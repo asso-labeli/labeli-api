@@ -1,0 +1,19 @@
+{
+  "name": "labeli-api",
+  "version": "0.0.0",
+  "description": "0.1",
+  "main": "api.js",
+  "private": true,
+  "dependencies": {
+    "body-parser": "^1.11.0",
+    "express": "^4.11.1",
+    "express-session": "^1.10.2",
+    "mongoose": "^3.8.22"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alix Fumoleau <alix.fumoleau@gmail.com>",
+  "license": "MIT"
+}
