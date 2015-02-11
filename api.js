@@ -3,7 +3,6 @@ var User = require('./models/user');
 var express     = require('express');
 var session     = require('express-session');
 var app         = express();
-var port        = 9005;
 var router      = express.Router();
 
 var mongoose   = require('mongoose');
@@ -54,7 +53,4 @@ app.use(require('./routes/projects'));
 app.use(require('./routes/auth'));
 
 app.use(router);
-
-app.listen(port);
-console.log('API listening on port ' + port);
 module.exports = app;
