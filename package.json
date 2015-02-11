@@ -9,7 +9,8 @@
     "express": "^4.11.1",
     "express-session": "^1.10.2",
     "gith": "^1.0.4",
-    "mongoose": "^3.8.22"
+    "mongoose": "^3.8.22",
+    "vhost": "^3.0.0"
   },
   "devDependencies": {},
   "scripts": {
