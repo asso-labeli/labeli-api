@@ -15,6 +15,7 @@ function createUser(req, res)
     var user = new User();
     if (typeof res.body.firstName !== 'undefined'){
         res.json({message : "Error : No firstName given !"});
+        return ;
     }
     else
         user.firstName = req.body.firstName;
