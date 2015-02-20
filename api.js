@@ -6,8 +6,6 @@ var vhost       = require('vhost');
 var app         = express();
 var router      = express.Router();
 
-app.use(vhost('hook.api.labeli.org', require('./hook.js')));
-
 var mongoose   = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/labeli-api');
 
