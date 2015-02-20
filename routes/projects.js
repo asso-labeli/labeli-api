@@ -39,6 +39,7 @@ function getProject(req, res)
         res.json(project);
     });
 }
+
 function editProject(req, res)
 {
     // use our bear model to find the bear we want
