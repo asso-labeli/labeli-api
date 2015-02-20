@@ -13,10 +13,11 @@ module.exports = router;
 function createUser(req, res)
 {        
     var user = new User();
-    if (res.body.firstName === null){
+    if (typeof res.body.firstName !== 'undefined'){
         res.json({message : "Error : No firstName given !"});
     }
-    user.firstName = req.body.firstName;
+    else
+        user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
     user.email = req.body.email;
 
