@@ -51,7 +51,6 @@ function editUser(req, res)
     {
         if (err) res.send(err);
         user.name = req.body.name;
-        user.email = req.body.email;
 
         // save the bear
         user.save(function(err)
