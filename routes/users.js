@@ -15,6 +15,7 @@ function createUser(req, res)
     var user = new User();
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
+    user.email = req.body.email;
     user.username = user.firstName.replace(/\s/g, '').toLowerCase()+"."+user.lastName.replace(/\s/g, '').toLowerCase();
     user.privateKey = generateRandomString(32);
     user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
@@ -50,6 +51,7 @@ function editUser(req, res)
     {
         if (err) res.send(err);
         user.name = req.body.name;
+        user.email = req.body.email;
 
         // save the bear
         user.save(function(err)
