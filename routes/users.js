@@ -66,18 +66,26 @@ function getUser(req, res)
 
 function editUser(req, res)
 {
-    User.findById(req.params.user_id, function(err, user)
+    User.findOne({username : req.params.user_id}, function(err, user)
     {
         if (err) res.send(err);
-        user.name = req.body.name;
+        else {
+            if ("firstName" in req.body) user.firstName = req.body.firstName;
+            if ("lastName" in req.body) user.lastName = req.body.lastName;
+            if ("email" in req.body) user.email = req.body.email;
+            if ("website" in req.body) user.website = req.body.website;
+            if ("universityGroup" in req.body) user.universityGroup = req.body.universityGroup;
+            if ("birthday" in req.body) user.birthday = new Date(req.body.birthday);
+            if ("description" in req.body) user.description = req.body.description;
+            if ("picture" in req.body) user.picture = req.body.picture;
 
-        // save the bear
-        user.save(function(err)
-        {
-            if (err) res.send(err);
-            res.json({ message: 'User updated!' });
-        });
-
+            // save the bear
+            user.save(function(err)
+            {
+                if (err) res.send(err);
+                res.json({ message: 'User updated!' });
+            });
+        }
     });
 }
 function deleteUser(req, res)
