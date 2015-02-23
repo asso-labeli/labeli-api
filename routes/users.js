@@ -13,14 +13,27 @@ module.exports = router;
 function createUser(req, res)
 {        
     var user = new User();
-    if (!("firstName" in res.body)){
+
+    if (!("firstName" in req.body)){
         res.json({message : "Error : No firstName given !"});
         return ;
     }
     else
         user.firstName = req.body.firstName;
-    user.lastName = req.body.lastName;
-    user.email = req.body.email;
+    
+    if (!("lastName" in req.body)){
+        res.json({message : "Error : No lastName given !"});
+        return ;
+    }
+    else
+        user.lastName = req.body.lastName;
+    
+    if (!("email" in req.body)){
+        res.json({message : "Error : No email given !"});
+        return ;
+    }
+    else
+        user.email = req.body.email;
 
     user.username = user.firstName.replace(/\s/g, '').toLowerCase()+"."+user.lastName.replace(/\s/g, '').toLowerCase();
     user.privateKey = generateRandomString(32);
