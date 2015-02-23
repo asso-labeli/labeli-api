@@ -26,6 +26,9 @@ Users :
     [GET]    /users/:id         Get a user
     [POST]   /users/:id         Edit a user (Parameters : email, password)
 
+Must be developped
+------------------
+
 Messages :
 
     [GET]    /messages/:thread  Get all the messages
