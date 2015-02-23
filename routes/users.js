@@ -38,7 +38,6 @@ function createUser(req, res)
     user.username = user.firstName.replace(/\s/g, '').toLowerCase()+"."+user.lastName.replace(/\s/g, '').toLowerCase();
     user.privateKey = generateRandomString(32);
     user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
-    user.created = Date.now();
 
     user.save(function(err)
     {
@@ -64,6 +63,7 @@ function getUser(req, res)
         res.json(user);
     });
 }
+
 function editUser(req, res)
 {
     User.findById(req.params.user_id, function(err, user)
