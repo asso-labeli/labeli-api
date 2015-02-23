@@ -15,7 +15,7 @@ Authentification :
 Projects :
 
     [GET]    /projects          Get all the projects
-    [POST]   /projects          Create a new project (Parameters : name, type)
+    [POST]   /projects          Create a new project (Parameters : name, type, authorUsername)
     [GET]    /projects/:id      Get a project
     [POST]   /projects/:id      Edit a project (Parameters : name, type)
 
