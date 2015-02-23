@@ -27,16 +27,16 @@ function createProject(req, res)
     } else
         project.type = req.body.type;
     
-    if (!("authorID" in req.body)){
-        res.json({message : "Error : No authorID given !"});
+    if (!("authorUsername" in req.body)){
+        res.json({message : "Error : No authorUsername given !"});
         return ;
     }
     else {
-        User.findOne({username : req.body.authorID}, function(err, user){
+        User.findOne({username : req.body.authorUsername}, function(err, user){
             if (err) {
                 res.send(err);
             } else if (user === null){
-                res.send({message : "Error : authorID not found !"});
+                res.send({message : "Error : authorUsername not found !"});
             } else {
                 project.author = user;
                 project.save(function(err){
