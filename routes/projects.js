@@ -13,7 +13,13 @@ module.exports = router;
 function createProject(req, res)
 {        
     var project = new Project();
-    project.name = req.body.name;
+    
+    if (!("name" in req.body)){
+        res.json({message : "Error : No name given !"});
+        return ;
+    }
+    else
+        project.name = req.body.name;
 
     project.save(function(err)
     {
