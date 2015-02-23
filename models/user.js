@@ -10,7 +10,7 @@ var UserSchema   = new Schema(
     passwordHash : String,
     privateKey : String,
     picture : {type : String, default : null},
-    level : {type : String, default : 1},
+    level : {type : Number, default : 1},
     description : {type : String, default : ''},
     created : {type : Date, default : Date.now},
     birthday : {type : Date, default : new Date(1970,1,1)},
