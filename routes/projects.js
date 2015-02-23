@@ -1,4 +1,5 @@
 var Project = require('../models/project');
+var User = require('../models/user');
 var express = require('express');
 var router = express.Router();
 
@@ -17,15 +18,34 @@ function createProject(req, res)
     if (!("name" in req.body)){
         res.json({message : "Error : No name given !"});
         return ;
-    }
-    else
+    } else
         project.name = req.body.name;
-
-    project.save(function(err)
-    {
-        if (err) res.send(err);
-        res.json({ message: 'Project created !' });
-    });
+    
+    if (!("type" in req.body)){
+        res.json({message : "Error : No type given !"});
+        return ;
+    } else
+        project.type = req.body.type;
+    
+    if (!("author_id" in req.body)){
+        res.json({message : "Error : No author_id given !"});
+        return ;
+    }
+    else {
+        User.findOne({username : req.body.author_id}, function(err, user){
+            if (err) {
+                res.send(err);
+            } else if (user === null){
+                res.send({message : "Error : author_id not found !"});
+            } else {
+                project.author = user;
+                project.save(function(err){
+                    if (err) res.send(err);
+                    res.json({ message: 'Project created !' });
+                });
+            }
+        });
+    }
 }
 
 function getProjects(req, res)
