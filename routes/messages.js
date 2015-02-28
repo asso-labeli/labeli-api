@@ -17,6 +17,7 @@ module.exports = router;
 
 function createMessage(req, res){        
     var message = new Message();
+    
     var projectFound = true;
     var userFound = true;
     
@@ -66,7 +67,11 @@ function createMessage(req, res){
 }
 
 function getMessages(req, res){
-    
+    Message.find({thread : req.params.project_id}, function(err, messages)
+    {
+        if (err) res.send(err);
+        res.json(messages);
+    });
 }
     
 function getMessage(req, res){
