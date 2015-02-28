@@ -52,6 +52,7 @@ app.use(function(req, res, next)
 app.use(require('./routes/users'));
 app.use(require('./routes/projects'));
 app.use(require('./routes/auth'));
+app.use(require('./routes/messages'));
 
 app.use(router);
 module.exports = app;
