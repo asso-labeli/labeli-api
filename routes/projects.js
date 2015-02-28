@@ -35,7 +35,7 @@ function createProject(req, res)
         return ;
     }
     else {
-        User.findOne({username : req.body.authorUsername}, function(err, user){
+        User.findOne({username : req.body.authorUsername.toLowerCase()}, function(err, user){
             if (err) {
                 res.send(err);
             } else if (user === null){
@@ -82,7 +82,7 @@ function editProject(req, res)
         if ("type" in req.body) project.type = req.body.type;
         if ("authorUsername" in req.body) 
             calls.push(function(callback){
-                User.findOne({username : req.body.authorUsername}, function(err, user){
+                User.findOne({username : req.body.authorUsername.toLowerCase()}, function(err, user){
                     if (err) usernameFound = false;
                     else project.author = user;
                     callback();

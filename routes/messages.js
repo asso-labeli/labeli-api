@@ -45,7 +45,7 @@ function createMessage(req, res){
     }
     else {
         calls.push(function(callback){
-            User.findOne({username : req.body.authorUsername}, function(err, user){
+            User.findOne({username : req.body.authorUsername.toLowerCase()}, function(err, user){
                 if (err || user == null) userFound = false;
                 else message.author = user;
                 callback();
