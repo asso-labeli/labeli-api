@@ -11,7 +11,7 @@ router.route('/messages/:project_id').post(createMessage);
 router.route('/messages/:project_id').get(getMessages);
 router.route('/message/:message_id').get(getMessage);
 router.route('/message/:message_id').put(editMessage);
-// router.route('/messages/:project_id').delete(deleteProject);
+router.route('/message/:message_id').delete(deleteProject);
 
 module.exports = router;
 
@@ -75,9 +75,12 @@ function getMessages(req, res){
 }
     
 function getMessage(req, res){
-    
+    Message.findById(req.params.message_id, function(err, message){
+        if (err) res.send(err);
+        res.json(message);
+    });
 }
     
 function editMessage(req, res){
-    
+
 }
