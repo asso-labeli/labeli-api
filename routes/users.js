@@ -42,7 +42,7 @@ function createUser(req, res)
     user.save(function(err)
     {
         if (err) res.send(err);
-        res.json({ message: 'User created !' });
+        else res.json({ message: 'User created !' });
     });
 }
 
@@ -51,7 +51,7 @@ function getUsers(req, res)
     User.find(function(err, users)
     {
         if (err) res.send(err);
-        res.json(users);
+        else res.json(users);
     });
 }
 
@@ -60,7 +60,7 @@ function getUser(req, res)
     User.findOne({username : req.params.user_id}, function(err, user)
     {
         if (err) res.send(err);
-        res.json(user);
+        else res.json(user);
     });
 }
 
@@ -83,7 +83,7 @@ function editUser(req, res)
             user.save(function(err)
             {
                 if (err) res.send(err);
-                res.json({ message: 'User updated!' });
+                else res.json({ message: 'User updated!' });
             });
         }
     });
@@ -93,7 +93,7 @@ function deleteUser(req, res)
     User.remove({_id: req.params.user_id}, function(err, user)
     {
         if (err) res.send(err);
-        res.json({ message: 'User deleted!' });
+        else res.json({ message: 'User deleted!' });
     });
 }
 

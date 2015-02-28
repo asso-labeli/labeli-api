@@ -44,7 +44,7 @@ function createProject(req, res)
                 project.author = user;
                 project.save(function(err){
                     if (err) res.send(err);
-                    res.json({ message: 'Project created !' });
+                    else res.json({ message: 'Project created !' });
                 });
             }
         });
@@ -56,7 +56,7 @@ function getProjects(req, res)
     Project.find(function(err, projects)
     {
         if (err) res.send(err);
-        res.json(projects);
+        else res.json(projects);
     });
 }
 
@@ -65,7 +65,7 @@ function getProject(req, res)
     Project.findById(req.params.project_id, function(err, project)
     {
         if (err) res.send(err);
-        res.json(project);
+        else res.json(project);
     });
 }
 
@@ -104,6 +104,6 @@ function deleteProject(req, res)
     Project.remove({_id: req.params.project_id}, function(err, project)
     {
         if (err) res.send(err);
-        res.json({ message: 'Project deleted!' });
+        else res.json({ message: 'Project deleted!' });
     });
 }
