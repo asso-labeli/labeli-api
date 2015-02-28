@@ -10,12 +10,13 @@
     "express-session": "^1.10.2",
     "gith": "^1.0.4",
     "mongoose": "^3.8.22",
-    "vhost": "^3.0.0"
+    "vhost": "^3.0.0",
+    "async": "^0.9.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Alix Fumoleau <alix.fumoleau@gmail.com>",
+  "author": "Alix Fumoleau <alix.fumoleau@gmail.com> - Florian Kauder <flokauder@hotmail.com>",
   "license": "MIT"
 }
