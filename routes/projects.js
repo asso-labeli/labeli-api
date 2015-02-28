@@ -1,6 +1,9 @@
 var Project = require('../models/project');
 var User = require('../models/user');
 var express = require('express');
+var async = require('async');
+var calls = [];
+
 var router = express.Router();
 
 router.route('/projects').post(createProject);
@@ -68,17 +71,30 @@ function getProject(req, res)
 
 function editProject(req, res)
 {
-    // use our bear model to find the bear we want
     Project.findById(req.params.project_id, function(err, project)
     {
+        var usernameFound = true;
+        
         if (err) res.send(err);
-        project.name = req.body.name;  // update the bears info
-
-        // save the bear
-        project.save(function(err)
-        {
-            if (err) res.send(err);
-            res.json({ message: 'Project updated!' });
+        if ("name" in req.body) project.name = req.body.name;
+        if ("status" in req.body) project.status = req.body.status;
+        if ("description" in req.body) project.description = req.body.description;
+        if ("type" in req.body) project.type = req.body.type;
+        if ("authorUsername" in req.body) 
+            calls.push(function(callback){
+                User.findOne({username : req.body.authorUsername}, function(err, user){
+                    if (err) usernameFound = false;
+                    else project.author = user;
+                    callback();
+                });
+            });
+        
+        async.parallel(calls, function(){
+            project.save(function(err){
+                if (err) res.send(err);
+                else if (!usernameFound) res.send({message : 'Project updated but authorUsername not found!'});
+                else res.json({ message: 'Project updated!' });
+            });
         });
 
     });
