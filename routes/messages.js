@@ -11,7 +11,7 @@ router.route('/messages/:project_id').post(createMessage);
 router.route('/messages/:project_id').get(getMessages);
 router.route('/message/:message_id').get(getMessage);
 router.route('/message/:message_id').put(editMessage);
-//router.route('/message/:message_id').delete(deleteProject);
+router.route('/message/:message_id').delete(deleteMessage);
 
 module.exports = router;
 
@@ -60,7 +60,7 @@ function createMessage(req, res){
         else {
             message.save(function(err){
                 if (err) res.send(err);
-                res.json({ message: 'Message created !' });
+                else res.json({ message: 'Message created !' });
             });
         }
     });
@@ -70,14 +70,14 @@ function getMessages(req, res){
     Message.find({thread : req.params.project_id}, function(err, messages)
     {
         if (err) res.send(err);
-        res.json(messages);
+        else res.json(messages);
     });
 }
     
 function getMessage(req, res){
     Message.findById(req.params.message_id, function(err, message){
         if (err) res.send(err);
-        res.json(message);
+        else res.json(message);
     });
 }
     
@@ -90,8 +90,16 @@ function editMessage(req, res){
         
         message.save(function(err){
             if (err) res.send(err);
-            res.json({ message: 'Message edited !' });
+            else res.json({ message: 'Message edited !' });
         });
 
+    });
+}
+
+function deleteMessage(req, res){
+    Message.remove({_id: req.params.message_id}, function(err, obj)
+    {
+        if (err) res.send(err);
+        else res.json({ message: 'Message deleted!' });
     });
 }
