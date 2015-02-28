@@ -10,4 +10,4 @@ var MessageSchema   = new Schema(
     author : {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
 
-module.exports = mongoose.model('Message', ProjectSchema);
+module.exports = mongoose.model('Message', MessageSchema);
