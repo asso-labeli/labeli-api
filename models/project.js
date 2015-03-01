@@ -8,6 +8,7 @@ var ProjectSchema   = new Schema(
     type : {type : Number, default : 0},
     description : {type : String, default : ''},
     created : {type : Date, default : Date.now},
+    lastEdited : {type : Date, default : Date.now},
     status : {type : Number, default : 0},
     author : {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
