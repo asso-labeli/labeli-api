@@ -82,7 +82,11 @@ function createOrEditVote(req, res){
 }
 
 function getVotes(req, res){
-    
+    Vote.find({thread : req.params.project_id}, function(err, votes)
+    {
+        if (err) res.send(err);
+        else res.json(votes);
+    });
 }
 
 function getVote(req, res){
