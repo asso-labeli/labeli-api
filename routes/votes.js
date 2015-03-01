@@ -97,5 +97,8 @@ function getVote(req, res){
 }
 
 function deleteVote(req, res){
-    
+    Vote.remove({_id: req.params.vote_id}, function(err, vote){
+        if (err) res.send(err);
+        else res.json({ message: 'Vote deleted !' });
+    });
 }
