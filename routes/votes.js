@@ -90,7 +90,10 @@ function getVotes(req, res){
 }
 
 function getVote(req, res){
-    
+    Vote.findById(req.params.vote_id, function(err, vote){
+        if (err) res.send(err);
+        else res.json(vote);
+    });
 }
 
 function deleteVote(req, res){
