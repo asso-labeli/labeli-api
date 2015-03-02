@@ -54,6 +54,7 @@ app.use(require('./routes/projects'));
 app.use(require('./routes/auth'));
 app.use(require('./routes/messages'));
 app.use(require('./routes/votes'));
+app.use(require('./routes/projectUsers'));
 
 app.use(router);
 module.exports = app;
