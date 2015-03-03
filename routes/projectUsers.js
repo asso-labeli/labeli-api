@@ -95,5 +95,8 @@ function getProjectUser(req, res){
 }
 
 function deleteProjectUser(req, res){
-    
+    ProjectUser.remove({_id : req.params.projectUser_id}, function(err, projectUser){
+        if (err) res.send(err);
+        else res.send({message : 'ProjectUser deleted !'});
+    });
 }
