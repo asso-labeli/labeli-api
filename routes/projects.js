@@ -1,5 +1,6 @@
 var Project = require('../models/project');
 var User = require('../models/user');
+var ProjectUser = require('../models/projectUser');
 var express = require('express');
 var async = require('async');
 var calls = [];
@@ -44,7 +45,17 @@ function createProject(req, res)
                 project.author = user;
                 project.save(function(err){
                     if (err) res.send(err);
-                    else res.json({ message: 'Project created !' });
+                    else {                        
+                        var projectUser = new ProjectUser();
+                        projectUser.author = project.author;
+                        projectUser.thread = project;
+                        projectUser.value = 2;
+                        
+                        projectUser.save(function(err){
+                            if (err) res.send(err);
+                            else res.json({ message: 'Project created !' });
+                        });
+                    }                            
                 });
             }
         });
