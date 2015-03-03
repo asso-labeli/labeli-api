@@ -88,11 +88,10 @@ function getProjectUsers(req, res){
 }
 
 function getProjectUser(req, res){
-    
-}
-
-function editProjectUser(req, res){
-    
+    ProjectUser.findById(req.params.projectUser_id, function(err, projectUser){
+        if (err) res.send(err);
+        else res.json(projectUser);
+    });
 }
 
 function deleteProjectUser(req, res){
