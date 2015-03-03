@@ -57,7 +57,7 @@ function getUsers(req, res)
 
 function getUser(req, res)
 {
-    User.findOne({username : req.params.user_id}, function(err, user)
+    User.findById(req.params.user_id, function(err, user)
     {
         if (err) res.send(err);
         else res.json(user);
@@ -66,7 +66,7 @@ function getUser(req, res)
 
 function editUser(req, res)
 {
-    User.findOne({username : req.params.user_id.toLowerCase}, function(err, user)
+    User.findOne(req.params.user_id, function(err, user)
     {
         if (err) res.send(err);
         else {
