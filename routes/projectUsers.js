@@ -81,7 +81,10 @@ function createOrEditProjectUser(req, res){
 }
 
 function getProjectUsers(req, res){
-    
+    ProjectUser.find({thread : req.params.project_id}, function(err, projectUsers){
+        if (err) res.send(err);
+        else res.json(projectUsers);
+    });
 }
 
 function getProjectUser(req, res){
