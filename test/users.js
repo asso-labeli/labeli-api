@@ -57,76 +57,73 @@ describe('User', function(){
         });
     })
     
-    after(function(){
-        if (userTest != null){
-            describe('.getUsers()', function(){        
-                it('must have at least a user', function(done){
-                    request(apiUrl)
-                    .get('/users')
-                    .end(function(err, res){
-                        if (err) return done(err);
-                        expect(res.body.success).to.equal(1);
-                        done();
-                    });
-                });
+    describe('.getUsers()', function(){        
+        it('must have at least a user', function(done){
+            request(apiUrl)
+            .get('/users')
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                done();
             });
-
-            describe('.getUser()', function(){
-                it('must return the user (with id)', function(done){
-                    request(apiUrl)
-                    .get('/users/' + userTest)
-                    .end(function(err, res){
-                        if (err) return done(err);
-                        expect(res.body.data.firstName).to.equal('test');
-                        done();
-                    });
-                });
-                
-                it('must return the user (with username)', function(done){
-                    request(apiUrl)
-                    .get('/users/' + username)
-                    .end(function(err, res){
-                        if (err) return done(err);
-                        expect(res.body.data.firstName).to.equal('test');
-                        done();
-                    });
-                });
-            });
-            
-            describe('.editUser()', function(){
-                editUser(userTest, 'firstName', "Bob");
-                editUser(userTest, 'lastName', "Eponge");
-                editUser(userTest, 'email', "bob.eponge@email.com");
-                editUser(userTest, 'website', "bob.eponge.com");
-                editUser(userTest, 'universityGroup', "notFound");
-                editUserDate(userTest, 'birthday', "02-02-2015");
-                editUser(userTest, 'description', "MyDescription");
-                editUser(userTest, 'picture', "picture.png");
-            });
-
-            describe('.deleteUser()', function(){
-                it('must delete the testUser', function(done){
-                    request(apiUrl)
-                    .delete('/users/' + userTest)
-                    .end(function(err, res){
-                        if (err) return done(err);
-                        expect(res.body.success).to.equal(1);
-                        done();
-                    });
-                });
-                
-                it('must be deleted', function(done){
-                    request(apiUrl)
-                    .get('/users/' + userTest)
-                    .end(function(err, res){
-                        if (err) return done(err);
-                        expect(res.body.success).to.equal(0);
-                        done();
-                    });
-                });
-            });
-        }
+        });
     });
+
+    describe('.getUser()', function(){
+        it('must return the user (with id)', function(done){
+            request(apiUrl)
+            .get('/users/' + userTest)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.data.firstName).to.equal('test');
+                done();
+            });
+        });
+
+        it('must return the user (with username)', function(done){
+            request(apiUrl)
+            .get('/users/' + username)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.data.firstName).to.equal('test');
+                done();
+            });
+        });
+    });
+
+    describe('.editUser()', function(){
+        editUser(userTest, 'firstName', "Bob");
+        editUser(userTest, 'lastName', "Eponge");
+        editUser(userTest, 'email', "bob.eponge@email.com");
+        editUser(userTest, 'website', "bob.eponge.com");
+        editUser(userTest, 'universityGroup', "notFound");
+        editUserDate(userTest, 'birthday', "02-02-2015");
+        editUser(userTest, 'description', "MyDescription");
+        editUser(userTest, 'picture', "picture.png");
+    });
+
+    describe('.deleteUser()', function(){
+        it('must delete the testUser', function(done){
+            request(apiUrl)
+            .delete('/users/' + userTest)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                done();
+            });
+        });
+
+        it('must be deleted', function(done){
+            request(apiUrl)
+            .get('/users/' + userTest)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.success).to.equal(0);
+                done();
+            });
+        });
+    });
+
 })
 
 function editUser(user_id, type, value){
