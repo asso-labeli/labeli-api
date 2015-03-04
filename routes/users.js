@@ -43,7 +43,7 @@ function createUser(req, res)
     user.save(function(err)
     {
         if (err) res.send(err);
-        else res.json({ message: 'User created !' });
+        else res.json({ message: 'User created !', id : user});
     });
 }
 
@@ -90,7 +90,7 @@ function editUser(req, res)
             user.save(function(err)
             {
                 if (err) res.send(err);
-                else res.json({ message: 'User updated!' });
+                else res.json({ message: 'User updated!', id:user });
             });
         }
     });
@@ -100,7 +100,7 @@ function deleteUser(req, res)
     User.remove({_id: req.params.user_id}, function(err, user)
     {
         if (err) res.send(err);
-        else res.json({ message: 'User deleted!' });
+        else res.json({ message: 'User deleted!', id:user });
     });
 }
 
