@@ -16,21 +16,27 @@ function createUser(req, res)
     var user = new User();
 
     if (!("firstName" in req.body)){
-        res.json({message : "Error : No firstName given !"});
+        res.send({message : "Error : No firstName given !",
+                 data : null,
+                 success : 0});
         return ;
     }
     else
         user.firstName = req.body.firstName;
     
     if (!("lastName" in req.body)){
-        res.json({message : "Error : No lastName given !"});
+        res.send({message : "Error : No lastName given !",
+                 data : null,
+                 success : 0});
         return ;
     }
     else
         user.lastName = req.body.lastName;
     
     if (!("email" in req.body)){
-        res.json({message : "Error : No email given !"});
+        res.send({message : "Error : No email given !",
+                 data : null,
+                 success : 0});
         return ;
     }
     else
@@ -43,7 +49,7 @@ function createUser(req, res)
     user.save(function(err)
     {
         if (err) res.send(err);
-        else res.json({ message: 'User created!', id : user._id, success : 1});
+        else res.json({ message: 'User created!', data : user, success : 1});
     });
 }
 
@@ -52,7 +58,9 @@ function getUsers(req, res)
     User.find(function(err, users)
     {
         if (err) res.send(err);
-        else res.json(users);
+        else res.send({message : "Users found!",
+                       data : users,
+                       success : 1});
     });
 }
 
@@ -61,12 +69,22 @@ function getUser(req, res)
     if (isMongooseId(req.params.user_id)){
         User.findById(req.params.user_id, function(err, user){
             if (err) res.send(err);
-            else res.json(user);
+            else if (user == null) res.send({message : 'Error : User not found!',
+                                             data : null,
+                                             success : 0});
+            else res.send({message : 'User found!',
+                           data : user,
+                           success : 1});
         });
     } else {
         User.findOne({username : req.params.user_id}, function(err, user){
             if (err) res.send(err);
-            else res.json(user);
+            else if (user == null) res.send({message : 'Error : User not found!',
+                                             data : null,
+                                             success : 0});
+            else res.send({message : 'User found!',
+                           data : user,
+                           success : 1});
         });
     }        
 }
@@ -90,7 +108,7 @@ function editUser(req, res)
             user.save(function(err)
             {
                 if (err) res.send(err);
-                else res.json({ message: 'User updated !', id:user._id, success:1 });
+                else res.send({ message: 'User updated !', data:user, success:1 });
             });
         }
     });
@@ -100,7 +118,7 @@ function deleteUser(req, res)
     User.remove({_id: req.params.user_id}, function(err, user)
     {
         if (err) res.send(err);
-        else res.json({ message: 'User deleted! ', id:user._id, success:1 });
+        else res.send({ message: 'User deleted! ', data:user, success:1 });
     });
 }
 
