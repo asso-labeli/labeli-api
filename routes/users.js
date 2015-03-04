@@ -48,8 +48,8 @@ function createUser(req, res)
 
     user.save(function(err)
     {
-        if (err) res.send(err);
-        else res.json({ message: 'User created!', data : user, success : 1});
+        if (err) res.send({message : "Error", data:err, success : 0});
+        else res.send({ message: 'User created!', data : user, success : 1});
     });
 }
 
@@ -57,7 +57,7 @@ function getUsers(req, res)
 {
     User.find(function(err, users)
     {
-        if (err) res.send(err);
+        if (err) res.send({message : "Error", data:err, success : 0});
         else res.send({message : "Users found!",
                        data : users,
                        success : 1});
@@ -68,7 +68,7 @@ function getUser(req, res)
 {
     if (isMongooseId(req.params.user_id)){
         User.findById(req.params.user_id, function(err, user){
-            if (err) res.send(err);
+            if (err) res.send({message : "Error", data:err, success : 0});
             else if (user == null) res.send({message : 'Error : User not found!',
                                              data : null,
                                              success : 0});
@@ -78,7 +78,7 @@ function getUser(req, res)
         });
     } else {
         User.findOne({username : req.params.user_id}, function(err, user){
-            if (err) res.send(err);
+            if (err) res.send({message : "Error", data:err, success : 0});
             else if (user == null) res.send({message : 'Error : User not found!',
                                              data : null,
                                              success : 0});
@@ -107,7 +107,7 @@ function editUser(req, res)
             // save the bear
             user.save(function(err)
             {
-                if (err) res.send(err);
+                if (err) res.send({message : "Error", data:err, success : 0});
                 else res.send({ message: 'User updated !', data:user, success:1 });
             });
         }
@@ -117,7 +117,7 @@ function deleteUser(req, res)
 {
     User.remove({_id: req.params.user_id}, function(err, user)
     {
-        if (err) res.send(err);
+        if (err) res.send({message : "Error", data:err, success : 0});
         else res.send({ message: 'User deleted! ', data:user, success:1 });
     });
 }
