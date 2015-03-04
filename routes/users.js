@@ -1,4 +1,5 @@
 var User = require('../models/user');
+var isMongooseId = require('mongoose').Types.ObjectId.isValid;
 var express = require('express');
 var router = express.Router();
 
@@ -57,11 +58,17 @@ function getUsers(req, res)
 
 function getUser(req, res)
 {
-    User.findById(req.params.user_id, function(err, user)
-    {
-        if (err) res.send(err);
-        else res.json(user);
-    });
+    if (isMongooseId(req.params.user_id)){
+        User.findById(req.params.user_id, function(err, user){
+            if (err) res.send(err);
+            else res.json(user);
+        });
+    } else {
+        User.findOne({username : req.params.user_id}, function(err, user){
+            if (err) res.send(err);
+            else res.json(user);
+        });
+    }        
 }
 
 function editUser(req, res)
