@@ -93,7 +93,7 @@ function editUser(req, res)
 {
     User.findOne(req.params.user_id, function(err, user)
     {
-        if (err) res.send(err);
+        if (err) res.send({message:"Error!", data : err, success : 0});
         else {
             if ("firstName" in req.body) user.firstName = req.body.firstName;
             if ("lastName" in req.body) user.lastName = req.body.lastName;
