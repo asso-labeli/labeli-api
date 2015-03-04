@@ -20,31 +20,39 @@ function createProject(req, res)
     var project = new Project();
     
     if (!("name" in req.body)){
-        res.json({message : "Error : No name given !"});
+        res.send({message : "Error : No name given!",
+                 data : null,
+                 success : 0});
         return ;
     } else
         project.name = req.body.name;
     
     if (!("type" in req.body)){
-        res.json({message : "Error : No type given !"});
+        res.send({message : "Error : No type given!",
+                 data : null,
+                 success : 0});
         return ;
     } else
         project.type = req.body.type;
     
     if (!("authorUsername" in req.body)){
-        res.json({message : "Error : No authorUsername given !"});
+        res.send({message : "Error : No authorUsername given!",
+                 data : null,
+                 success : 0});
         return ;
     }
     else {
         User.findOne({username : req.body.authorUsername.toLowerCase()}, function(err, user){
             if (err) {
-                res.send(err);
+                res.send({message:"Error!", data : err, success : 0});
             } else if (user === null){
-                res.send({message : "Error : authorUsername not found !"});
+                res.send({message : "Error : authorUsername not found!",
+                          data : null,
+                          success : 0});
             } else {
                 project.author = user;
                 project.save(function(err){
-                    if (err) res.send(err);
+                    if (err) res.send({message:"Error!", data : err, success : 0});
                     else {                        
                         var projectUser = new ProjectUser();
                         projectUser.author = project.author;
@@ -52,8 +60,10 @@ function createProject(req, res)
                         projectUser.value = 2;
                         
                         projectUser.save(function(err){
-                            if (err) res.send(err);
-                            else res.json({ message: 'Project created !' });
+                            if (err) res.send({message:"Error!", data : err, success : 0});
+                            else res.send({ message: 'Project created!',
+                                          data : project,
+                                          success : 1});
                         });
                     }                            
                 });
@@ -66,8 +76,10 @@ function getProjects(req, res)
 {
     Project.find(function(err, projects)
     {
-        if (err) res.send(err);
-        else res.json(projects);
+        if (err) res.send({message:"Error!", data : err, success : 0});
+        else res.send({message : "Projects found!",
+                       data : projects,
+                       success : 1});
     });
 }
 
@@ -75,8 +87,10 @@ function getProject(req, res)
 {
     Project.findById(req.params.project_id, function(err, project)
     {
-        if (err) res.send(err);
-        else res.json(project);
+        if (err) res.send({message:"Error!", data : err, success : 0});
+        else res.send({message : "Project Found!",
+                       data : project,
+                       success : 1});
     });
 }
 
@@ -86,7 +100,7 @@ function editProject(req, res)
     {
         var usernameFound = true;
         
-        if (err) res.send(err);
+        if (err) res.send({message:"Error!", data : err, success : 0});
         if ("name" in req.body) project.name = req.body.name;
         if ("status" in req.body) project.status = req.body.status;
         if ("description" in req.body) project.description = req.body.description;
@@ -102,9 +116,13 @@ function editProject(req, res)
         
         async.parallel(calls, function(){
             project.save(function(err){
-                if (err) res.send(err);
-                else if (!usernameFound) res.send({message : 'Project updated but authorUsername not found!'});
-                else res.json({ message: 'Project updated!' });
+                if (err) res.send({message:"Error!", data : err, success : 0});
+                else if (!usernameFound) res.send({message : 'Project updated but authorUsername not found!',
+                                                  data : project,
+                                                  success : 0});
+                else res.send({ message: 'Project updated!',
+                              data : project,
+                              success : 1});
             });
         });
 
@@ -114,7 +132,9 @@ function deleteProject(req, res)
 {
     Project.remove({_id: req.params.project_id}, function(err, project)
     {
-        if (err) res.send(err);
-        else res.json({ message: 'Project deleted!' });
+        if (err) res.send({message:"Error!", data : err, success : 0});
+        else res.send({ message: 'Project deleted!',
+                      data : null,
+                      success : 1});
     });
 }
