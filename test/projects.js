@@ -17,7 +17,7 @@ describe('Project', function(){
             .post('/projects')
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.message).to.equal("Error : No name given!");
+                expect(res.body.message).to.equal("Error : No name given");
                 expect(res.body.success).to.equal(0);
                 done();
             });
@@ -29,7 +29,7 @@ describe('Project', function(){
             .send({name : 'ProjetTest'})
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.message).to.equal("Error : No type given!");
+                expect(res.body.message).to.equal("Error : No type given");
                 expect(res.body.success).to.equal(0);
                 done();
             });
@@ -41,7 +41,7 @@ describe('Project', function(){
             .send({name : 'ProjetTest', type : 1})
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.message).to.equal("Error : No authorUsername given!");
+                expect(res.body.message).to.equal("Error : No authorUsername given");
                 expect(res.body.success).to.equal(0);
                 done();
             });
@@ -53,7 +53,7 @@ describe('Project', function(){
             .send({name : 'ProjetTest', type : 1, authorUsername : "impossible"})
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.message).to.equal("Error : authorUsername not found!");
+                expect(res.body.message).to.equal("Error : authorUsername not found");
                 expect(res.body.success).to.equal(0);
                 done();
             });
