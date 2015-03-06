@@ -15,7 +15,8 @@ describe('User', function(){
             .post('/users')
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.message).to.equal("Error : No firstName given !");
+                console.log(res);
+                expect(res.body.message).to.equal("Error : No firstName given");
                 done();
             });
         });
@@ -26,7 +27,7 @@ describe('User', function(){
             .send({firstName : 'testFirstName'})
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.message).to.equal("Error : No lastName given !");
+                expect(res.body.message).to.equal("Error : No lastName given");
                 done();
             });
         });
@@ -37,7 +38,7 @@ describe('User', function(){
             .send({firstName : 'testFirstName', lastName : 'testLastName'})
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.message).to.equal("Error : No email given !");
+                expect(res.body.message).to.equal("Error : No email given");
                 done();
             });
         });
