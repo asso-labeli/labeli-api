@@ -5,11 +5,10 @@ var expect = require('chai').expect,
 var request = require('supertest');
 
 var apiUrl = 'http://localhost:8080';
+var userTest = null;
+var username = null;
 
 describe('User', function(){
-    var userTest = null;
-    var username = null;
-    
     describe('.createUser()', function(){
         it('must need a firstName', function(done){
             request(apiUrl)
@@ -24,7 +23,7 @@ describe('User', function(){
         it('must need a lastName', function(done){
             request(apiUrl)
             .post('/users')
-            .send({firstName : 'test'})
+            .send({firstName : 'testFirstName'})
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.message).to.equal("Error : No lastName given !");
@@ -35,7 +34,7 @@ describe('User', function(){
         it('must need a email', function(done){
             request(apiUrl)
             .post('/users')
-            .send({firstName : 'test', lastName : 'test'})
+            .send({firstName : 'testFirstName', lastName : 'testLastName'})
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.message).to.equal("Error : No email given !");
@@ -46,7 +45,7 @@ describe('User', function(){
         it ('must create a new User with good informations', function(done){
             request(apiUrl)
             .post('/users')
-            .send({firstName : 'test', lastName : 'test', email : 'test@test.com'})
+            .send({firstName : 'testFirstName', lastName : 'testLastName', email : 'test@test.com'})
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
@@ -75,7 +74,7 @@ describe('User', function(){
             .get('/users/' + userTest)
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.data.firstName).to.equal('test');
+                expect(res.body.data.firstName).to.equal('testFirstName');
                 done();
             });
         });
@@ -85,21 +84,21 @@ describe('User', function(){
             .get('/users/' + username)
             .end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.data.firstName).to.equal('test');
+                expect(res.body.data.firstName).to.equal('testFirstName');
                 done();
             });
         });
     });
 
     describe('.editUser()', function(){
-        editUser(userTest, 'firstName', "Bob");
-        editUser(userTest, 'lastName', "Eponge");
-        editUser(userTest, 'email', "bob.eponge@email.com");
-        editUser(userTest, 'website', "bob.eponge.com");
-        editUser(userTest, 'universityGroup', "notFound");
-        editUserDate(userTest, 'birthday', "02-02-2015");
-        editUser(userTest, 'description', "MyDescription");
-        editUser(userTest, 'picture', "picture.png");
+        editUser('firstName', "Bob");
+        editUser('lastName', "Eponge");
+        editUser('email', "bob.eponge@email.com");
+        editUser('website', "bob.eponge.com");
+        editUser('universityGroup', "notFound");
+        editUserDate('birthday', "02-02-2015");
+        editUser('description', "MyDescription");
+        editUser('picture', "picture.png");
     });
 
     describe('.deleteUser()', function(){
@@ -126,13 +125,13 @@ describe('User', function(){
 
 })
 
-function editUser(user_id, type, value){
+function editUser(type, value){
     it('must edit the ' + type, function(done){
         var params = {}
         params[type] = value;
         
         request(apiUrl)
-        .put('/users/' + user_id)
+        .put('/users/' + userTest)
         .send(params)
         .end(function(err, res){
             if (err) return done(err);
@@ -142,13 +141,13 @@ function editUser(user_id, type, value){
     });
 }
 
-function editUserDate(user_id, type, value){
+function editUserDate(type, value){
     it('must edit the ' + type, function(done){
         var params = {}
         params[type] = value;
         
         request(apiUrl)
-        .put('/users/' + user_id)
+        .put('/users/' + userTest)
         .send(params)
         .end(function(err, res){
             if (err) return done(err);
