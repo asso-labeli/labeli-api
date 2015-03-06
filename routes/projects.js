@@ -88,6 +88,9 @@ function getProject(req, res)
     Project.findById(req.params.project_id, function(err, project)
     {
         if (err) res.send({message:"Error!", data : err, success : 0});
+        else if (project == null) res.send({message : "Error : Project not found!",
+                                            data : project,
+                                            success : 0});
         else res.send({message : "Project Found!",
                        data : project,
                        success : 1});
@@ -100,7 +103,17 @@ function editProject(req, res)
     {
         var usernameFound = true;
         
-        if (err) res.send({message:"Error!", data : err, success : 0});
+        if (err) {
+            res.send({message:"Error!", data : err, success : 0});
+            return;
+        }
+        else if (project == null) {
+            res.send({message:"Error : Project not found!",
+                      data : project,
+                      success : 0});
+            return;
+        }
+        
         if ("name" in req.body) project.name = req.body.name;
         if ("status" in req.body) project.status = req.body.status;
         if ("description" in req.body) project.description = req.body.description;
