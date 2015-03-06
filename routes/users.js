@@ -17,21 +17,21 @@ function createUser(req, res)
 {        
     var user = new User();
 
-    if (("firstName" in req.body)){
+    if (!("firstName" in req.body)){
         Response(res, "Error : No firstName given", null, 0);
         return ;
     }
     else
         user.firstName = req.body.firstName;
     
-    if (("lastName" in req.body)){
+    if (!("lastName" in req.body)){
         Response(res, "Error : No lastName given", null, 0);
         return ;
     }
     else
         user.lastName = req.body.lastName;
     
-    if (("email" in req.body)){
+    if (!("email" in req.body)){
         Response(res, "Error : No email given", null, 0);
         return ;
     }
@@ -70,7 +70,7 @@ function getUser(req, res)
         });
     } else {
         User.findOne({username : req.params.user_id}, function(err, user){
-            if (err) Response(res, "Error", err, 0});
+            if (err) Response(res, "Error", err, 0);
             else if (user == null) 
                 Response(res, 'Error : User not found', null, 0);
             else Response(res, 'User found', user, 1);
@@ -106,7 +106,7 @@ function deleteUser(req, res)
 {
     User.remove({_id: req.params.user_id}, function(err, user)
     {
-        if (err) Response(res, "Error", err, 0});
+        if (err) Response(res, "Error", err, 0);
         else Response(res, 'User deleted', user, 1);
     });
 }
