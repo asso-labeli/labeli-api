@@ -15,7 +15,6 @@ describe('User', function(){
             .post('/users')
             .end(function(err, res){
                 if (err) return done(err);
-                console.log(res);
                 expect(res.body.message).to.equal("Error : No firstName given");
                 done();
             });
