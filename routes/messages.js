@@ -38,7 +38,7 @@ function createMessage(req, res){
         calls.push(function(callback){
             Project.findById(req.params.project_id, function(err, project){
                 if (err || project == null) projectFound = false;
-                else message.thread = project;
+                else message.project = project;
                 callback();
             });
         });   
