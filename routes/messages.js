@@ -1,6 +1,8 @@
 var Project = require('../models/project');
 var User = require('../models/user');
 var Message = require('../models/message');
+var Response = require('../modules/response');
+
 var express = require('express');
 var async = require('async');
 var calls = [];
@@ -22,15 +24,17 @@ function createMessage(req, res){
     var userFound = true;
     
     if (!("content" in req.body)){
-        res.json({message : "Error : No content given !"});
+        Response(res, "Error : No content given", null, 0);
         return ;
-    } else
+    } 
+    else
         message.content = req.body.content;
     
     if (!("project_id" in req.params)){
-        res.json({message : "Error : No project id given in parameters !"});
+        Response(res, "Error : No project id given in parameters", null, 0);
         return ;
-    } else {
+    } 
+    else {
         calls.push(function(callback){
             Project.findById(req.params.project_id, function(err, project){
                 if (err || project == null) projectFound = false;
@@ -41,12 +45,13 @@ function createMessage(req, res){
     }
     
     if (!("authorUsername" in req.body)){
-        res.json({message : "Error : No authorUsername given !"});
+        Response(res, "Error : No authorUsername given", null, 0);
         return ;
     }
     else {
         calls.push(function(callback){
-            User.findOne({username : req.body.authorUsername.toLowerCase()}, function(err, user){
+            User.findOne({username : req.body.authorUsername.toLowerCase()}, 
+                         function(err, user){
                 if (err || user == null) userFound = false;
                 else message.author = user;
                 callback();
@@ -55,12 +60,13 @@ function createMessage(req, res){
     }
         
     async.parallel(calls, function(){
-        if (!projectFound) res.send({message : "Error : Project not found !"});
-        else if (!userFound) res.send({message : "Error : User not found !"});
+        if (!projectFound) Response(res, "Error : Project not found", null, 0);
+        else if (!userFound) Response(res, "Error : User not found", null, 0);
         else {
             message.save(function(err){
-                if (err) res.send(err);
-                else res.json({ message: 'Message created !' });
+                if (err) 
+                    Response(res, "Error", err, 0);
+                else Response(res, 'Message created', message, 1);
             });
         }
     });
@@ -69,28 +75,31 @@ function createMessage(req, res){
 function getMessages(req, res){
     Message.find({thread : req.params.project_id}, function(err, messages)
     {
-        if (err) res.send(err);
-        else res.json(messages);
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, "Messages found", messages, 1);
     });
 }
     
 function getMessage(req, res){
     Message.findById(req.params.message_id, function(err, message){
-        if (err) res.send(err);
-        else res.json(message);
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, "Message found", message, 1);
     });
 }
     
 function editMessage(req, res){
     Message.findById(req.params.message_id, function(err, message)
     {
-        if (err) res.send(err);
+        if (err) {
+            Response(res, "Error", err, 0);
+            return;
+        }
         if ("content" in req.body) message.content = req.body.content;
         message.lastEdited = Date.now();
         
         message.save(function(err){
-            if (err) res.send(err);
-            else res.json({ message: 'Message edited !' });
+            if (err) Response(res, "Error", err, 0);
+            else Response(res, 'Message edited', message, 1);
         });
 
     });
@@ -99,7 +108,7 @@ function editMessage(req, res){
 function deleteMessage(req, res){
     Message.remove({_id: req.params.message_id}, function(err, obj)
     {
-        if (err) res.send(err);
-        else res.json({ message: 'Message deleted!' });
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, 'Message deleted', message, 0);
     });
 }
