@@ -109,6 +109,6 @@ function deleteMessage(req, res){
     Message.remove({_id: req.params.message_id}, function(err, obj)
     {
         if (err) Response(res, "Error", err, 0);
-        else Response(res, 'Message deleted', obj, 0);
+        else Response(res, 'Message deleted', obj, 1);
     });
 }
