@@ -94,6 +94,7 @@ function getVotes(req, res){
 function getVote(req, res){
     Vote.findById(req.params.vote_id, function(err, vote){
         if (err) Response(res, "Error", err, 0);
+        else if (vote == null) Response(res, "Error : Vote not found", null, 0);
         else Response(res, "Vote found", vote, 1);
     });
 }
