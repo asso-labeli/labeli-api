@@ -1,6 +1,8 @@
 var Project = require('../models/project');
 var User = require('../models/user');
 var ProjectUser = require('../models/projectUser');
+var Response = require('../modules/response');
+
 var express = require('express');
 var async = require('async');
 var calls = [];
@@ -21,32 +23,28 @@ function createOrEditProjectUser(req, res){
     var projectFound = true;
     
     if (!('value' in req.body)){
-        res.send({message : "Error : No value given !"});
+        Response(res, "Error : No value given", null, 0);
         return;
     }
     else
         projectUser.value = req.body.value;
     
-    if (!("project_id" in req.params)){
-        res.json({message : "Error : No project id given in parameters !"});
-        return ;
-    } else {
-        calls.push(function(callback){
-            Project.findById(req.params.project_id, function(err, project){
-                if (err || project == null) projectFound = false;
-                else projectUser.thread = project;
-                callback();
-            });
-        });   
-    }
+    calls.push(function(callback){
+        Project.findById(req.params.project_id, function(err, project){
+            if (err || project == null) projectFound = false;
+            else projectUser.thread = project;
+            callback();
+        });
+    });   
     
     if (!("authorUsername" in req.body)){
-        res.json({message : "Error : No authorUsername given !"});
+        Response(res, "Error : No authorUsername given", null, 0);
         return ;
     }
     else {
         calls.push(function(callback){
-            User.findOne({username : req.body.authorUsername.toLowerCase()}, function(err, user){
+            User.findOne({username : req.body.authorUsername.toLowerCase()}, 
+                         function(err, user){
                 if (err || user == null) userFound = false;
                 else projectUser.author = user;
                 callback();
@@ -55,23 +53,25 @@ function createOrEditProjectUser(req, res){
     }
         
     async.parallel(calls, function(){
-        if (!projectFound) res.send({message : "Error : Project not found !"});
-        else if (!userFound) res.send({message : "Error : User not found !"});
+        if (!projectFound) 
+            Response(res, "Error : Project not found", null, 0);
+        else if (!userFound) 
+            Response(res, "Error : User not found", null, 0);
         else {
             ProjectUser.findOne({author : projectUser.author,
                                  thread : projectUser.thread},
                                 function(err, pu){
                 if (err || pu == null) {        
                     projectUser.save(function(err){
-                        if (err) res.send(err);
-                        else res.json({ message: 'ProjectUser created !' });
+                        if (err) Response(res, "Error", err, 0);
+                        else Response(res, 'ProjectUser created', projectUser, 1);
                     });
                 }
                 else {
                     pu.value = projectUser.value;
                     pu.save(function(err){
-                        if (err) res.send(err);
-                        else res.json({message : 'ProjectUser updated !'});
+                        if (err) Response(res, "Error", err, 0);
+                        else Response(res, 'ProjectUser updated', pu, 1);
                     });
                 }
             });
@@ -82,21 +82,21 @@ function createOrEditProjectUser(req, res){
 
 function getProjectUsers(req, res){
     ProjectUser.find({thread : req.params.project_id}, function(err, projectUsers){
-        if (err) res.send(err);
-        else res.json(projectUsers);
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, "ProjectUsers found", projectUsers, 1);
     });
 }
 
 function getProjectUser(req, res){
     ProjectUser.findById(req.params.projectUser_id, function(err, projectUser){
-        if (err) res.send(err);
-        else res.json(projectUser);
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, "ProjectUser found", projectUser, 1);
     });
 }
 
 function deleteProjectUser(req, res){
     ProjectUser.remove({_id : req.params.projectUser_id}, function(err, projectUser){
-        if (err) res.send(err);
-        else res.send({message : 'ProjectUser deleted !'});
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, 'ProjectUser deleted', projectUser, 1);
     });
 }
