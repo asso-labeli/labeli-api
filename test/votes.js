@@ -98,7 +98,6 @@ describe('Vote', function(){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
                 expect(res.body.data.value).to.equal(1);
-                console.log(res.body);
                 expect(res.body.data.project).to.equal(projectTest);
                 expect(res.body.data.author).to.equal(userTest);
                 voteTest = res.body.data._id;
@@ -113,7 +112,6 @@ describe('Vote', function(){
             .send({value : -1, authorUsername : "votetest.votetest"})
             .end(function(err, res){
                 if (err) return done(err);
-                console.log(res.body);
                 expect(res.body.success).to.equal(1);
                 expect(res.body.data.value).to.equal(-1);
                 expect(res.body.data.project).to.equal(projectTest);
