@@ -38,7 +38,7 @@ function createMessage(req, res){
         calls.push(function(callback){
             Project.findById(req.params.project_id, function(err, project){
                 if (err || project == null) projectFound = false;
-                else message.project = project;
+                else message.project = project._id;
                 callback();
             });
         });   
@@ -53,7 +53,7 @@ function createMessage(req, res){
             User.findOne({username : req.body.authorUsername.toLowerCase()}, 
                          function(err, user){
                 if (err || user == null) userFound = false;
-                else message.author = user;
+                else message.author = user._id;
                 callback();
             });
         });

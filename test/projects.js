@@ -84,7 +84,7 @@ describe('Project', function(){
                 expect(res.body.success).to.equal(1);
                 expect(res.body.data.name).to.equal('ProjetTest');
                 expect(res.body.data.type).to.equal(1);
-                expect(res.body.data.author.username).to.equal('bob.eponge');
+                expect(res.body.data.author).to.equal(userTest);
                 projectTest = res.body.data._id;
                 projectName = res.body.data.name;
                 done();

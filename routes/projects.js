@@ -47,7 +47,7 @@ function createProject(req, res)
             } else if (user === null){
                 Response(res, "Error : authorUsername not found", null, 0);
             } else {
-                project.author = user;
+                project.author = user._id;
                 project.save(function(err){
                     if (err) Response(res, "Error", err, 0);
                     else {                        

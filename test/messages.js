@@ -98,8 +98,8 @@ describe('Message', function(){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
                 expect(res.body.data.content).to.equal('No');
-                expect(res.body.data.project._id).to.equal(projectTest);
-                expect(res.body.data.author._id).to.equal(userTest);
+                expect(res.body.data.project).to.equal(projectTest);
+                expect(res.body.data.author).to.equal(userTest);
                 messageTest = res.body.data._id;
                 messageContent = res.body.data.content;
                 done();
