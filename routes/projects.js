@@ -53,7 +53,7 @@ function createProject(req, res)
                     else {                        
                         var projectUser = new ProjectUser();
                         projectUser.author = project.author;
-                        projectUser.thread = project;
+                        projectUser.project = project;
                         projectUser.value = 2;
                         
                         projectUser.save(function(err){
