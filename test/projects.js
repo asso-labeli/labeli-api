@@ -11,6 +11,22 @@ var projectName = null;
 var userTest = null;
     
 describe('Project', function(){
+    describe('Preparation', function(){
+        it ('must create a new test user', function(done){
+            request(apiUrl)
+            .post('/users')
+            .send({firstName : 'Bob', 
+                   lastName : 'Eponge', 
+                   email : 'bob.eponge@email.com'})
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                userTest = res.body.data._id;
+                done();
+            });
+        });
+    });
+    
     describe('.createProject()', function(){
         it('must need a name', function(done){
             request(apiUrl)
@@ -60,15 +76,6 @@ describe('Project', function(){
         });
         
         it ('must create a new Project with good informations', function(done){
-            request(apiUrl)
-            .post('/users')
-            .send({firstName : 'Bob', lastName : 'Eponge', email : 'bob.eponge@email.com'})
-            .end(function(err, res){
-                if (err) return done(err);
-                expect(res.body.success).to.equal(1);
-                userTest = res.body.data._id;
-            });
-            
             request(apiUrl)
             .post('/projects')
             .send({name : 'ProjetTest', type : 1, authorUsername : 'bob.eponge'})
@@ -125,13 +132,6 @@ describe('Project', function(){
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
-            });
-            
-            request(apiUrl)
-            .delete('/users/' + userTest)
-            .end(function(err, res){
-                if (err) return done(err);
-                expect(res.body.success).to.equal(1);
                 done();
             });
         });
@@ -146,7 +146,18 @@ describe('Project', function(){
             });
         });
     });
-
+    
+    describe('End of test', function(){
+        it('must delete the test user', function(done){
+            request(apiUrl)
+            .delete('/users/' + userTest)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                done();
+            });
+        });
+    });
 });
 
 function editProject(type, value){
