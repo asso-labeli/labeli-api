@@ -83,6 +83,8 @@ function getMessages(req, res){
 function getMessage(req, res){
     Message.findById(req.params.message_id, function(err, message){
         if (err) Response(res, "Error", err, 0);
+        else if (message == null) 
+            Response(res, "Error : Message not found", message, 0);
         else Response(res, "Message found", message, 1);
     });
 }
