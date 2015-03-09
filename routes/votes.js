@@ -38,7 +38,7 @@ function createOrEditVote(req, res){
             User.findOne({username : req.body.authorUsername.toLowerCase()}, 
                         function(err, user){
                 if (err || user == null) userFound = false;
-                else vote.author = user;
+                else vote.author = user._id;
                 callback();
             });
         });
@@ -47,7 +47,7 @@ function createOrEditVote(req, res){
     calls.push(function(callback){
         Project.findById(req.params.project_id, function(err, project){
             if (err || project == null) projectFound = false;
-            else vote.project = project;
+            else vote.project = project._id;
             callback();
         });
     });
