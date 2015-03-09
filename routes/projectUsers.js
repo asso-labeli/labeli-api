@@ -32,7 +32,7 @@ function createOrEditProjectUser(req, res){
     calls.push(function(callback){
         Project.findById(req.params.project_id, function(err, project){
             if (err || project == null) projectFound = false;
-            else projectUser.thread = project;
+            else projectUser.project = project._id;
             callback();
         });
     });   
@@ -46,7 +46,7 @@ function createOrEditProjectUser(req, res){
             User.findOne({username : req.body.authorUsername.toLowerCase()}, 
                          function(err, user){
                 if (err || user == null) userFound = false;
-                else projectUser.author = user;
+                else projectUser.author = user._id;
                 callback();
             });
         });
@@ -59,7 +59,7 @@ function createOrEditProjectUser(req, res){
             Response(res, "Error : User not found", null, 0);
         else {
             ProjectUser.findOne({author : projectUser.author,
-                                 thread : projectUser.thread},
+                                 project : projectUser.project},
                                 function(err, pu){
                 if (err || pu == null) {        
                     projectUser.save(function(err){
@@ -81,7 +81,7 @@ function createOrEditProjectUser(req, res){
 }
 
 function getProjectUsers(req, res){
-    ProjectUser.find({thread : req.params.project_id}, function(err, projectUsers){
+    ProjectUser.find({project : req.params.project_id}, function(err, projectUsers){
         if (err) Response(res, "Error", err, 0);
         else Response(res, "ProjectUsers found", projectUsers, 1);
     });

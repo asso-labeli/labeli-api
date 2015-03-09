@@ -13,7 +13,7 @@ var ProjectUserSchema   = new Schema(
     created : {type : Date, default : Date.now},
     value : {type : Number, default : 0},
     author : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    thread : {type : mongoose.Schema.Types.ObjectId, ref: 'Project'}
+    project : {type : mongoose.Schema.Types.ObjectId, ref: 'Project'}
 });
 
 module.exports = mongoose.model('ProjectUser', ProjectUserSchema);
