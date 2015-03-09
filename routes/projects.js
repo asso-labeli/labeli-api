@@ -1,6 +1,8 @@
 var Project = require('../models/project');
 var User = require('../models/user');
 var ProjectUser = require('../models/projectUser');
+var Vote = require('../models/vote');
+var Message = require('../models/message');
 var Response = require('../modules/response');
 
 var express = require('express');
@@ -133,6 +135,53 @@ function deleteProject(req, res)
     Project.remove({_id: req.params.project_id}, function(err, project)
     {
         if (err) Response(res, "Error", err, 0);
-        else Response(res, 'Project deleted', null, 1);
+        else {
+            var errors = [];
+            var voteDeleted = true;
+            var projectUserDeleted = true;
+            var messageDeleted = true;
+            
+            calls.push(function(callback){
+                Vote.remove({project : req.params.project_id}, function(err){
+                    if (err) {
+                        voteDeleted = false;
+                        errors.push(err);
+                    }
+                    callback();
+                });
+            });
+            
+            calls.push(function(callback){
+                ProjectUser.remove({project : req.params.project_id}, function(err){
+                    if (err) {
+                        projectUserDeleted = false;
+                        errors.push(err);
+                    }
+                    callback();
+                });
+            });
+            
+            calls.push(function(callback){
+                Message.remove({project : req.params.project_id}, function(err){
+                    if (err) {
+                        messageDeleted = false;
+                        errors.push(err);
+                    }
+                    callback();
+                });
+            });
+            
+            async.parallel(calls, function(){
+                var errorMessage = "Error during delete :";
+                if (!voteDeleted) errorMessage += "Vote ";
+                if (!projectUserDeleted) errorMessage += "ProjectUser ";
+                if (!messageDeleted) errorMessage += "Message ";
+                
+                if (voteDeleted && projectUserDeleted && messageDeleted)
+                    Response(res, 'Project deleted', project, 1);
+                else
+                    Response(res, errorMessage, errors, 0);
+            });
+        }
     });
 }

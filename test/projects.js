@@ -8,6 +8,7 @@ var apiUrl = 'http://localhost:8080';
 
 var projectTest = null;
 var projectName = null;
+var projectUserTest = null;
 var userTest = null;
     
 describe('Project', function(){
@@ -90,6 +91,19 @@ describe('Project', function(){
                 done();
             });
         });
+        
+        it('must have create a new ProjectUser with project and author', function(done){
+            request(apiUrl)
+            .get('/projectUsers/'+projectTest)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                expect(res.body.data[0].author).to.equal(userTest);
+                expect(res.body.data[0].value).to.equal(2);
+                projectUserTest = res.body.data._id;
+                done();
+            });
+        });
     })
     
     describe('.getProjects()', function(){        
@@ -142,6 +156,36 @@ describe('Project', function(){
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(0);
+                done();
+            });
+        });
+        
+        it('must have delete all ProjectUsers for this Project', function(done){
+            request(apiUrl)
+            .get('/projectUsers/' + projectTest)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.data).to.be.empty;
+                done();
+            });
+        });
+        
+        it('must have delete all Votes for this Project', function(done){
+            request(apiUrl)
+            .get('/votes/' + projectTest)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.data).to.be.empty;
+                done();
+            });
+        });
+        
+        it('must have delete all Messages for this Project', function(done){
+            request(apiUrl)
+            .get('/messages/' + projectTest)
+            .end(function(err, res){
+                if (err) return done(err);
+                expect(res.body.data).to.be.empty;
                 done();
             });
         });
