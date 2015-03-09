@@ -89,8 +89,12 @@ function getProjectUsers(req, res){
 
 function getProjectUser(req, res){
     ProjectUser.findById(req.params.projectUser_id, function(err, projectUser){
-        if (err) Response(res, "Error", err, 0);
-        else Response(res, "ProjectUser found", projectUser, 1);
+        if (err) 
+            Response(res, "Error", err, 0);
+        else if (projectUser == null) 
+            Response(res, "Error : ProjectUser not found", null, 0);
+        else 
+            Response(res, "ProjectUser found", projectUser, 1);
     });
 }
 
