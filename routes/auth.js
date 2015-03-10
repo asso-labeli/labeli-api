@@ -1,32 +1,41 @@
 var User = require('../models/user');
+var Response = require('../modules/response');
+
 var express = require('express');
 var router = express.Router();
 
 router.route('/auth').get(getAuth);
 router.route('/auth').post(login);
 router.route('/auth').delete(logout);
+
 module.exports = router;
 
 function getAuth(req, res)
 {
     if(req.session.userId == null)
-        res.json(null);
+        Response(res, "Error : Not Authenticated", null, 0);
     else
-        User.findById(req.session.userId, function(err, user) { res.json(user); });
+        User.findById(req.session.userId, function(err, user) { 
+            Response(res, "Authenticated", user, 1); 
+        });
 }
 
 function login(req, res)
 {
-    var user = User.findOne({username : req.body.username, passwordHash : encryptPassword(req.body.password)}, function(err, user)
+    var user = User.findOne({username : req.body.username, 
+                             passwordHash : encryptPassword(req.body.password)}, 
+                            function(err, user)
     {
-        if(user != null)
+        if (err) Response(res, "Error", err, 0);
+        else if(user != null)
         {
             console.log("login");
             req.session.userId = user._id;
             req.session.save();
+            Response(res, "Authentification successfull", user, 1);
         }
-        
-        res.json(user);
+        else
+            Response(res, "Error : Authentification failed", null, 0);
     });
     
 }
@@ -34,7 +43,9 @@ function login(req, res)
 function logout(req, res)
 {
     console.log("logout");
-    req.session.destroy(function(){res.json(true);});
+    req.session.destroy(function(){
+        Response(res, "Disconnected", null, 1);
+    });
 }
 
 
