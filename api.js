@@ -57,4 +57,4 @@ app.use(require('./routes/votes'));
 app.use(require('./routes/projectUsers'));
 
 app.use(router);
-module.exports = app;
+app.listen(9010);
