@@ -13,9 +13,14 @@
     "vhost": "^3.0.0",
     "async": "^0.9.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "supertest": "^0.15.0",
+    "mocha": "^2.1.0",
+    "superagent": "^0.21.0",
+    "chai": "^2.1.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "Alix Fumoleau <alix.fumoleau@gmail.com> - Florian Kauder <flokauder@hotmail.com>",
   "license": "MIT"
