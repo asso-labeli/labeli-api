@@ -10,4 +10,4 @@ var SurveyVoteSchema   = new Schema(
     user : {type: mongoose.Schema.Types.ObjectId, ref : "User"}
 });
 
-module.exports = mongoose.model('SurveyVote', MessageSchema);
+module.exports = mongoose.model('SurveyVote', SurveyVoteSchema);

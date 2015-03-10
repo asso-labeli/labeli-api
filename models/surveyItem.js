@@ -9,4 +9,4 @@ var SurveyItemSchema   = new Schema(
     survey : {type: mongoose.Schema.Types.ObjectId, ref : "Survey"}
 });
 
-module.exports = mongoose.model('SurveyItem', MessageSchema);
+module.exports = mongoose.model('SurveyItem', SurveyItemSchema);

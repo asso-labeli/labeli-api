@@ -11,4 +11,4 @@ var SurveySchema   = new Schema(
     author : {type: mongoose.Schema.Types.ObjectId, ref : "User"}
 });
 
-module.exports = mongoose.model('Survey', MessageSchema);
+module.exports = mongoose.model('Survey', SurveySchema);
