@@ -138,7 +138,7 @@ describe('Survey', function(){
            .get("/surveys/"+surveyTest)
            .end(function(err, res){
                if (err) return err;
-               expect(res.body.success).to.equal(0);
+               expect(res.body.success).to.equal(0);          
                done();
            });
         });
@@ -148,7 +148,8 @@ describe('Survey', function(){
            .get("/surveyItems/"+surveyTest)
            .end(function(err, res){
                if (err) return err;
-               expect(res.body.success).to.equal(0);
+               expect(res.body.success).to.equal(1);
+               expect(res.body.data).to.be.empty; 
                done();
            });
         });
@@ -158,7 +159,8 @@ describe('Survey', function(){
            .get("/surveyVotes/"+surveyTest)
            .end(function(err, res){
                if (err) return err;
-               expect(res.body.success).to.equal(0);
+               expect(res.body.success).to.equal(1);
+               expect(res.body.data).to.be.empty; 
                done();
            });
         });
