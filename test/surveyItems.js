@@ -88,7 +88,7 @@ describe('SurveyItem', function(){
             .end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(1);
-                expect(res.body.data).not.to.be.empty;
+                expect(res.body.data[0]).not.to.be.empty;
                 done();
             });
         });
