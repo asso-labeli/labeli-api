@@ -4,7 +4,7 @@ var expect = require('chai').expect,
 
 var request = require('supertest');
 
-var apiUrl = 'http://localhost:8080';
+var apiUrl = 'http://localhost:9010';
 var userTest = null;
 var username = null;
 
