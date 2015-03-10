@@ -22,20 +22,29 @@ function getAuth(req, res)
 
 function login(req, res)
 {
-    var user = User.findOne({username : req.body.username, 
-                             passwordHash : encryptPassword(req.body.password)}, 
+    if (!('username' in req.body)){
+        Response(res, "Error : No username given", null, 0);
+        return;
+    }
+    else if (!('password' in req.body)){
+        Response(res, "Error : No password given", null, 0);
+        return;
+    }
+    
+    var user = User.findOne({username : req.body.username}, 
                             function(err, user)
     {
         if (err) Response(res, "Error", err, 0);
-        else if(user != null)
-        {
+        else if (user == null)
+            Response(res, "Error : User not found", null, 0);
+        else if (user.passwordHash != encryptPassword(req.body.password))
+            Response(res, "Error : Bad combinaison username/password", null, 0);
+        else {
             console.log("login");
             req.session.userId = user._id;
             req.session.save();
             Response(res, "Authentification successfull", user, 1);
         }
-        else
-            Response(res, "Error : Authentification failed", null, 0);
     });
     
 }
