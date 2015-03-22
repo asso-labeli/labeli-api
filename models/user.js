@@ -1,6 +1,15 @@
 var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
+/** Level
+* -1 : Guest
+* 0 : Old Member
+* 1 : Member
+* 2 : 
+* 3 : Administrator
+* 4 : 
+**/
+
 var UserSchema   = new Schema(
 {
     lastName : String,
@@ -19,3 +28,9 @@ var UserSchema   = new Schema(
 });
 
 module.exports = mongoose.model('User', UserSchema);
+
+module.exports.Level = {};
+module.exports.Level.Guest = -1;
+module.exports.Level.OldMember = 0;
+module.exports.Level.Member = 1;
+module.exports.Level.Admin = 3;
