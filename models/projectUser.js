@@ -11,7 +11,7 @@ var Schema       = mongoose.Schema;
 var ProjectUserSchema   = new Schema(
 {
     created : {type : Date, default : Date.now},
-    value : {type : Number, default : 0},
+    level : {type : Number, default : 0},
     author : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     project : {type : mongoose.Schema.Types.ObjectId, ref: 'Project'}
 });

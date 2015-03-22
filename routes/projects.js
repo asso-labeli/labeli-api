@@ -107,7 +107,7 @@ function createProject(req, res) {
                         var projectUser = new ProjectUser();
                         projectUser.author = project.author;
                         projectUser.project = project;
-                        projectUser.value = ProjectUser.Level.Creator;
+                        projectUser.level = ProjectUser.Level.Creator;
 
                         projectUser.save(function (err) {
                             if (err) Response(res, "Error", err, 0);

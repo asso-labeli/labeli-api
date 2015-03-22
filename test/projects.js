@@ -217,7 +217,7 @@ describe('Project', function () {
                     if (err) return done(err);
                     expect(res.body.success).to.equal(1);
                     expect(res.body.data[0].author).to.equal(userTest);
-                    expect(res.body.data[0].value).to.equal(2);
+                    expect(res.body.data[0].level).to.equal(2);
                     projectUserTest = res.body.data._id;
                     done();
                 });

@@ -4,7 +4,7 @@
  * <table>
  * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
  * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
- * <tr><td>value</td><td>Number</td><td>0</td></tr>
+ * <tr><td>level</td><td>Number</td><td>0</td></tr>
  * <tr><td>author</td><td>ObjectId</td></tr>
  * <tr><td>project</td><td>ObjectId</td></tr>
  * </table><br>
@@ -48,7 +48,7 @@ module.exports = router;
  * <b>Level needed :</b> Member
  * @memberof ProjectUser
  * @param {Express.Request} req - request send
- * @param {String} req.body.value - name of the project
+ * @param {String} req.body.level - name of the project
  * @param {String} req.params.project_id - ID of the reference project
  * @param {Express.Response} res - variable to send the response
  */
@@ -58,12 +58,12 @@ function createOrEditProjectUser(req, res){
     var userFound = true;
     var projectFound = true;
     
-    if (!('value' in req.body)){
-        Response(res, "Error : No value given", null, 0);
+    if (!('level' in req.body)){
+        Response(res, "Error : No level given", null, 0);
         return;
     }
     else
-        projectUser.value = req.body.value;
+        projectUser.level = req.body.level;
     
     calls.push(function(callback){
         Project.findById(req.params.project_id, function(err, project){
@@ -104,7 +104,7 @@ function createOrEditProjectUser(req, res){
                     });
                 }
                 else {
-                    pu.value = projectUser.value;
+                    pu.level = projectUser.level;
                     pu.save(function(err){
                         if (err) Response(res, "Error", err, 0);
                         else Response(res, 'ProjectUser updated', pu, 1);
