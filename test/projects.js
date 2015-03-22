@@ -382,7 +382,7 @@ describe('Project', function () {
             });
         });
 
-        it('must delete the test user', function (done) {
+        it('must delete the userTest', function (done) {
             var req = request(apiUrl)
                 .delete('/users/' + userTest);
             agentAdmin.attachCookies(req);
