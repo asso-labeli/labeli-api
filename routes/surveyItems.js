@@ -1,5 +1,5 @@
 var Survey = require('../models/survey');
-var SurveyItem = require('../models/surveyitem');
+var SurveyItem = require('../models/surveyItem');
 var Response = require('../modules/response');
 
 var express = require('express');
