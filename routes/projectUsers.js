@@ -1,3 +1,30 @@
+/**
+ * This is the link between User module and Project module.<br>
+ * <h2>Model</h2>
+ * <table>
+ * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+ * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>value</td><td>Number</td><td>0</td></tr>
+ * <tr><td>author</td><td>ObjectId</td></tr>
+ * <tr><td>project</td><td>ObjectId</td></tr>
+ * </table><br>
+ * <h2>Routing Table</h2>
+ * <table>
+ * <tr><td>POST /projectUsers/</td><td>{@link Project.createOrEditProjectUser}</td></tr>
+ * <tr><td>GET /projectUsers/</td><td>{@link Project.getProjectUsers}</td></tr>
+ * <tr><td>GET /projectUser/:projectUser_id</td><td>{@link Project.getProjectUser}</td></tr>
+ * <tr><td>DELETE /projectUser/:projectUser_id</td><td>{@link Project.deleteProjectUser}</td></tr></table><br>
+ * <h2>Constants</h2>
+ * <h5>ProjectUser.Level</h5>
+ * <table>
+ * <tr><td>Member</td><td>0</td></tr>
+ * <tr><td>Administrator</td><td>1</td></tr>
+ * <tr><td>Creator</td><td>2</td></tr>
+ * </table>
+ * @namespace ProjectUser
+ * @author Florian Kauder
+ */
+
 var Project = require('../models/project');
 var User = require('../models/user');
 var ProjectUser = require('../models/projectUser');
@@ -16,6 +43,15 @@ router.route('/projectUser/:projectUser_id').delete(deleteProjectUser);
 
 module.exports = router;
 
+/**
+ * Create or edit a new projectUser<br>
+ * <b>Level needed :</b> Member
+ * @memberof ProjectUser
+ * @param {Express.Request} req - request send
+ * @param {String} req.body.value - name of the project
+ * @param {String} req.params.project_id - ID of the reference project
+ * @param {Express.Response} res - variable to send the response
+ */
 function createOrEditProjectUser(req, res){
     var projectUser = new ProjectUser();
     
@@ -80,6 +116,14 @@ function createOrEditProjectUser(req, res){
         
 }
 
+/**
+ * Get all projectUsers of a project<br>
+ * <b>Level needed :</b> Guest
+ * @memberof ProjectUser
+ * @param {Express.Request} req - request send
+ * @param {String} req.params.project_id - ID of the reference project
+ * @param {Express.Response} res - variable to send the response
+ */
 function getProjectUsers(req, res){
     ProjectUser.find({project : req.params.project_id}, function(err, projectUsers){
         if (err) Response(res, "Error", err, 0);
@@ -87,6 +131,14 @@ function getProjectUsers(req, res){
     });
 }
 
+/**
+ * Get a specific projectUser<br>
+ * <b>Level needed :</b> Guest
+ * @memberof ProjectUser
+ * @param {Express.Request} req - request send
+ * @param {String} req.params.projectUser_id - ID of the projectUser
+ * @param {Express.Response} res - variable to send the response
+ */
 function getProjectUser(req, res){
     ProjectUser.findById(req.params.projectUser_id, function(err, projectUser){
         if (err) 
@@ -98,6 +150,14 @@ function getProjectUser(req, res){
     });
 }
 
+/**
+ * Delete a projectUser<br>
+ * <b>Level needed :</b> Owner
+ * @memberof ProjectUser
+ * @param {Express.Request} req - request send
+ * @param {String} req.params.projectUser_id - ID of the projectUser to delete
+ * @param {Express.Response} res - variable to send the response
+ */
 function deleteProjectUser(req, res){
     ProjectUser.remove({_id : req.params.projectUser_id}, function(err, projectUser){
         if (err) Response(res, "Error", err, 0);
