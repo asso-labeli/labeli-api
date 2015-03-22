@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: users.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: users.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * &lt;table>&lt;tr>
+ * &lt;td>POST /users/&lt;/td>&lt;td>{@link User.createUser}&lt;/td>&lt;/tr>
+ * &lt;td>GET /users/&lt;/td>&lt;td>{@link User.getUsers}&lt;/td>&lt;/tr>
+ * &lt;td>GET /users/:user_id&lt;/td>&lt;td>{@link User.getUser}&lt;/td>&lt;/tr>
+ * &lt;td>PUT /users/:user_id&lt;/td>&lt;td>{@link User.editUser}&lt;/td>&lt;/tr>
+ * &lt;td>DELETE /users/:user_id&lt;/td>&lt;td>{@link User.deleteUser}&lt;/td>&lt;/tr>
+ * &lt;/table>
+ * @namespace User
+ * @author Florian Kauder
+ */
+
+var User = require('../models/user');
+var Response = require('../modules/response');
+
+var isMongooseId = require('mongoose').Types.ObjectId.isValid;
+var express = require('express');
+var router = express.Router();
+
+router.route('/users').post(createUser);
+router.route('/users').get(getUsers);
+router.route('/users/:user_id').get(getUser);
+router.route('/users/:user_id').put(editUser);
+router.route('/users/:user_id').delete(deleteUser);
+if (require('../modules/apiConf').debugMode)
+    router.route('/admin').post(createAdmin);
+
+module.exports = router;
+
+/**
+ * Create a new user&lt;br>
+ * &lt;b>Level needed :&lt;/b> Admin
+ * @memberof User
+ * @param {Express.Request} req - request send
+ * @param {String} req.body.firstName - first name of user
+ * @param {String} req.body.lastName - last name of user
+ * @param {String} req.body.email - email of user
+ * @param {Express.Response} res - variable to send the response
+ */
+function createUser(req, res) {
+    if (req.session.level == -1) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level &lt; User.Level.Admin) {
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
+
+    var user = new User();
+
+    // Check req variables
+    if (!("firstName" in req.body)) {
+        Response(res, "Error : No firstName given", null, 0);
+        return;
+    } else if (!("lastName" in req.body)) {
+        Response(res, "Error : No lastName given", null, 0);
+        return;
+    } else if (!("email" in req.body)) {
+        Response(res, "Error : No email given", null, 0);
+        return;
+    }
+
+    // Setting user values
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.email = req.body.email;
+
+    user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
+    user.privateKey = generateRandomString(32);
+    user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
+
+    user.save(function (err) {
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, 'User created', user, 1);
+    });
+}
+
+/**
+ * Get all users&lt;br>
+ * &lt;b>Level needed :&lt;/b> Guest
+ * @memberof User
+ * @param {Express.Request} req - request send
+ * @param {Express.Response} res - variable to send the response
+ */
+function getUsers(req, res) {
+    User.find(function useResult(err, users) {
+        if (err) Response(res, "Error", err, 0);
+        else if (users == null)
+            Response(res, "Error : No users found", null, 0);
+        else Response(res, "Users found", users, 1);
+    });
+}
+
+/**
+ * Get a specific user&lt;br>
+ * &lt;b>Level needed :&lt;/b> Guest
+ * @memberof User
+ * @param {Express.Request} req - request send
+ * @param {String} req.params.user_id - User Id OR User username
+ * @param {Express.Response} res - variable to send the response
+ */
+function getUser(req, res) {
+    // If is an ID, search with id
+    if (isMongooseId(req.params.user_id)) {
+        User.findById(req.params.user_id, function useResult(err, user) {
+            if (err) Response(res, "Error", err, 0);
+            else if (user == null)
+                Response(res, 'Error : User not found', null, 0);
+            else Response(res, 'User found', user, 1);
+        });
+    } else { // Username case
+        User.findOne({
+            username: req.params.user_id
+        }, function useResult(err, user) {
+            if (err) Response(res, "Error", err, 0);
+            else if (user == null)
+                Response(res, 'Error : User not found', null, 0);
+            else Response(res, 'User found', user, 1);
+        });
+    }
+}
+
+/**
+ * Edit a user&lt;br>
+ * &lt;b>Level needed :&lt;/b> Owner | Admin
+ * @memberof User
+ * @param {Express.Request} req - request send
+ * @param {String} [req.body.firstName] - New first name
+ * @param {String} [req.body.lastName] - New last name
+ * @param {String} [req.body.email] - New email
+ * @param {String} [req.body.website] - New website
+ * @param {String} [req.body.universityGroup] - New university group
+ * @param {String} [req.body.birthday] - New birthday (LocaleDateString)
+ * @param {String} [req.body.description] - New description
+ * @param {String} [req.body.picture] - New url for picture
+ * @param {ObjectID} [req.params.user_id] - ID of user to edit
+ * @param {Express.Response} res - variable to send the response
+ */
+function editUser(req, res) {
+    User.findById(req.params.user_id, function (err, user) {
+        if (err) Response(res, "Error", err, 0);
+        else if (user == null)
+            Response(res, "Error : User not found", null, 0);
+        else if ((user._id != req.session.userId) &amp;&amp; (req.session.level &lt; User.Level.Admin))
+            Response(res, "Error : You're not an admin", null, 0);
+        else {
+            if ("firstName" in req.body) user.firstName = req.body.firstName;
+            if ("lastName" in req.body) user.lastName = req.body.lastName;
+            if ("email" in req.body) user.email = req.body.email;
+            if ("website" in req.body) user.website = req.body.website;
+            if ("universityGroup" in req.body) user.universityGroup = req.body.universityGroup;
+            if ("birthday" in req.body) user.birthday = new Date(req.body.birthday);
+            if ("description" in req.body) user.description = req.body.description;
+            if ("picture" in req.body) user.picture = req.body.picture;
+
+            user.save(function (err) {
+                if (err) Response(res, "Error", err, 0);
+                else Response(res, 'User updated', user, 1);
+            });
+        }
+    });
+}
+
+/**
+ * Delete a user&lt;br>
+ * &lt;b>Level needed :&lt;/b> Admin
+ * @memberof User
+ * @param {Express.Request} req - request send
+ * @param {ObjectID} [req.params.user_id] - ID of user to delete
+ * @param {Express.Response} res - variable to send the response
+ */
+function deleteUser(req, res) {
+    if (req.session.level &lt; User.Level.Admin)
+        Response(res, "Error : You're not an admin", null, 0);
+    else
+        User.remove({
+            _id: req.params.user_id
+        }, function (err, user) {
+            if (err) Response(res, "Error", err, 0);
+            else Response(res, 'User deleted', user, 1);
+        });
+}
+
+// Function available only in debug mode 
+function createAdmin(req, res) {
+    var user = new User();
+
+    user.firstName = "AdminTest";
+    user.lastName = "AdminTest";
+    user.email = "admin@test.com";
+    user.level = User.Level.Admin;
+
+    user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
+    user.privateKey = generateRandomString(32);
+    user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
+
+    user.save(function (err) {
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, 'Admin created', user, 1);
+    });
+}
+
+/**
+ * Generate a random string&lt;br>
+ * &lt;b>[Private Function]&lt;/b>
+ * @memberof User
+ * @param {Number} length - Length of the generated string
+ * @return {String} the random String
+ */
+function generateRandomString(length) {
+    var result = "";
+    var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i &lt; length; i++)
+        result += charset.charAt(Math.floor(Math.random() * charset.length));
+    return result;
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Message.html">Message</a></li><li><a href="Project.html">Project</a></li><li><a href="User.html">User</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun Mar 22 2015 19:08:25 GMT+0100 (Paris, Madrid)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
