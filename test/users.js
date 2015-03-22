@@ -156,6 +156,22 @@ describe('User', function () {
                     done();
                 });
         });
+
+        it('must logged the second user', function (done) {
+            request(apiUrl)
+                .post('/auth')
+                .send({
+                    username: "testfirstnamesecond.testlastnamesecond",
+                    password: '098f6bcd4621d373cade4e832627b4f6'
+                })
+                .end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    expect(res.body.message).to.equal("Authentification successfull");
+                    agent2.saveCookies(res);
+                    done();
+                });
+        });
     })
 
     describe('.getUsers()', function () {
@@ -257,7 +273,7 @@ describe('User', function () {
                 done();
             });
         });
-        
+
         it('guest cannot delete a user', function (done) {
             request(apiUrl)
                 .delete('/users/' + userTest)
@@ -271,7 +287,7 @@ describe('User', function () {
 
         it('user cannot delete himself', function (done) {
             var req = request(apiUrl)
-                .delete('/users/' + userTest);
+                .delete('/users/' + user2Test);
             agent2.attachCookies(req);
             req.end(function (err, res) {
                 if (err) return done(err);
@@ -280,7 +296,7 @@ describe('User', function () {
                 done();
             });
         });
-        
+
         it('admin can delete user', function (done) {
             var req = request(apiUrl)
                 .delete('/users/' + userTest);
@@ -302,9 +318,9 @@ describe('User', function () {
                 });
         });
     });
-    
-    describe('End of test', function(){
-        it('must logout the userTest2', function(done){
+
+    describe('End of test', function () {
+        it('must logout the user2Test', function (done) {
             var req = request(apiUrl).delete('/auth')
             agent2.attachCookies(req);
             req.end(function (err, res) {
@@ -313,10 +329,10 @@ describe('User', function () {
                 done();
             });
         });
-        
-        it('must delete the userTest2', function(done){
+
+        it('must delete the user2Test', function (done) {
             var req = request(apiUrl)
-                .delete('/users/' + userTest2);
+                .delete('/users/' + user2Test);
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
                 if (err) return done(err);
@@ -324,8 +340,8 @@ describe('User', function () {
                 done();
             });
         });
-        
-        it('must delete the adminTest', function(done){
+
+        it('must delete the adminTest', function (done) {
             var req = request(apiUrl)
                 .delete('/users/' + adminTest);
             agentAdmin.attachCookies(req);
@@ -335,8 +351,8 @@ describe('User', function () {
                 done();
             });
         });
-        
-        it('must logout the adminTest', function(done){
+
+        it('must logout the adminTest', function (done) {
             var req = request(apiUrl).delete('/auth')
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
