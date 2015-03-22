@@ -56,6 +56,8 @@ app.use(require('./routes/messages'));
 app.use(require('./routes/votes'));
 app.use(require('./routes/projectUsers'));
 app.use(require('./routes/surveys'));
+app.use(require('./routes/surveyItems'));
+app.use(require('./routes/surveyVotes'));
 
 app.use(router);
 app.listen(9010);
