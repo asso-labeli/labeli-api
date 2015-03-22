@@ -27,13 +27,25 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * &lt;table>&lt;tr>
- * &lt;td>POST /projects/&lt;/td>&lt;td>{@link Project.createProject}&lt;/td>&lt;/tr>
- * &lt;td>GET /projects/&lt;/td>&lt;td>{@link Project.getProjects}&lt;/td>&lt;/tr>
- * &lt;td>GET /projects/:project_id&lt;/td>&lt;td>{@link Project.getProject}&lt;/td>&lt;/tr>
- * &lt;td>PUT /projects/:project_id&lt;/td>&lt;td>{@link Project.editProject}&lt;/td>&lt;/tr>
- * &lt;td>DELETE /projects/:project_id&lt;/td>&lt;td>{@link Project.deleteProject}&lt;/td>&lt;/tr>
- * &lt;/table>
+ * &lt;h2>Model&lt;/h2>
+ * &lt;table>
+ * &lt;tr>&lt;td>&lt;b>Name&lt;/b>&lt;/td>&lt;td>&lt;b>Type&lt;/b>&lt;/td>&lt;td>&lt;b>Default Value&lt;/b>&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>name&lt;/td>&lt;td>String&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>picture&lt;/td>&lt;td>String&lt;/td>&lt;td>null&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>type&lt;/td>&lt;td>Number&lt;/td>&lt;td>0&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>description&lt;/td>&lt;td>String&lt;/td>&lt;td>' '&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>created&lt;/td>&lt;td>Date&lt;/td>&lt;td>Date.now&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>lastEdited&lt;/td>&lt;td>Date&lt;/td>&lt;td>Date.now&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>status&lt;/td>&lt;td>Number&lt;/td>&lt;td>0&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>author&lt;/td>&lt;td>ObjectId&lt;/td>&lt;/tr>
+ * &lt;/table>&lt;br>
+ * &lt;h2>Routing Table&lt;/h2>
+ * &lt;table>
+ * &lt;tr>&lt;td>POST /projects/&lt;/td>&lt;td>{@link Project.createProject}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>GET /projects/&lt;/td>&lt;td>{@link Project.getProjects}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>GET /projects/:project_id&lt;/td>&lt;td>{@link Project.getProject}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>PUT /projects/:project_id&lt;/td>&lt;td>{@link Project.editProject}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>DELETE /projects/:project_id&lt;/td>&lt;td>{@link Project.deleteProject}&lt;/td>&lt;/tr>&lt;/table>&lt;br>
  * &lt;h2>Constants&lt;/h2>
  * &lt;h5>Project.Type&lt;/h5>
  * &lt;table>
@@ -82,6 +94,13 @@ module.exports = router;
  * @param {Express.Response} res - variable to send the response
  */
 function createProject(req, res) {
+    if (req.session.level == User.Level.Guest){
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level &lt; User.Level.Admin){
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
     var project = new Project();
 
     // Check request variables
@@ -116,7 +135,7 @@ function createProject(req, res) {
                         var projectUser = new ProjectUser();
                         projectUser.author = project.author;
                         projectUser.project = project;
-                        projectUser.value = 2;
+                        projectUser.value = ProjectUser.Level.Creator;
 
                         projectUser.save(function (err) {
                             if (err) Response(res, "Error", err, 0);
@@ -138,6 +157,8 @@ function createProject(req, res) {
 function getProjects(req, res) {
     Project.find(function (err, projects) {
         if (err) Response(res, "Error", err, 0);
+        else if (projects == null)
+            Response(res, "Error : No projects found", null, 0);
         else Response(res, "Projects found", projects, 1);
     });
 }
@@ -154,7 +175,7 @@ function getProject(req, res) {
     Project.findById(req.params.project_id, function (err, project) {
         if (err) Response(res, "Error", err, 0);
         else if (project == null)
-            Response(res, "Error : Project not found", project, 0);
+            Response(res, "Error : Project not found", null, 0);
         else Response(res, "Project Found", project, 1);
     });
 }
@@ -174,16 +195,20 @@ function getProject(req, res) {
  */
 function editProject(req, res) {
     Project.findById(req.params.project_id, function (err, project) {
-        var usernameFound = true;
-
         if (err) {
             Response(res, "Error", err, 0);
             return;
         } else if (project == null) {
-            Response(res, "Error : Project not found", project, 0);
+            Response(res, "Error : Project not found", null, 0);
+            return;
+        } else if ((project.author != req.session.userId) &amp;&amp; (req.session.level &lt; User.Level.Admin)) {
+            Response(res, "Error : You're not an admin", null, 0);
             return;
         }
 
+        var usernameFound = true;
+        
+        // Edit project values
         if ("name" in req.body) project.name = req.body.name;
         if ("status" in req.body) project.status = req.body.status;
         if ("description" in req.body) project.description = req.body.description;
@@ -199,12 +224,15 @@ function editProject(req, res) {
                         callback();
                     });
             });
+        
+        project.lastEdited = Date.now();
 
+        // Wait and save the project
         async.parallel(calls, function () {
             project.save(function (err) {
                 if (err) Response(res, "Error", err, 0);
                 else if (!usernameFound)
-                    Response(res, 'Project updated but authorUsername not found',
+                    Response(res, 'Error : Project updated but authorUsername not found',
                         project, 0);
                 else Response(res, 'Project updated', project, 1);
             });
@@ -222,6 +250,12 @@ function editProject(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function deleteProject(req, res) {
+    if (req.session.level &lt; User.Level.Admin) {
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
+    
+    // Remove the project
     Project.remove({
         _id: req.params.project_id
     }, function (err, project) {
@@ -232,6 +266,7 @@ function deleteProject(req, res) {
             var projectUserDeleted = true;
             var messageDeleted = true;
 
+            // Remove all votes with this project
             calls.push(function (callback) {
                 Vote.remove({
                     project: req.params.project_id
@@ -244,6 +279,7 @@ function deleteProject(req, res) {
                 });
             });
 
+            // Remove all projectUsers with this project
             calls.push(function (callback) {
                 ProjectUser.remove({
                     project: req.params.project_id
@@ -256,6 +292,7 @@ function deleteProject(req, res) {
                 });
             });
 
+            // Remove all messages with this project
             calls.push(function (callback) {
                 Message.remove({
                     project: req.params.project_id
@@ -268,6 +305,7 @@ function deleteProject(req, res) {
                 });
             });
 
+            // Wait and send result of deleting
             async.parallel(calls, function () {
                 var errorMessage = "Error during delete :";
                 if (!voteDeleted) errorMessage += "Vote ";
@@ -297,7 +335,7 @@ function deleteProject(req, res) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun Mar 22 2015 19:38:20 GMT+0100 (Paris, Madrid)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun Mar 22 2015 22:50:40 GMT+0100 (Paris, Madrid)
 </footer>
 
 <script> prettyPrint(); </script>
