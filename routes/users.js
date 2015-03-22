@@ -5,7 +5,14 @@
  * <td>GET /users/:user_id</td><td>{@link User.getUser}</td></tr>
  * <td>PUT /users/:user_id</td><td>{@link User.editUser}</td></tr>
  * <td>DELETE /users/:user_id</td><td>{@link User.deleteUser}</td></tr>
- * </table>
+ * </table><br><br>
+ * <h2>Constants</h2><br>
+ * <h5>User.Level</h5>
+ * <table>
+ * <tr><td>Guest</td><td>-1</td></tr>
+ * <tr><td>OldMember</td><td>0</td></tr>
+ * <tr><td>Member</td><td>1</td></tr>
+ * <tr><td>Admin</td><td>3</td></tr></table>
  * @namespace User
  * @author Florian Kauder
  */
