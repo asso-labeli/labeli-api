@@ -1,5 +1,6 @@
 /**
  * This is the link between User module and Project module.<br>
+ * Creator can only be set during creation of project.<br>
  * <h2>Model</h2>
  * <table>
  * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
@@ -45,75 +46,131 @@ module.exports = router;
 
 /**
  * Create or edit a new projectUser<br>
- * <b>Level needed :</b> Member
+ * <b>Level needed :</b><br>
+ * - At least <i>ProjectUser.Level.Admin</i> to invite someone or to name a new admin<br>
+ * - <i>User.Member</i> to join a project
  * @memberof ProjectUser
  * @param {Express.Request} req - request send
- * @param {String} req.body.level - name of the project
+ * @param {String} [req.body.level=0] - level to give to user in project
+ * @param {ObjectID} [req.body.username] - name of user to join to the project
  * @param {String} req.params.project_id - ID of the reference project
  * @param {Express.Response} res - variable to send the response
  */
-function createOrEditProjectUser(req, res){
-    var projectUser = new ProjectUser();
-    
-    var userFound = true;
-    var projectFound = true;
-    
-    if (!('level' in req.body)){
-        Response(res, "Error : No level given", null, 0);
+function createOrEditProjectUser(req, res) {
+    if (req.session.level < User.Level.OldMember) {
+        Response(res, "Error : Not logged", null, 0);
         return;
     }
-    else
-        projectUser.level = req.body.level;
-    
-    calls.push(function(callback){
-        Project.findById(req.params.project_id, function(err, project){
-            if (err || project == null) projectFound = false;
-            else projectUser.project = project._id;
-            callback();
-        });
-    });   
-    
-    if (!("authorUsername" in req.body)){
-        Response(res, "Error : No authorUsername given", null, 0);
-        return ;
+
+    var projectUser = new ProjectUser();
+    var project = null;
+    var projectUserOfClient = null;
+
+    var userFound = true;
+    var projectFound = true;
+
+    // Check variables in body
+    if (!('level' in req.body)) {
+        req.body.level = 0;
+    } else if (req.body.level >= ProjectUser.Level.Creator) {
+        Response(res, "Error : Impossible to name a new creator");
+        return;
     }
-    else {
-        calls.push(function(callback){
-            User.findOne({username : req.body.authorUsername.toLowerCase()}, 
-                         function(err, user){
-                if (err || user == null) userFound = false;
-                else projectUser.author = user._id;
-                callback();
-            });
-        });
-    }
-        
-    async.parallel(calls, function(){
-        if (!projectFound) 
-            Response(res, "Error : Project not found", null, 0);
-        else if (!userFound) 
-            Response(res, "Error : User not found", null, 0);
-        else {
-            ProjectUser.findOne({author : projectUser.author,
-                                 project : projectUser.project},
-                                function(err, pu){
-                if (err || pu == null) {        
-                    projectUser.save(function(err){
-                        if (err) Response(res, "Error", err, 0);
-                        else Response(res, 'ProjectUser created', projectUser, 1);
+
+    // Search datas in database
+    async.series([
+        // Search the project
+        function searchProject(callback) {
+                Project.findById(req.params.project_id,
+                    function (err, project) {
+                        if (err || project == null) projectFound = false;
+                        else projectUser.project = project._id;
+                        callback();
+                    })
+        },
+        // Search user
+        function searchUser(callback) {
+                if ("username" in req.body)
+                // Case where a user want to add another user to project
+                    User.findOne({
+                        username: req.body.username.toLowerCase()
+                    },
+                    function (err, user) {
+                        if (err || user == null) userFound = false;
+                        else projectUser.author = user._id;
+                        callback();
                     });
-                }
                 else {
-                    pu.level = projectUser.level;
-                    pu.save(function(err){
+                    // Case where a user want to take part in project
+                    projectUser.author = req.session.userId;
+                    callback();
+                }
+
+        },
+        function searchProjectUserOfClient(callback) {
+                // Search ProjectUser of the client
+                ProjectUser.findOne({
+                    author: req.session.userId,
+                    project: projectUser.project
+                }, function (err, pu) {
+                    console.log("found : " + pu);
+                    projectUserOfClient = pu;
+                    callback();
+                });
+        }],
+
+        function useResult() {
+            if (!projectFound)
+                Response(res, "Error : Project not found", null, 0);
+            else if (!userFound)
+                Response(res, "Error : User not found", null, 0);
+            // Case where a user want to add another user to project
+            else if ("username" in req.body) {
+                // Client not found in project
+                if (projectUserOfClient == null)
+                    Response(res, "Error : You're not an admin", null, 0);
+                // Client not admin or creator of project
+                else if (projectUserOfClient.level < ProjectUser.Level.Admin)
+                    Response(res, "Error : You're not an admin", null, 0);
+                // Client is admin, so add the user to project
+                else {
+                    ProjectUser.findOne({
+                            author: projectUser.author,
+                            project: projectUser.project
+                        },
+                        function (err, pu) {
+                            if (err || pu == null) {
+                                projectUser.level = req.body.level;
+                                projectUser.save(function (err) {
+                                    if (err) Response(res, "Error", err, 0);
+                                    else Response(res, 'ProjectUser created',
+                                        projectUser, 1);
+                                });
+                            } else {
+                                pu.level = req.body.level;
+                                pu.save(function (err) {
+                                    if (err) Response(res, "Error", err, 0);
+                                    else Response(res, 'ProjectUser updated',
+                                        pu, 1);
+                                });
+                            }
+                        });
+                }
+            } else {
+                // Already member of project
+                if (projectUserOfClient != null) {
+                    Response(res, 'ProjectUser already good',
+                        projectUserOfClient, 1);
+                } else {
+                    projectUser.level = ProjectUser.Level.Member;
+                    projectUser.save(function (err) {
                         if (err) Response(res, "Error", err, 0);
-                        else Response(res, 'ProjectUser updated', pu, 1);
+                        else Response(res, 'ProjectUser created',
+                            projectUser, 1);
                     });
                 }
-            });
-        }
-    });
-        
+            }
+        });
 }
 
 /**
@@ -124,9 +181,13 @@ function createOrEditProjectUser(req, res){
  * @param {String} req.params.project_id - ID of the reference project
  * @param {Express.Response} res - variable to send the response
  */
-function getProjectUsers(req, res){
-    ProjectUser.find({project : req.params.project_id}, function(err, projectUsers){
+function getProjectUsers(req, res) {
+    ProjectUser.find({
+        project: req.params.project_id
+    }, function (err, projectUsers) {
         if (err) Response(res, "Error", err, 0);
+        else if (projectUsers == null) 
+            Response(res, "Error : No ProjectUsers found", null, 0);
         else Response(res, "ProjectUsers found", projectUsers, 1);
     });
 }
@@ -139,28 +200,80 @@ function getProjectUsers(req, res){
  * @param {String} req.params.projectUser_id - ID of the projectUser
  * @param {Express.Response} res - variable to send the response
  */
-function getProjectUser(req, res){
-    ProjectUser.findById(req.params.projectUser_id, function(err, projectUser){
-        if (err) 
-            Response(res, "Error", err, 0);
-        else if (projectUser == null) 
-            Response(res, "Error : ProjectUser not found", null, 0);
-        else 
-            Response(res, "ProjectUser found", projectUser, 1);
-    });
+function getProjectUser(req, res) {
+    ProjectUser.findById(req.params.projectUser_id,
+        function (err, projectUser) {
+            if (err)
+                Response(res, "Error", err, 0);
+            else if (projectUser == null)
+                Response(res, "Error : ProjectUser not found", null, 0);
+            else
+                Response(res, "ProjectUser found", projectUser, 1);
+        });
 }
 
 /**
- * Delete a projectUser<br>
- * <b>Level needed :</b> Owner
+ * Delete a projectUser<br><br>
+ * <b>/!\</b> : Creator cannot be kicked.<br>
+ * To delete him, you must delete the project.<br>
+ * <b>Level needed :</b> <br>
+ * - At least <i>ProjectUser.Level.Admin</i> to kick someone<br>
+ * - <i>ProjectUser.Level.Member</i> to leave the project
  * @memberof ProjectUser
  * @param {Express.Request} req - request send
  * @param {String} req.params.projectUser_id - ID of the projectUser to delete
  * @param {Express.Response} res - variable to send the response
  */
-function deleteProjectUser(req, res){
-    ProjectUser.remove({_id : req.params.projectUser_id}, function(err, projectUser){
-        if (err) Response(res, "Error", err, 0);
-        else Response(res, 'ProjectUser deleted', projectUser, 1);
-    });
+function deleteProjectUser(req, res) {
+    if (req.session.level < User.Level.OldMember) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    }
+
+    var projectUser = null;
+    var projectUserOfClient = null;
+
+    async.series([
+        // Search the projectUser to delete
+        function searchProjectUser(callback) {
+                ProjectUser.findById(req.params.projectUser_id,
+                    function (err, pu) {
+                        if (err) Response(res, "Error", err, 0);
+                        else if (pu == null)
+                            Response(res, "Error : ProjectUser not found",
+                                null, 0);
+                        else projectUser = pu;
+                        callback();
+                    })
+        },
+        // Search the projectUser of Client
+        function searchProjectUserOfClient(callback) {
+                if (projectUser != null) {
+                    ProjectUser.findOne({
+                            author: req.session.userId,
+                            project: projectUser.project
+                        },
+                        function (err, pu) {
+                            projectUserOfClient = pu;
+                            callback();
+                        });
+                } else callback();
+    }],
+        function useResult() {
+            // ProjectUser not found : message send in searchProjectUser()
+            if (projectUser == null) return;
+            // Creator cannot be kicked
+            else if (projectUser.level == ProjectUser.Level.Creator)
+                Response(res, "Error : You cannot kick the creator", null, 0);
+            // Need to be at least an admin to kick
+            else if (projectUserOfClient.level < ProjectUser.Level.Admin)
+                Response(res, "Error : You're not an admin", null, 0);
+            else
+                ProjectUser.remove({
+                    _id: req.params.projectUser_id
+                }, function (err, projectUser) {
+                    if (err) Response(res, "Error", err, 0);
+                    else Response(res, 'ProjectUser deleted', projectUser, 1);
+                });
+        });
 }
