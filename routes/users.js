@@ -6,7 +6,7 @@
  * <td>PUT /users/:user_id</td><td>{@link User.editUser}</td></tr>
  * <td>DELETE /users/:user_id</td><td>{@link User.deleteUser}</td></tr>
  * </table><br><br>
- * <h2>Constants</h2><br>
+ * <h2>Constants</h2>
  * <h5>User.Level</h5>
  * <table>
  * <tr><td>Guest</td><td>-1</td></tr>
