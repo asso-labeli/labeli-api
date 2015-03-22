@@ -1,6 +1,6 @@
 var Survey = require('../models/survey');
-var SurveyItem = require('../models/surveyitem');
-var SurveyVote = require('../models/surveyvote');
+var SurveyItem = require('../models/surveyItem');
+var SurveyVote = require('../models/surveyVote');
 var User = require('../models/user');
 var Response = require('../modules/response');
 
