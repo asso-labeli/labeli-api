@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: Message</title>
+    <title>JSDoc: Namespace: ProjectUser</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: Message</h1>
+    <h1 class="page-title">Namespace: ProjectUser</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-        Message
+        ProjectUser
         </h2>
         
     
@@ -39,7 +39,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>content</td><td>String</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>project</td><td>ObjectId</td></tr><tr><td>author</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /messages/:project_id</td><td><a href="Message.html#.createMessage">Message.createMessage</a></td></tr><tr><td>GET /messages/:project_id</td><td><a href="Message.html#.getMessages">Message.getMessages</a></td></tr><tr><td>GET /messages/:message_id</td><td><a href="Message.html#.getMessage">Message.getMessage</a></td></tr><tr><td>PUT /messages/:message_id</td><td><a href="Message.html#.editMessage">Message.editMessage</a></td></tr><tr><td>DELETE /messages/:message_id</td><td><a href="Message.html#.deleteMessage">Message.deleteMessage</a></td></tr></table><br></div>
+            <div class="description">This is the link between User module and Project module.<br>Creator can only be set during creation of project.<br><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>level</td><td>Number</td><td>0</td></tr><tr><td>author</td><td>ObjectId</td></tr><tr><td>project</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /projectUsers/</td><td>Project.createOrEditProjectUser</td></tr><tr><td>GET /projectUsers/</td><td>Project.getProjectUsers</td></tr><tr><td>GET /projectUser/:projectUser_id</td><td>Project.getProjectUser</td></tr><tr><td>DELETE /projectUser/:projectUser_id</td><td>Project.deleteProjectUser</td></tr></table><br><h2>Constants</h2><h5>ProjectUser.Level</h5><table><tr><td>Member</td><td>0</td></tr><tr><td>Administrator</td><td>1</td></tr><tr><td>Creator</td><td>2</td></tr></table></div>
         
 
         
@@ -81,7 +81,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line1">line 1</a>
+        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -117,466 +117,14 @@
 
     
 
-    <h4 class="name" id=".createMessage"><span class="type-signature">(static) </span>createMessage<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".createOrEditProjectUser"><span class="type-signature">(static) </span>createOrEditProjectUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Create a new message<br><b>Level needed :</b> Member
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>body.content</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">content of message</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.authorUsername</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">username of author</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>params.project_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ObjectID</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">id of project</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line52">line 52</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".deleteMessage"><span class="type-signature">(static) </span>deleteMessage<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Delete a message<br><b>Level needed :</b> Owner | Admin
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params.message_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ObjectID</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">id of message</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line173">line 173</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".editMessage"><span class="type-signature">(static) </span>editMessage<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Edit a message<br><b>Level needed :</b> Owner | Admin
+    Create or edit a new projectUser<br><b>Level needed :</b><br>- At least <i>ProjectUser.Level.Admin</i> to invite someone or to name a new admin<br>- <i>User.Member</i> to join a project
 </div>
 
 
@@ -646,6 +194,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -656,38 +206,7 @@
 
         <tr>
             
-                <td class="name"><code>params.message_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ObjectID</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">id of message</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.content</code></td>
+                <td class="name"><code>body.level</code></td>
             
 
             <td class="type">
@@ -712,8 +231,86 @@
             
 
             
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
 
-            <td class="description last">new content</td>
+            <td class="description last">level to give to user in project</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>body.username</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectID</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">name of user to join to the project</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params.project_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">ID of the reference project</td>
         </tr>
 
     
@@ -784,7 +381,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line139">line 139</a>
+        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line59">line 59</a>
     </li></ul></dd>
     
 
@@ -815,14 +412,14 @@
 
     
 
-    <h4 class="name" id=".getMessage"><span class="type-signature">(static) </span>getMessage<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".deleteProjectUser"><span class="type-signature">(static) </span>deleteProjectUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Get a specific message<br><b>Level needed :</b> Guest
+    Delete a projectUser<br><br><b>/!\</b> : Creator cannot be kicked.<br>To delete him, you must delete the project.<br><b>Level needed :</b> <br>- At least <i>ProjectUser.Level.Admin</i> to kick someone<br>- <i>ProjectUser.Level.Member</i> to leave the project
 </div>
 
 
@@ -900,13 +497,13 @@
 
         <tr>
             
-                <td class="name"><code>params.message_id</code></td>
+                <td class="name"><code>params.projectUser_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ObjectID</span>
+<span class="param-type">String</span>
 
 
             
@@ -916,7 +513,7 @@
 
             
 
-            <td class="description last">id of message</td>
+            <td class="description last">ID of the projectUser to delete</td>
         </tr>
 
     
@@ -987,7 +584,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line121">line 121</a>
+        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line227">line 227</a>
     </li></ul></dd>
     
 
@@ -1018,14 +615,217 @@
 
     
 
-    <h4 class="name" id=".getMessages"><span class="type-signature">(static) </span>getMessages<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".getProjectUser"><span class="type-signature">(static) </span>getProjectUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Get all messages from a project<br><b>Level needed :</b> Guest
+    Get a specific projectUser<br><b>Level needed :</b> Guest
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params.projectUser_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ID of the projectUser</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line203">line 203</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getProjectUsers"><span class="type-signature">(static) </span>getProjectUsers<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get all projectUsers of a project<br><b>Level needed :</b> Guest
 </div>
 
 
@@ -1109,7 +909,7 @@
             <td class="type">
             
                 
-<span class="param-type">ObjectID</span>
+<span class="param-type">String</span>
 
 
             
@@ -1119,7 +919,7 @@
 
             
 
-            <td class="description last">id of project</td>
+            <td class="description last">ID of the reference project</td>
         </tr>
 
     
@@ -1190,7 +990,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line102">line 102</a>
+        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line184">line 184</a>
     </li></ul></dd>
     
 
