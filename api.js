@@ -13,8 +13,6 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-currentUser = null;
-
 app.use(session({
     secret: 'labeliSessionPwordAss',
     resave: true,
@@ -34,19 +32,14 @@ app.use(function(req, res, next)
 app.use(function(req, res, next)
 {
     console.log("request by "+req.session.userId);
-    if(req.session.userId == null)
+    
+    if(req.session.userId == undefined)
     {
-        currentUser = null;
-        next();
+        req.session.userId = null;
+        req.session.level = 0;
     }
-    else
-    {
-        User.findById(req.session.userId, function(err, user)
-        {
-            currentUser = user;
-            next();
-        });
-    }
+    
+    next();
 });
 
 app.use(require('./routes/users'));
