@@ -15,7 +15,7 @@ var userTest = null;
 var user2Test = null;
 var adminTest = null;
 var projectUserTest = null;
-var projectUserValue = null;
+var projectUserLevel = null;
 var projectUserTest2 = null;
 var projectUserTest3 = null;
     
@@ -87,7 +87,7 @@ describe('ProjectUser', function(){
             .end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(1);
-                userTest = res.body.data._id;
+                user2Test = res.body.data._id;
                 done();
             });
         });
@@ -113,7 +113,7 @@ describe('ProjectUser', function(){
             agentAdmin.attachCookies(req);
             req.send({name : "ProjectUser Module Test",
                    type : 0,
-                   authorUsername : "projectUsertest.projectUsertest"})
+                   authorUsername : "projectusertest.projectusertest"})
             .end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(1);
@@ -135,12 +135,12 @@ describe('ProjectUser', function(){
             });
         });
         
-        it('must need a value', function(done){
+        it('must need a level', function(done){
             var req = request(apiUrl).post('/projectUsers/42');
             agent2.attachCookies(req);
             req.end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.message).to.equal("Error : No value given");
+                expect(res.body.message).to.equal("Error : No level given");
                 expect(res.body.success).to.equal(0);
                 done();
             });
@@ -149,7 +149,7 @@ describe('ProjectUser', function(){
         it ('simple member cannot add a new administrator to project', function(done){
             var req = request(apiUrl).post('/projectUsers/'+projectTest);
             agent2.attachCookies(req);
-            req.send({value : 0, username : "admintest.admintest"})
+            req.send({level : 0, username : "admintest.admintest"})
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(0);
@@ -158,18 +158,18 @@ describe('ProjectUser', function(){
             });
         });
         
-        it ('must create a new ProjectUser with good informations', function(done){
+        it ('simple user can be a member of project', function(done){
             var req = request(apiUrl).post('/projectUsers/'+projectTest);
             agent2.attachCookies(req);
-            req.send({value : 0})
+            req.send({level : 0})
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
-                expect(res.body.data.value).to.equal(1);
+                expect(res.body.data.level).to.equal(0);
                 expect(res.body.data.project).to.equal(projectTest);
-                expect(res.body.data.author).to.equal(userTest);
-                projectUserTest = res.body.data._id;
-                projectUserValue = res.body.data.value;
+                expect(res.body.data.author).to.equal(user2Test);
+                projectUserTest2 = res.body.data._id;
+                projectUserLevel = res.body.data.level;
                 done();
             });
         });
@@ -177,14 +177,15 @@ describe('ProjectUser', function(){
         it('creator can add a new administrator to his project', function(done){
             var req = request(apiUrl).post('/projectUsers/'+projectTest);
             agent.attachCookies(req);
-            req.send({value : 1, username : "projectUsertestsecond.projectUsertestsecond"})
+            req.send({level : 1, username : "projectusertestsecond.projectusertestsecond"})
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
-                expect(res.body.data.value).to.equal(1);
+                expect(res.body.data.level).to.equal(1);
                 expect(res.body.data.project).to.equal(projectTest);
                 expect(res.body.data.author).to.equal(user2Test);
                 projectUserTest2 = res.body.data._id;
+                projectUserLevel = res.body.data.level;
                 done();
             });
         });
@@ -192,14 +193,14 @@ describe('ProjectUser', function(){
         it('administrator can add a new administrator to his project', function(done){
             var req = request(apiUrl).post('/projectUsers/'+projectTest);
             agent2.attachCookies(req);
-            req.send({value : 1, username : "admintest.admintest"})
+            req.send({level : 1, username : "admintest.admintest"})
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
-                expect(res.body.data.value).to.equal(1);
+                expect(res.body.data.level).to.equal(1);
                 expect(res.body.data.project).to.equal(projectTest);
                 expect(res.body.data.author).to.equal(adminTest);
-                projectUserTest2 = res.body.data._id;
+                projectUserTest3 = res.body.data._id;
                 done();
             });
         });
@@ -212,6 +213,8 @@ describe('ProjectUser', function(){
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
+                expect(res.body.data[0].author).to.equal(userTest);
+                projectUserTest = res.body.data[0]._id;
                 done();
             });
         });
@@ -220,11 +223,11 @@ describe('ProjectUser', function(){
     describe('.getProjectUser()', function(){
         it('must return the projectUser (with id param)', function(done){
             request(apiUrl)
-            .get('/projectUser/' + projectUserTest)
+            .get('/projectUser/' + projectUserTest2)
             .end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
-                expect(res.body.data.value).to.equal(projectUserValue);
+                expect(res.body.data.level).to.equal(projectUserLevel);
                 done();
             });
         });
@@ -234,8 +237,7 @@ describe('ProjectUser', function(){
         it('administrator cannot kick the creator', function(done){
             var req = request(apiUrl).delete('/projectUser/' + projectUserTest);
             agent2.attachCookies(req);
-            req.request(apiUrl)
-            .end(function(err, res){
+            req.end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(0);
                 expect(res.body.message).to.equal("Error : You cannot kick the creator");
@@ -246,8 +248,7 @@ describe('ProjectUser', function(){
         it('administrator can kick an administrator and members', function(done){
             var req = request(apiUrl).delete('/projectUser/' + projectUserTest3);
             agent2.attachCookies(req);
-            req.request(apiUrl)
-            .end(function(err, res){
+            req.end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
                 expect(res.body.message).to.equal("ProjectUser deleted");
@@ -258,8 +259,7 @@ describe('ProjectUser', function(){
         it('creator can kick everyone', function(done){
             var req = request(apiUrl).delete('/projectUser/' + projectUserTest2);
             agent.attachCookies(req);
-            req.request(apiUrl)
-            .end(function(err, res){
+            req.end(function(err, res){
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
                 expect(res.body.message).to.equal("ProjectUser deleted");
@@ -270,17 +270,26 @@ describe('ProjectUser', function(){
         it('creator cannot kick himself', function(done){
             var req = request(apiUrl).delete('/projectUser/' + projectUserTest);
             agent.attachCookies(req);
-            req.request(apiUrl)
-            .end(function(err, res){
+            req.end(function(err, res){
                 if (err) return done(err);
-                expect(res.body.success).to.equal(1);
-                expect(res.body.message).to.equal("ProjectUser deleted");
+                expect(res.body.success).to.equal(0);
+                expect(res.body.message).to.equal("Error : You cannot kick the creator");
                 done();
             });
         });
     });
     
     describe('End of test', function(){
+        it ('must delete the project test', function(done){
+            var req = request(apiUrl).delete('/projects/'+projectTest);
+            agentAdmin.attachCookies(req);
+            req.end(function(err, res){
+                if (err) return err;
+                expect(res.body.success).to.equal(1);
+                done();
+            });
+        });
+        
         it('must logout the userTest', function (done) {
             var req = request(apiUrl).delete('/auth')
             agent.attachCookies(req);
@@ -338,16 +347,6 @@ describe('ProjectUser', function(){
             var req = request(apiUrl).delete('/auth')
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
-                if (err) return err;
-                expect(res.body.success).to.equal(1);
-                done();
-            });
-        });
-        
-        it ('must delete the project test', function(done){
-            var req = request(apiUrl).delete('/projects/'+projectTest);
-            agentAdmin.attachCookies(req);
-            req.end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(1);
                 done();
