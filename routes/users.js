@@ -29,7 +29,7 @@ module.exports = router;
 
 /**
  * Create a new user<br>
- * <b>Level needed :</b> 3 - Admin
+ * <b>Level needed :</b> Admin
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {String} req.body.firstName - first name of user
@@ -38,6 +38,14 @@ module.exports = router;
  * @param {Express.Response} res - variable to send the response
  */
 function createUser(req, res) {
+    if (req.session.level == -1) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level < User.Level.Admin) {
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
+
     var user = new User();
 
     // Check req variables
@@ -69,7 +77,7 @@ function createUser(req, res) {
 
 /**
  * Get all users<br>
- * <b>Level needed :</b> 0 - Guest
+ * <b>Level needed :</b> Guest
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {Express.Response} res - variable to send the response
@@ -85,7 +93,7 @@ function getUsers(req, res) {
 
 /**
  * Get a specific user<br>
- * <b>Level needed :</b> 0 - Guest
+ * <b>Level needed :</b> Guest
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {String} req.params.user_id - User Id OR User username
@@ -114,7 +122,7 @@ function getUser(req, res) {
 
 /**
  * Edit a user<br>
- * <b>Level needed :</b> Owner | 3 - Admin
+ * <b>Level needed :</b> Owner | Admin
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {String} [req.body.firstName] - New first name
@@ -128,8 +136,12 @@ function getUser(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function editUser(req, res) {
-    User.findOne(req.params.user_id, function (err, user) {
+    User.findById(req.params.user_id, function (err, user) {
         if (err) Response(res, "Error", err, 0);
+        else if (user == null)
+            Response(res, "Error : User not found", null, 0);
+        else if ((user._id != req.session.userId) && (req.session.level < User.Level.Admin))
+            Response(res, "Error : You're not an admin", null, 0);
         else {
             if ("firstName" in req.body) user.firstName = req.body.firstName;
             if ("lastName" in req.body) user.lastName = req.body.lastName;
@@ -150,18 +162,21 @@ function editUser(req, res) {
 
 /**
  * Delete a user<br>
- * <b>Level needed :</b> 3 - Admin
+ * <b>Level needed :</b> Admin
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {Express.Response} res - variable to send the response
  */
 function deleteUser(req, res) {
-    User.remove({
-        _id: req.params.user_id
-    }, function (err, user) {
-        if (err) Response(res, "Error", err, 0);
-        else Response(res, 'User deleted', user, 1);
-    });
+    if (req.session.level < User.Level.Admin)
+        Response(res, "Error : You're not an admin", null, 0);
+    else
+        User.remove({
+            _id: req.params.user_id
+        }, function (err, user) {
+            if (err) Response(res, "Error", err, 0);
+            else Response(res, 'User deleted', user, 1);
+        });
 }
 
 // Function available only in debug mode 
@@ -171,7 +186,7 @@ function createAdmin(req, res) {
     user.firstName = "AdminTest";
     user.lastName = "AdminTest";
     user.email = "admin@test.com";
-    user.level = 3;
+    user.level = User.Level.Admin;
 
     user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
     user.privateKey = generateRandomString(32);
