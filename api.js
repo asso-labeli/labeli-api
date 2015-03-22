@@ -36,7 +36,7 @@ app.use(function(req, res, next)
     if(req.session.userId == undefined)
     {
         req.session.userId = null;
-        req.session.level = 0;
+        req.session.level = -1;
     }
     
     next();
