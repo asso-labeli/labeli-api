@@ -84,7 +84,7 @@ function createMessage(req, res) {
 
 /**
  * Get all messages from a project<br>
- * <b>Level needed :</b> 0 - Guest
+ * <b>Level needed :</b> -1 - Guest
  * @memberof Message
  * @param {Express.Request} req - request send
  * @param {ObjectID} req.params.project_id - id of project
@@ -103,7 +103,7 @@ function getMessages(req, res) {
 
 /**
  * Get a specific message<br>
- * <b>Level needed :</b> 0 - Guest
+ * <b>Level needed :</b> -1 - Guest
  * @memberof Message
  * @param {Express.Request} req - request send
  * @param {ObjectID} req.params.message_id - id of message
