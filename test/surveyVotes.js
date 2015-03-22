@@ -8,11 +8,12 @@ var apiUrl = 'http://localhost:9010';
 
 var surveyTest = null;
 var surveyItemTest = null;
+var surveyItemTest2 = null;
 var userTest = null;
 var surveyVoteValue = null;
 var surveyVoteTest = null;
 
-describe('SurveyItem', function(){
+describe('SurveyVote', function(){
     describe('Preparation', function(){
         it('must create a new user', function(done){
             request(apiUrl)
@@ -41,7 +42,7 @@ describe('SurveyItem', function(){
             });
         });
         
-        it('must create a new surveyItem', function(done){
+        it('must create two surveyItems', function(done){
             request(apiUrl)
             .post('/surveyItems/'+surveyTest)
             .send({name : "Option 1"})
@@ -49,27 +50,25 @@ describe('SurveyItem', function(){
                 if (err) return err;
                 expect(res.body.success).to.equal(1);
                 surveyItemTest = res.body.data._id;
+            });
+            
+            request(apiUrl)
+            .post('/surveyItems/'+surveyTest)
+            .send({name : "Option 2"})
+            .end(function(err, res){
+                if (err) return err;
+                expect(res.body.success).to.equal(1);
+                surveyItemTest2 = res.body.data._id;
                 done();
             });
         });
     });
     
     describe('.createSurveyItem()', function(){
-        it('must need a value', function(done){
-            request(apiUrl)
-            .post('/surveyVotes/42')
-            .end(function(err, res){
-                if (err) return err;
-                expect(res.body.success).to.equal(0);
-                expect(res.body.message).to.equal("Error : No value given");
-                done();
-            });
-        });
-        
         it('must need a username', function(done){
             request(apiUrl)
             .post('/surveyVotes/42')
-            .send({value : 1})
+            .send({items : [1]})
             .end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(0);
@@ -81,7 +80,7 @@ describe('SurveyItem', function(){
         it('must check the user', function(done){
             request(apiUrl)
             .post('/surveyVotes/42')
-            .send({value : 1, username : 'aa'})
+            .send({"items" : [1], "username" : 'aa'})
             .end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(0);
@@ -93,7 +92,7 @@ describe('SurveyItem', function(){
         it('must check the survey', function(done){
             request(apiUrl)
             .post('/surveyVotes/42')
-            .send({value : 1, username : 'itemvotetest.itemvotetest'})
+            .send({items : [1], username : "surveyvotetest.surveyvotetest"})
             .end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(0);
@@ -102,17 +101,31 @@ describe('SurveyItem', function(){
             });
         });
         
+        it('must check the surveyItem', function(done){
+            request(apiUrl)
+            .post('/surveyVotes/'+surveyTest)
+            .send({items : [1], username : "surveyvotetest.surveyvotetest"})
+            .end(function(err, res){
+                if (err) return err;
+                expect(res.body.success).to.equal(0);
+                expect(res.body.message).to.equal("Error : One SurveyItem not valid");
+                done();
+            });
+        });
+        
         it('must add a new surveyVote', function(done){
             request(apiUrl)
             .post('/surveyVotes/'+surveyTest)
-            .send({value : 1, username : 'itemvotetest.itemvotetest'})
+            .send({items : [surveyItemTest], 
+                   username : "surveyvotetest.surveyvotetest"})
             .end(function(err, res){
                 if (err) return err;
+                console.log(res.body);
                 expect(res.body.success).to.equal(1);
-                expect(res.body.message).to.equal("SurveyVote created");
-                expect(res.body.data.value).to.equal(1);
-                surveyVoteTest = res.body.data._id;
-                surveyVoteValue = res.body.data.value;
+                expect(res.body.message).to.equal("SurveyVotes created");
+                expect(res.body.data[0].value).to.equal(surveyItemTest);
+                surveyVoteTest = res.body.data[0]._id;
+                surveyVoteValue = res.body.data[0].value;
                 done();
             });
         });
@@ -138,23 +151,9 @@ describe('SurveyItem', function(){
            .end(function(err, res){
                if (err) return err;
                expect(res.body.success).to.equal(1);
-               expect(res.body.data.name).to.equal(surveyVoteName);
+               expect(res.body.data.value).to.equal(surveyVoteValue);
                done();
            });
-        });
-    });
-    
-    describe(".editSurveyVote()", function(){
-        it('must edit the name', function(done){
-            request(apiUrl)
-            .put("/surveyVote/"+surveyVoteTest)
-            .send({value : 0})
-            .end(function(err, res){
-                if (err) return err;
-                expect(res.body.success).to.equal(1);
-                expect(res.body.data.value).to.equal(0);
-                done();
-            });
         });
     });
     
@@ -181,9 +180,16 @@ describe('SurveyItem', function(){
     });
     
     describe("End of test", function(){
-        it('must delete the surveyItem test', function(done){
+        it('must delete the surveyItems test', function(done){
             request(apiUrl)
             .delete('/surveyItem/'+surveyItemTest)
+            .end(function(err, res){
+                if (err) return err;
+                expect(res.body.success).to.equal(1);
+            });
+            
+            request(apiUrl)
+            .delete('/surveyItem/'+surveyItemTest2)
             .end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(1);
