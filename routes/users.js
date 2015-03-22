@@ -133,7 +133,7 @@ function getUser(req, res) {
  * @param {String} [req.body.birthday] - New birthday (LocaleDateString)
  * @param {String} [req.body.description] - New description
  * @param {String} [req.body.picture] - New url for picture
- * @param {ObjectID} [req.params.user_id] - ID of edited user
+ * @param {ObjectID} [req.params.user_id] - ID of user to edit
  * @param {Express.Response} res - variable to send the response
  */
 function editUser(req, res) {
@@ -166,7 +166,7 @@ function editUser(req, res) {
  * <b>Level needed :</b> Admin
  * @memberof User
  * @param {Express.Request} req - request send
- * @param {ObjectID} [req.params.user_id] - ID of deleted user
+ * @param {ObjectID} [req.params.user_id] - ID of user to delete
  * @param {Express.Response} res - variable to send the response
  */
 function deleteUser(req, res) {
