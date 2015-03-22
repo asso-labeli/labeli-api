@@ -1,3 +1,15 @@
+/**
+ * <table><tr>
+ * <td>POST /projects/</td><td>{@link Project.createProject}</td></tr>
+ * <td>GET /projects/</td><td>{@link Project.getProjects}</td></tr>
+ * <td>GET /projects/:project_id</td><td>{@link Project.getProject}</td></tr>
+ * <td>PUT /projects/:project_id</td><td>{@link Project.editProject}</td></tr>
+ * <td>DELETE /projects/:project_id</td><td>{@link Project.deleteProject}</td></tr>
+ * </table>
+ * @namespace Project
+ * @author Florian Kauder
+ */
+
 var Project = require('../models/project');
 var User = require('../models/user');
 var ProjectUser = require('../models/projectUser');
@@ -19,6 +31,16 @@ router.route('/projects/:project_id').delete(deleteProject);
 
 module.exports = router;
 
+/**
+ * Create a new project<br>
+ * <b>Level needed :</b> Admin
+ * @memberof Project
+ * @param {Express.Request} req - request send
+ * @param {String} req.body.name - name of the project
+ * @param {String} req.body.type - type of the project
+ * @param {String} req.body.authorUsername - author username of the project
+ * @param {Express.Response} res - variable to send the response
+ */
 function createProject(req, res)
 {        
     var project = new Project();
@@ -69,6 +91,13 @@ function createProject(req, res)
     }
 }
 
+/**
+ * Get all projects<br>
+ * <b>Level needed :</b> Guest
+ * @memberof Project
+ * @param {Express.Request} req - request send
+ * @param {Express.Response} res - variable to send the response
+ */
 function getProjects(req, res)
 {
     Project.find(function(err, projects)
@@ -78,6 +107,14 @@ function getProjects(req, res)
     });
 }
 
+/**
+ * Get a specific project<br>
+ * <b>Level needed :</b> Guest
+ * @memberof Project
+ * @param {Express.Request} req - request send
+ * @param {ObjectID} [req.params.project_id] - ID of project
+ * @param {Express.Response} res - variable to send the response
+ */
 function getProject(req, res)
 {
     Project.findById(req.params.project_id, function(err, project)
@@ -89,6 +126,19 @@ function getProject(req, res)
     });
 }
 
+/**
+ * Edit a project<br>
+ * <b>Level needed :</b> Owner | Admin
+ * @memberof Project
+ * @param {Express.Request} req - request send
+ * @param {String} [req.body.name] - New name
+ * @param {Number} [req.body.status] - New status
+ * @param {String} [req.body.description] - New description
+ * @param {Number} [req.body.type] - New type
+ * @param {String} [req.body.authorUsername] - New author username
+ * @param {ObjectID} [req.params.project_id] - ID of project to edit
+ * @param {Express.Response} res - variable to send the response
+ */
 function editProject(req, res)
 {
     Project.findById(req.params.project_id, function(err, project)
@@ -130,6 +180,15 @@ function editProject(req, res)
 
     });
 }
+
+/**
+ * Delete a project<br>
+ * <b>Level needed :</b> Admin
+ * @memberof Project
+ * @param {Express.Request} req - request send
+ * @param {ObjectID} [req.params.project_id] - ID of project to delete
+ * @param {Express.Response} res - variable to send the response
+ */
 function deleteProject(req, res)
 {
     Project.remove({_id: req.params.project_id}, function(err, project)
