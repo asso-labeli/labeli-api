@@ -1,11 +1,23 @@
 /**
- * <table><tr>
- * <td>POST /projects/</td><td>{@link Project.createProject}</td></tr>
- * <td>GET /projects/</td><td>{@link Project.getProjects}</td></tr>
- * <td>GET /projects/:project_id</td><td>{@link Project.getProject}</td></tr>
- * <td>PUT /projects/:project_id</td><td>{@link Project.editProject}</td></tr>
- * <td>DELETE /projects/:project_id</td><td>{@link Project.deleteProject}</td></tr>
- * </table>
+ * <h2>Model</h2>
+ * <table>
+ * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+ * <tr><td>name</td><td>String</td></tr>
+ * <tr><td>picture</td><td>String</td><td>null</td></tr>
+ * <tr><td>type</td><td>Number</td><td>0</td></tr>
+ * <tr><td>description</td><td>String</td><td>' '</td></tr>
+ * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>status</td><td>Number</td><td>0</td></tr>
+ * <tr><td>author</td><td>ObjectId</td></tr>
+ * </table><br>
+ * <h2>Routing Table</h2>
+ * <table>
+ * <tr><td>POST /projects/</td><td>{@link Project.createProject}</td></tr>
+ * <tr><td>GET /projects/</td><td>{@link Project.getProjects}</td></tr>
+ * <tr><td>GET /projects/:project_id</td><td>{@link Project.getProject}</td></tr>
+ * <tr><td>PUT /projects/:project_id</td><td>{@link Project.editProject}</td></tr>
+ * <tr><td>DELETE /projects/:project_id</td><td>{@link Project.deleteProject}</td></tr></table><br>
  * <h2>Constants</h2>
  * <h5>Project.Type</h5>
  * <table>

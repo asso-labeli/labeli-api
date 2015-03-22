@@ -1,11 +1,21 @@
 /**
- * <table><tr>
- * <td>POST /messages/:project_id</td><td>{@link Message.createMessage}</td></tr>
- * <td>GET /messages/:project_id</td><td>{@link Message.getMessages}</td></tr>
- * <td>GET /messages/:message_id</td><td>{@link Message.getMessage}</td></tr>
- * <td>PUT /messages/:message_id</td><td>{@link Message.editMessage}</td></tr>
- * <td>DELETE /messages/:message_id</td><td>{@link Message.deleteMessage}</td></tr>
- * </table>
+ * <h2>Model</h2>
+ * <table>
+ * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+ * <tr><td>content</td><td>String</td></tr>
+ * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>project</td><td>ObjectId</td></tr>
+ * <tr><td>author</td><td>ObjectId</td></tr>
+ * </table><br>
+ * <h2>Routing Table</h2>
+ * <table>
+ * <tr><td>POST /messages/:project_id</td><td>{@link Message.createMessage}</td></tr>
+ * <tr><td>GET /messages/:project_id</td><td>{@link Message.getMessages}</td></tr>
+ * <tr><td>GET /messages/:message_id</td><td>{@link Message.getMessage}</td></tr>
+ * <tr><td>PUT /messages/:message_id</td><td>{@link Message.editMessage}</td></tr>
+ * <tr><td>DELETE /messages/:message_id</td><td>{@link Message.deleteMessage}</td></tr>
+ * </table><br>
  * @namespace Message
  * @author Florian Kauder
  */
@@ -31,7 +41,7 @@ module.exports = router;
 
 /**
  * Create a new message<br>
- * <b>Level needed :</b> 1 - Member
+ * <b>Level needed :</b> Member
  * @memberof Message
  * @param {Express.Request} req - request send
  * @param {String} req.body.content - content of message
@@ -81,10 +91,9 @@ function createMessage(req, res) {
     });
 }
 
-
 /**
  * Get all messages from a project<br>
- * <b>Level needed :</b> -1 - Guest
+ * <b>Level needed :</b> Guest
  * @memberof Message
  * @param {Express.Request} req - request send
  * @param {ObjectID} req.params.project_id - id of project
@@ -103,7 +112,7 @@ function getMessages(req, res) {
 
 /**
  * Get a specific message<br>
- * <b>Level needed :</b> -1 - Guest
+ * <b>Level needed :</b> Guest
  * @memberof Message
  * @param {Express.Request} req - request send
  * @param {ObjectID} req.params.message_id - id of message
@@ -120,7 +129,7 @@ function getMessage(req, res) {
 
 /**
  * Edit a message<br>
- * <b>Level needed :</b> Owner | 3 - Admin
+ * <b>Level needed :</b> Owner | Admin
  * @memberof Message
  * @param {Express.Request} req - request send
  * @param {ObjectID} req.params.message_id - id of message
@@ -155,7 +164,7 @@ function editMessage(req, res) {
 
 /**
  * Delete a message<br>
- * <b>Level needed :</b> Owner | 3 - Admin
+ * <b>Level needed :</b> Owner | Admin
  * @memberof Message
  * @param {Express.Request} req - request send
  * @param {ObjectID} req.params.message_id - id of message

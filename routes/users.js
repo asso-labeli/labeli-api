@@ -1,11 +1,29 @@
 /**
- * <table><tr>
- * <td>POST /users/</td><td>{@link User.createUser}</td></tr>
- * <td>GET /users/</td><td>{@link User.getUsers}</td></tr>
- * <td>GET /users/:user_id</td><td>{@link User.getUser}</td></tr>
- * <td>PUT /users/:user_id</td><td>{@link User.editUser}</td></tr>
- * <td>DELETE /users/:user_id</td><td>{@link User.deleteUser}</td></tr>
- * </table><br><br>
+ * <h2>Model</h2>
+ * <table>
+ * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+ * <tr><td>lastName</td><td>String</td></tr>
+ * <tr><td>firstName</td><td>String</td></tr>
+ * <tr><td>username</td><td>String</td></tr>
+ * <tr><td>email</td><td>String</td></tr>
+ * <tr><td>passwordHash</td><td>String</td></tr>
+ * <tr><td>privateKey</td><td>String</td></tr>
+ * <tr><td>picture</td><td>String</td><td>null</td></tr>
+ * <tr><td>level</td><td>Number</td><td>1</td></tr>
+ * <tr><td>description</td><td>String</td><td> ' '</td></tr>
+ * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>birthday</td><td>Date</td><td>new Date('01.01.1970T01:00')</td></tr>
+ * <tr><td>universityGroup</td><td>String</td><td>'Inconnu'</td></tr>
+ * <tr><td>website</td><td>String</td><td>null</td></tr>
+ * </table><br>
+ * <h2>Routing Table</h2>
+ * <table>
+ * <tr><td>POST /users/</td><td>{@link User.createUser}</td></tr>
+ * <tr><td>GET /users/</td><td>{@link User.getUsers}</td></tr>
+ * <tr><td>GET /users/:user_id</td><td>{@link User.getUser}</td></tr>
+ * <tr><td>PUT /users/:user_id</td><td>{@link User.editUser}</td></tr>
+ * <tr><td>DELETE /users/:user_id</td><td>{@link User.deleteUser}</td></tr>
+ * </table><br>
  * <h2>Constants</h2>
  * <h5>User.Level</h5>
  * <table>
