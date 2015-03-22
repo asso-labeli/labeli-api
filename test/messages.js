@@ -19,10 +19,37 @@ var message2Content = null;
 
 describe('Message', function () {
     describe('Preparation', function () {
-        it('must create a new user', function (done) {
+        it('must create a new admin', function (done) {
             request(apiUrl)
-                .post('/users')
+                .post('/admin')
+                .end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    adminTest = res.body.data._id;
+                    done();
+                });
+        });
+
+        it('must logged the admin', function (done) {
+            request(apiUrl)
+                .post('/auth')
                 .send({
+                    username: "admintest.admintest",
+                    password: '098f6bcd4621d373cade4e832627b4f6'
+                })
+                .end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    expect(res.body.message).to.equal("Authentification successfull");
+                    agentAdmin.saveCookies(res);
+                    done();
+                });
+        });
+
+        it('must create a new user', function (done) {
+            var req = request(apiUrl).post('/users');
+            agentAdmin.attachCookies(req);
+            req.send({
                     firstName: 'messageTest',
                     lastName: 'messageTest',
                     email: 'something@email.com'
@@ -51,37 +78,10 @@ describe('Message', function () {
                 });
         });
 
-        it('must create a new admin', function (done) {
-            request(apiUrl)
-                .post('/admin')
-                .end(function (err, res) {
-                    if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    adminTest = res.body.data._id;
-                    done();
-                });
-        });
-
-        it('must logged the admin', function (done) {
-            request(apiUrl)
-                .post('/auth')
-                .send({
-                    username: "admintest.admintest",
-                    password: '098f6bcd4621d373cade4e832627b4f6'
-                })
-                .end(function (err, res) {
-                    if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    expect(res.body.message).to.equal("Authentification successfull");
-                    agentAdmin.saveCookies(res);
-                    done();
-                });
-        });
-
         it('must create a new project', function (done) {
-            request(apiUrl)
-                .post('/projects')
-                .send({
+            var req = request(apiUrl).post('/projects');
+            agentAdmin.attachCookies(req);
+            req.send({
                     name: "Message Module Test",
                     type: 0,
                     authorUsername: "messagetest.messagetest"
@@ -96,17 +96,6 @@ describe('Message', function () {
     });
 
     describe('.createMessage()', function () {
-        it('must need a content', function (done) {
-            request(apiUrl)
-                .post('/messages/42')
-                .end(function (err, res) {
-                    if (err) return done(err);
-                    expect(res.body.message).to.equal("Error : No content given");
-                    expect(res.body.success).to.equal(0);
-                    done();
-                });
-        });
-
         it('must need to be logged', function (done) {
             request(apiUrl)
                 .post('/messages/42')
@@ -119,6 +108,17 @@ describe('Message', function () {
                     expect(res.body.success).to.equal(0);
                     done();
                 });
+        });
+
+        it('must need a content', function (done) {
+            var req = request(apiUrl).post('/messages/42');
+            agent.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.message).to.equal("Error : No content given");
+                expect(res.body.success).to.equal(0);
+                done();
+            });
         });
 
         it('must check the project given', function (done) {
@@ -287,7 +287,7 @@ describe('Message', function () {
                 done();
             });
         });
-        
+
         it('admin can delete messages', function (done) {
             var req = request(apiUrl)
                 .delete('/message/' + message2Test);
@@ -311,6 +311,16 @@ describe('Message', function () {
     });
 
     describe('End of test', function () {
+        it('must delete the project test', function (done) {
+            var req = request(apiUrl).delete('/projects/' + projectTest);
+            agentAdmin.attachCookies(req);
+            req.end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    done();
+                });
+        });
+        
         it('must logout the current user', function (done) {
             var req = request(apiUrl).delete('/auth')
             agent.attachCookies(req);
@@ -322,15 +332,25 @@ describe('Message', function () {
         });
 
         it('must delete the user test', function (done) {
-            request(apiUrl)
-                .delete('/users/' + userTest)
-                .end(function (err, res) {
+            var req = request(apiUrl).delete('/users/' + userTest);
+            agentAdmin.attachCookies(req);
+            req.end(function (err, res) {
                     if (err) return err;
                     expect(res.body.success).to.equal(1);
                     done();
                 });
         });
         
+        it('must delete the admin test', function (done) {
+            var req = request(apiUrl).delete('/users/' + adminTest);
+            agentAdmin.attachCookies(req);
+            req.end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    done();
+                });
+        });
+
         it('must logout the current admin', function (done) {
             var req = request(apiUrl).delete('/auth')
             agentAdmin.attachCookies(req);
@@ -339,26 +359,6 @@ describe('Message', function () {
                 expect(res.body.success).to.equal(1);
                 done();
             });
-        });
-
-        it('must delete the admin test', function (done) {
-            request(apiUrl)
-                .delete('/users/' + adminTest)
-                .end(function (err, res) {
-                    if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
-        });
-
-        it('must delete the project test', function (done) {
-            request(apiUrl)
-                .delete('/projects/' + projectTest)
-                .end(function (err, res) {
-                    if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
         });
     });
 
