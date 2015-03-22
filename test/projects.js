@@ -47,9 +47,9 @@ describe('Project', function () {
         });
 
         it('must create a new test user', function (done) {
-            request(apiUrl)
-                .post('/users')
-                .send({
+            var req = request(apiUrl).post('/users');
+            agentAdmin.attachCookies(req);
+            req.send({
                     firstName: 'projectTest',
                     lastName: 'projectTest',
                     email: 'something@email.com'
@@ -79,9 +79,9 @@ describe('Project', function () {
         });
 
         it('must create a second new test user', function (done) {
-            request(apiUrl)
-                .post('/users')
-                .send({
+            var req = request(apiUrl).post('/users');
+            agentAdmin.attachCookies(req);
+            req.send({
                     firstName: 'projectTest2',
                     lastName: 'projectTest2',
                     email: 'something@email.com'
@@ -268,7 +268,7 @@ describe('Project', function () {
                 });
         });
 
-        it('user can edit someone\'s project\'s informations', function (done) {
+        it('user cannot edit someone\'s project\'s informations', function (done) {
             var req = request(apiUrl).put('/projects/' + projectTest);
             agent2.attachCookies(req);
             req.send({
@@ -276,7 +276,8 @@ describe('Project', function () {
                 })
                 .end(function (err, res) {
                     if (err) return done(err);
-                    expect(res.body.data.name).to.equal("MyProject");
+                    expect(res.body.success).to.equal(0);
+                    expect(res.body.message).to.equal("Error : You're not an admin");
                     done();
                 });
         });
@@ -288,7 +289,8 @@ describe('Project', function () {
                 })
                 .end(function (err, res) {
                     if (err) return done(err);
-                    expect(res.body.data.name).to.equal("AProject");
+                    expect(res.body.success).to.equal(0);
+                    expect(res.body.message).to.equal("Error : You're not an admin");
                     done();
                 });
         });
@@ -306,26 +308,26 @@ describe('Project', function () {
                     done();
                 });
         });
-        
+
         it('user cannot delete a project', function (done) {
             var req = request(apiUrl).delete('/projects/' + projectTest);
             agent.attachCookies(req);
             req.end(function (err, res) {
-                    if (err) return done(err);
-                    expect(res.body.success).to.equal(0);
-                    expect(res.body.message).to.equal("Error : You're not an admin");
-                    done();
-                });
+                if (err) return done(err);
+                expect(res.body.success).to.equal(0);
+                expect(res.body.message).to.equal("Error : You're not an admin");
+                done();
+            });
         });
 
         it('admin can delete the testProject', function (done) {
             var req = request(apiUrl).delete('/projects/' + projectTest);
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
-                    if (err) return done(err);
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                done();
+            });
         });
 
         it('must be deleted', function (done) {
@@ -379,17 +381,18 @@ describe('Project', function () {
                 done();
             });
         });
-        
+
         it('must delete the test user', function (done) {
-            request(apiUrl)
-                .delete('/users/' + userTest)
-                .end(function (err, res) {
-                    if (err) return done(err);
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
+            var req = request(apiUrl)
+                .delete('/users/' + userTest);
+            agentAdmin.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                done();
+            });
         });
-        
+
         it('must logout the user2Test', function (done) {
             var req = request(apiUrl).delete('/auth')
             agent2.attachCookies(req);
