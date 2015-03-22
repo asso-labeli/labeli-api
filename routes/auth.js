@@ -42,6 +42,7 @@ function login(req, res)
         else {
             console.log("login");
             req.session.userId = user._id;
+            req.session.level = user.level;
             req.session.save();
             Response(res, "Authentification successfull", user, 1);
         }
