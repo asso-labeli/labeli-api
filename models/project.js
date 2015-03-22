@@ -14,3 +14,14 @@ var ProjectSchema   = new Schema(
 });
 
 module.exports = mongoose.model('Project', ProjectSchema);
+
+module.exports.Type = {};
+module.exports.Type.Project = 0;
+module.exports.Type.Event = 1;
+module.exports.Type.Team = 2;
+
+module.exports.Status = {};
+module.exports.Status.Preparation = 0;
+module.exports.Status.Vote = 1;
+module.exports.Status.Working = 2;
+module.exports.Status.Archived = 3;
