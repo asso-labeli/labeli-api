@@ -244,11 +244,10 @@ describe('Vote', function () {
 
         it('admin can get votes', function (done) {
             var req = request(apiUrl).get('/votes/' + projectTest);
-            agent.attachCookies(req);
+            agentAdmin.attachCookies(req);
             req.end(function (err, res) {
                 if (err) return done(err);
-                expect(res.body.success).to.equal(0);
-                expect(res.body.message).to.equal("Error : You're not an admin");
+                expect(res.body.success).to.equal(1);
                 done();
             });
         });
@@ -279,7 +278,7 @@ describe('Vote', function () {
 
         it('admin can get specific vote', function (done) {
             var req = request(apiUrl).get('/vote/' + voteTest);
-            agent.attachCookies(req);
+            agentAdmin.attachCookies(req);
             req.end(function (err, res) {
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
