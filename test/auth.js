@@ -5,25 +5,56 @@ var expect = require('chai').expect,
 var request = require('supertest');
 var superagent = require('superagent');
 var agent = superagent.agent();
+var agentAdmin = superagent.agent();
 
 var apiUrl = 'http://localhost:9010';
 
 var userTest = null;
+var adminTest = null;
     
 describe('Authentification', function(){
     describe('Preparation', function(){
-        it('must create a new user', function(done){
+        it('must create a new admin', function (done) {
             request(apiUrl)
-            .post('/users')
-            .send({firstName : 'authTest',
-                  lastName : 'authTest',
-                  email : 'something@email.com'})
-            .end(function(err, res){
-                if (err) return err;
-                expect(res.body.success).to.equal(1);
-                userTest = res.body.data._id;
-                done();
-            });
+                .post('/admin')
+                .end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    adminTest = res.body.data._id;
+                    done();
+                });
+        });
+
+        it('must logged the admin', function (done) {
+            request(apiUrl)
+                .post('/auth')
+                .send({
+                    username: "admintest.admintest",
+                    password: '098f6bcd4621d373cade4e832627b4f6'
+                })
+                .end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    expect(res.body.message).to.equal("Authentification successfull");
+                    agentAdmin.saveCookies(res);
+                    done();
+                });
+        });
+
+        it('must create a new user', function (done) {
+            var req = request(apiUrl).post('/users');
+            agentAdmin.attachCookies(req);
+            req.send({
+                    firstName: 'authTest',
+                    lastName: 'authTest',
+                    email: 'something@email.com'
+                })
+                .end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    userTest = res.body.data._id;
+                    done();
+                });
         });
     });
     
@@ -105,7 +136,7 @@ describe('Authentification', function(){
     
     describe(".logout()", function(){
         it('must logout the current user', function(done){
-            var req = request(apiUrl).delete('/auth')
+            var req = request(apiUrl).delete('/auth');
             agent.attachCookies(req);
             req.end(function(err, res){
                 if (err) return err;
@@ -115,7 +146,7 @@ describe('Authentification', function(){
         });
         
         it('must have logout the current user', function(done){
-            var req = request(apiUrl).get('/auth')
+            var req = request(apiUrl).get('/auth');
             agent.attachCookies(req);
             req.end(function(err, res){
                 if (err) return err;
@@ -126,10 +157,30 @@ describe('Authentification', function(){
     });
     
     describe("End of test", function(){
-        it ('must delete the test user', function(done){
-            request(apiUrl)
-            .delete('/users/'+userTest)
-            .end(function(err, res){
+        it('must delete the user test', function (done) {
+            var req = request(apiUrl).delete('/users/' + userTest);
+            agentAdmin.attachCookies(req);
+            req.end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    done();
+                });
+        });
+        
+        it('must delete the admin test', function (done) {
+            var req = request(apiUrl).delete('/users/' + adminTest);
+            agentAdmin.attachCookies(req);
+            req.end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(1);
+                    done();
+                });
+        });
+
+        it('must logout the current admin', function (done) {
+            var req = request(apiUrl).delete('/auth')
+            agentAdmin.attachCookies(req);
+            req.end(function (err, res) {
                 if (err) return err;
                 expect(res.body.success).to.equal(1);
                 done();
