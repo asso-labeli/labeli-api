@@ -324,7 +324,7 @@ describe('Vote', function () {
         });
         
         it('member can get result for a vote', function (done) {
-            var req = request(apiUrl).get('/voteResult/' + projectTest)
+            var req = request(apiUrl).get('/voteResult/' + projectTest);
             agent.attachCookies(req);
             req.end(function (err, res) {
                     if (err) return done(err);
