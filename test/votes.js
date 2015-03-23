@@ -200,8 +200,8 @@ describe('Vote', function () {
                     done();
                 });
         });
-        
-        it('user2Test can vote for project', function(done){
+
+        it('user2Test can vote for project', function (done) {
             var req = request(apiUrl).post('/votes/' + projectTest);
             agent2.attachCookies(req);
             req.send({
@@ -220,70 +220,189 @@ describe('Vote', function () {
     });
 
     describe('.getVotes()', function () {
-        it('must have at least one vote', function (done) {
+        it('guest cannot get votes', function (done) {
             request(apiUrl)
                 .get('/votes/' + projectTest)
                 .end(function (err, res) {
                     if (err) return done(err);
-                    expect(res.body.success).to.equal(1);
+                    expect(res.body.success).to.equal(0);
+                    expect(res.body.message).to.equal("Error : Not logged");
                     done();
                 });
+        });
+
+        it('member cannot get votes', function (done) {
+            var req = request(apiUrl).get('/votes/' + projectTest);
+            agent.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(0);
+                expect(res.body.message).to.equal("Error : You're not an admin");
+                done();
+            });
+        });
+
+        it('admin can get votes', function (done) {
+            var req = request(apiUrl).get('/votes/' + projectTest);
+            agent.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(0);
+                expect(res.body.message).to.equal("Error : You're not an admin");
+                done();
+            });
         });
     });
 
     describe('.getVote()', function () {
-        it('must return the vote (with id param)', function (done) {
+        it('guest cannot get specific vote', function (done) {
             request(apiUrl)
                 .get('/vote/' + voteTest)
                 .end(function (err, res) {
                     if (err) return done(err);
+                    expect(res.body.success).to.equal(0);
+                    expect(res.body.message).to.equal("Error : Not logged");
+                    done();
+                });
+        });
+
+        it('member cannot get specific vote', function (done) {
+            var req = request(apiUrl).get('/vote/' + voteTest);
+            agent.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(0);
+                expect(res.body.message).to.equal("Error : You're not an admin");
+                done();
+            });
+        });
+
+        it('admin can get specific vote', function (done) {
+            var req = request(apiUrl).get('/vote/' + voteTest);
+            agent.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                done();
+            });
+        });
+    });
+
+    describe('.getSessionVote()', function () {
+        it('guest cannot get session vote', function (done) {
+            request(apiUrl)
+                .get('/voteForProject/' + projectTest)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    expect(res.body.success).to.equal(0);
+                    expect(res.body.message).to.equal("Error : Not logged");
+                    done();
+                });
+        });
+
+        it('member can get session vote', function (done) {
+            var req = request(apiUrl).get('/voteForProject/' + projectTest);
+            agent.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                expect(res.body.data.value).to.equal(voteValue);
+                done();
+            });
+        });
+    });
+    
+    describe('.getVoteResult()', function(){
+        it('guest cannot get result for a vote', function (done) {
+            request(apiUrl)
+                .get('/voteResult/' + projectTest)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    expect(res.body.success).to.equal(0);
+                    expect(res.body.message).to.equal("Error : Not logged");
+                    done();
+                });
+        });
+        
+        it('member can get result for a vote', function (done) {
+            var req = request(apiUrl).get('/voteResult/' + projectTest)
+            agent.attachCookies(req);
+            req.end(function (err, res) {
+                    if (err) return done(err);
                     expect(res.body.success).to.equal(1);
-                    expect(res.body.data.value).to.equal(voteValue);
+                    expect(res.body.data.negative).to.equal(1);
+                    expect(res.body.data.neutral).to.equal(0);
+                    expect(res.body.data.positive).to.equal(1);
+                    expect(res.body.data.total).to.equal(0);
                     done();
                 });
         });
     });
 
-    describe('.deleteVote()', function () {    
-        it('admin cannot delete someone\'s testVote', function (done) {
-            var req = request(apiUrl).delete('/votes/' + voteTest);
+    describe('.deleteVote()', function () {
+        it('admin can delete someone\'s testVote', function (done) {
+            var req = request(apiUrl).delete('/votes/' + vote2Test);
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
-                    if (err) return done(err);
-                    expect(res.body.success).to.equal(0);
-                    expect(res.body.message).to.equal("Error : You cannot change vote");
-                    done();
-                });
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                done();
+            });
         });
-        
-        it('userTest can delete his testVote', function (done) {
+
+        it('must be deleted', function (done) {
+            var req = request(apiUrl).get('/vote/' + vote2Test);
+            agentAdmin.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(0);
+                done();
+            });
+        });
+
+        it('userTest cannot delete specific vote', function (done) {
             var req = request(apiUrl).delete('/votes/' + voteTest);
             agent.attachCookies(req);
             req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(0);
+                expect(res.body.message).to.equal("Error : You're not an admin");
+                done();
+            });
+        });
+    });
+
+    describe('.deleteSessionVote()', function () {
+        it('guest cannot get session vote', function (done) {
+            request(apiUrl)
+                .delete('/voteForProject/' + projectTest)
+                .end(function (err, res) {
                     if (err) return done(err);
-                    expect(res.body.success).to.equal(1);
+                    expect(res.body.success).to.equal(0);
+                    expect(res.body.message).to.equal("Error : Not logged");
                     done();
                 });
         });
 
-        it('must be deleted', function (done) {
-            request(apiUrl)
-                .get('/vote/' + voteTest)
-                .end(function (err, res) {
-                    if (err) return done(err);
-                    expect(res.body.success).to.equal(0);
-                    done();
-                });
+        it('userTest can delete his vote', function (done) {
+            var req = request(apiUrl).delete('/voteForProject/' + projectTest);
+            agent.attachCookies(req);
+            req.end(function (err, res) {
+                if (err) return done(err);
+                expect(res.body.success).to.equal(1);
+                done();
+            });
         });
         
-        it('user2Test can delete his testVote', function (done) {
-            var req = request(apiUrl).delete('/votes/' + vote2Test);
-            agent2.attachCookies(req);
+        it('userTest cannot delete his vote a second time', function (done) {
+            var req = request(apiUrl).delete('/voteForProject/' + projectTest);
+            agent.attachCookies(req);
             req.end(function (err, res) {
-                    if (err) return done(err);
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
+                if (err) return done(err);
+                expect(res.body.success).to.equal(0);
+                expect(res.body.message).to.equal("Error : Vote not found");
+                done();
+            });
         });
     });
 
@@ -292,12 +411,12 @@ describe('Vote', function () {
             var req = request(apiUrl).delete('/projects/' + projectTest);
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
-                    if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
+                if (err) return err;
+                expect(res.body.success).to.equal(1);
+                done();
+            });
         });
-        
+
         it('must logout the current user2Test', function (done) {
             var req = request(apiUrl).delete('/auth')
             agent2.attachCookies(req);
@@ -312,12 +431,12 @@ describe('Vote', function () {
             var req = request(apiUrl).delete('/users/' + user2Test);
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
-                    if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
+                if (err) return err;
+                expect(res.body.success).to.equal(1);
+                done();
+            });
         });
-        
+
         it('must logout the current userTest', function (done) {
             var req = request(apiUrl).delete('/auth')
             agent.attachCookies(req);
@@ -332,20 +451,20 @@ describe('Vote', function () {
             var req = request(apiUrl).delete('/users/' + userTest);
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
-                    if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
+                if (err) return err;
+                expect(res.body.success).to.equal(1);
+                done();
+            });
         });
-        
+
         it('must delete the adminTest', function (done) {
             var req = request(apiUrl).delete('/users/' + adminTest);
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
-                    if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    done();
-                });
+                if (err) return err;
+                expect(res.body.success).to.equal(1);
+                done();
+            });
         });
 
         it('must logout the current adminTest', function (done) {
