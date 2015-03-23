@@ -11,3 +11,8 @@ var VoteSchema   = new Schema(
 });
 
 module.exports = mongoose.model('Vote', VoteSchema);
+
+module.exports.Value = {};
+module.exports.Value.Negative = -1;
+module.exports.Value.Neutral = 0;
+module.exports.Value.Positive = 1;
