@@ -105,6 +105,7 @@ function createOrEditVote(req, res) {
                         });
                     } else { // Vote already exists -> Modify and save it
                         v.value = vote.value;
+                        v.lastEdited = Date.now();
                         v.save(function (err) {
                             if (err) Response(res, "Error", err, 0);
                             else Response(res, "Vote updated", v, 1);
