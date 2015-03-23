@@ -1,3 +1,31 @@
+/**
+ * <h2>Model</h2>
+ * <table>
+ * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+ * <tr><td>description</td><td>String</td></tr>
+ * <tr><td>name</td><td>String</td></tr>
+ * <tr><td>state</td><td>Number</td><td>1</td></tr>
+ * <tr><td>numberChoices</td><td>Number</td><td>1</td></tr>
+ * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>author</td><td>ObjectId, ref : "User"</td></tr>
+ * </table><br>
+ * <h2>Routing Table</h2>
+ * <table>
+ * <tr><td>POST /surveys/</td><td>{@link Survey.createSurvey}</td></tr>
+ * <tr><td>GET /surveys/</td><td>{@link Survey.getSurveys}</td></tr>
+ * <tr><td>GET /surveys/:survey_id</td><td>{@link Survey.getSurvey}</td></tr>
+ * <tr><td>PUT /surveys/:survey_id</td><td>{@link Survey.editSurvey}</td></tr>
+ * <tr><td>DELETE /surveys/:survey_id</td><td>{@link Survey.deleteSurvey}</td></tr></table><br>
+ * <h2>Constants</h2>
+ * <h5>Survey.State</h5>
+ * <table>
+ * <tr><td>IsClosed</td><td>0</td></tr>
+ * <tr><td>IsOpened</td><td>1</td></tr></table>
+ * @namespace Project
+ * @author Florian Kauder
+ */
+
 var User = require('../models/user');
 var Survey = require('../models/survey');
 var Response = require('../modules/response');
@@ -16,6 +44,14 @@ router.route('/surveys/:survey_id').delete(deleteSurvey);
 
 module.exports = router;
 
+/**
+ * Create a new survey<br>
+ * <b>Level needed :</b> Member
+ * @memberof Survey
+ * @param {Express.Request} req - request send
+ * @param {String} req.body.name - name of the survey
+ * @param {Express.Response} res - variable to send the response
+ */
 function createSurvey(req, res){
     var survey = new Survey();
     var userFound = true;
@@ -63,6 +99,13 @@ function createSurvey(req, res){
     });
 }
 
+/**
+ * Get all surveys<br>
+ * <b>Level needed :</b> Member
+ * @memberof Survey
+ * @param {Express.Request} req - request send
+ * @param {Express.Response} res - variable to send the response
+ */
 function getSurveys(req, res){
     Survey.find(function(err, surveys){
         if (err) Response(res, "Error", err, 0);
@@ -70,6 +113,14 @@ function getSurveys(req, res){
     });
 }
 
+/**
+ * Get a specific survey<br>
+ * <b>Level needed :</b> Member
+ * @memberof Survey
+ * @param {Express.Request} req - request send
+ * @param {ObjectID} req.params.survey_id - ID of survey
+ * @param {Express.Response} res - variable to send the response
+ */
 function getSurvey(req, res){
     Survey.findById(req.params.survey_id, function(err, survey){
         if (err) 
@@ -81,6 +132,17 @@ function getSurvey(req, res){
     });
 }
 
+/**
+ * Edit a survey<br>
+ * <b>Level needed :</b> Owner | Admin
+ * @memberof Survey
+ * @param {Express.Request} req - request send
+ * @param {String} [req.body.description] - new description
+ * @param {String} [req.body.name] - new name
+ * @param {Number} [req.body.state] - new state (0 : closed - 1 : opened)
+ * @param {ObjectID} req.params.survey_id - ID of survey
+ * @param {Express.Response} res - variable to send the response
+ */
 function editSurvey(req, res){
     Survey.findById(req.params.survey_id, function(err, survey){
         if (err) {
@@ -90,6 +152,11 @@ function editSurvey(req, res){
         
         if ('description' in req.body) survey.description = req.body.description;
         if ('name' in req.body) survey.name = req.body.name;
+        if ('state' in req.body) {
+            if (state > 1) survey.state = 1;
+            else if (state < 0) survey.state = 0;
+            else survey.state = req.body.state;
+        }
         
         survey.save(function(err){
             if (err) Response(res, "Error", err, 0);
@@ -98,6 +165,14 @@ function editSurvey(req, res){
     });
 }
 
+/**
+ * Delete a survey<br>
+ * <b>Level needed :</b> Owner | Admin
+ * @memberof Survey
+ * @param {Express.Request} req - request send
+ * @param {ObjectID} req.params.survey_id - ID of survey
+ * @param {Express.Response} res - variable to send the response
+ */
 function deleteSurvey(req, res){
     Survey.remove({_id : req.params.survey_id}, function(err, survey){
         if (err) Response(res, "Error", err, 0);
