@@ -135,17 +135,6 @@ describe('ProjectUser', function(){
             });
         });
         
-        it('must need a level', function(done){
-            var req = request(apiUrl).post('/projectUsers/42');
-            agent2.attachCookies(req);
-            req.end(function(err, res){
-                if (err) return done(err);
-                expect(res.body.message).to.equal("Error : No level given");
-                expect(res.body.success).to.equal(0);
-                done();
-            });
-        });
-        
         it ('simple member cannot add a new administrator to project', function(done){
             var req = request(apiUrl).post('/projectUsers/'+projectTest);
             agent2.attachCookies(req);
