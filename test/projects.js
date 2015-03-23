@@ -355,7 +355,7 @@ describe('Project', function () {
                 .get('/votes/' + projectTest)
                 .end(function (err, res) {
                     if (err) return done(err);
-                    expect(res.body.data).to.be.empty;
+                    expect(res.body.success).to.equal(0);
                     done();
                 });
         });

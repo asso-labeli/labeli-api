@@ -272,8 +272,7 @@ describe('Survey', function () {
                 .get("/surveyVotes/" + surveyTest)
                 .end(function (err, res) {
                     if (err) return err;
-                    expect(res.body.success).to.equal(1);
-                    expect(res.body.data).to.be.empty;
+                    expect(res.body.success).to.equal(0);
                     done();
                 });
         });

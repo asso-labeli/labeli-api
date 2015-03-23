@@ -191,7 +191,7 @@ describe('SurveyVote', function(){
             .end(function(err, res){
                 if (err) return err;
                 expect(res.body.success).to.equal(0);
-                expect(res.body.message).to.equal("Error : One SurveyItem not valid");
+                expect(res.body.message).to.equal("Error : One SurveyItem not exist");
                 done();
             });
         });
@@ -312,7 +312,7 @@ describe('SurveyVote', function(){
             req.end(function (err, res) {
                 if (err) return done(err);
                 expect(res.body.success).to.equal(1);
-                expect(res.body.data.value).to.equal(surveyVoteValue);
+                expect(res.body.data[0].value).to.equal(surveyVoteValue);
                 done();
             });
         });
@@ -336,8 +336,8 @@ describe('SurveyVote', function(){
             req.end(function (err, res) {
                     if (err) return done(err);
                     expect(res.body.success).to.equal(1);
-                    expect(res.body.data[surveyItem]).to.equal(1);
-                    expect(res.body.data[surveyItem2]).to.equal(1);
+                    expect(res.body.data[surveyItemTest]).to.equal(1);
+                    expect(res.body.data[surveyItemTest2]).to.equal(1);
                     expect(res.body.data.total).to.equal(2);
                     done();
                 });

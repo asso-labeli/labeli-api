@@ -7,7 +7,7 @@
  * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
  * <tr><td>survey</td><td>ObjectId</td></tr>
  * <tr><td>value</td><td>ObjectId</td></tr>
- * <tr><td>user</td><td>ObjectId</td></tr>
+ * <tr><td>author</td><td>ObjectId</td></tr>
  * </table><br>
  * <h2>Routing Table</h2>
  * <table>
@@ -55,27 +55,12 @@ module.exports = router;
  * @param {Express.Response} res - variable to send the response
  */
 function createSurveyVote(req, res) {
-    console.log(req.body);
-    var surveyFound = true;
-    var userFound = true;
-    var surveyItemFound = true;
-
-    var surveyVoteFound = true;
-    var numberChoices = -1;
-    var surveyClosed = false;
-
-    var user = null;
-    var survey = null;
-    var surveyItems = [];
-
-    var surveyVoteNotCreated = false;
-
-    var surveyVotes = [];
-
-    if (!('username' in req.body)) {
-        Response(res, "Error : No username given", null, 0);
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
         return;
     }
+
+    // Check variables in req.body
     if (!('items' in req.body)) {
         Response(res, "Error : No items given", null, 0);
         return;
@@ -84,86 +69,124 @@ function createSurveyVote(req, res) {
         return;
     }
 
+    // Checker for survey exist
+    var surveyFound = true;
+    // Checker for surveyItem exist
+    var surveyItemFound = true;
+    // Checker for surveyItem are in the survey
+    var surveyItemValid = true;
+    // Checker for descruction of old surveyVotes
+    var surveyVotesDeleted = true;
+    var deletionError = null;
+
+    var survey = null;
+    var surveyItems = [];
+
+    var surveyVoteNotCreated = false;
+
+    var surveyVotes = [];
+
     async.parallel([
-        function (callback) {
-                User.findOne({
-                    username: req.body.username
-                }, function (err, u) {
-                    if (err || u == null) userFound = false;
-                    else user = u._id;
-                    console.log("User in callback function : " + user);
-                    callback();
-                });
-        },
-        function (callback) {
-                Survey.findById(req.params.survey_id, function (err, s) {
-                    if (err || s == null) surveyFound = false;
-                    else {
-                        survey = s._id;
-                        numberChoices = s.numberChoices;
-                        surveyClosed = s.isClosed;
-                    }
-                    callback();
-                });
+        // Search survey give in params
+        function searchSurvey(callback) {
+                Survey.findById(req.params.survey_id,
+                    function (err, s) {
+                        if (err || s == null) surveyFound = false;
+                        else survey = s;
+                        callback();
+                    });
         }],
-        function (err) {
-            async.each(req.body.items, function (v, callback) {
-                console.log(req.body.items);
-                console.log("item : " + v);
-                console.log("user : " + user + " - survey : " + survey + " - userFound : " + userFound);
-                SurveyItem.findById(v, function (err, surveyItem) {
-                    if (err || surveyItem == null) surveyItemFound = false;
-                    else surveyItems.push(surveyItem._id);
-                    callback();
-                });
-            }, function (err) {
-                console.log("Testing values");
-                if (!userFound) Response(res, "Error : User not found", null, 0);
-                else if (!surveyFound) Response(res, "Error : Survey not found", null, 0);
-                else if (!surveyItemFound) Response(res, "Error : One SurveyItem not valid", null, 0);
-                else if (surveyClosed) Response(res, "Error : Survey closed", null, 0);
-                else {
-                    console.log("Survey : " + surveyItems);
-
-                    async.series([
-                    function (callback) {
-                            SurveyVote.remove({
-                                user: user,
-                                survey: survey
-                            }, function (err) {
-                                callback();
-                            });
-                    },
-                    function (callback) {
-                            async.each(surveyItems, function (v, callback2) {
-                                var sv = new SurveyVote();
-
-                                sv.user = user;
-                                sv.survey = survey;
-                                sv.value = v;
-
-                                surveyVotes.push(sv);
-                                console.log(sv);
-                                sv.save(function (err) {
+        function useResult(err) {
+            // For each item give in parameter
+            async.each(req.body.items,
+                function searchSurveyItem(v, callback) {
+                    SurveyItem.findById(v, function (err, surveyItem) {
+                        // Check if surveyItem exist
+                        if (err || surveyItem == null)
+                            surveyItemFound = false;
+                        // Check if surveyItem are in good survey
+                        else if (!surveyItem.survey.equals(survey._id))
+                            surveyItemValid = false;
+                        else surveyItems.push(surveyItem._id);
+                        callback();
+                    });
+                },
+                function useResult(err) {
+                    // Check if the survey exist
+                    if (!surveyFound)
+                        Response(res, "Error : Survey not found", null, 0);
+                    // Check if all surveyItems exists
+                    else if (!surveyItemFound)
+                        Response(res, "Error : One SurveyItem not exist",
+                            null, 0);
+                    // Check if the survey is closed
+                    else if (survey.state == Survey.State.IsClosed)
+                        Response(res, "Error : Survey closed", null, 0);
+                    // Check if all surveyItems are in the good survey
+                    else if (!surveyItemValid)
+                        Response(res, "Error : One SurveyItem not valid");
+                    // Check number of surveyItems 
+                    else if (surveyItems.length > survey.numberChoices)
+                        Response(res, "Error : Too many surveyItems",
+                            null, 0);
+                    else {
+                        async.series([
+                            // Remove all old surveyVotes
+                    function removeOldSurveyVotes(callback) {
+                                SurveyVote.remove({
+                                    author: req.session.userId,
+                                    survey: survey
+                                }, function (err) {
                                     if (err) {
-                                        surveyVoteNotCreated = true;
+                                        surveyVotesDeleted = false;
+                                        deletionError = err;
                                     }
-                                    callback2();
+                                    callback();
                                 });
-                            });
-                            callback();
                     },
-                    function (callback) {
-                            console.log("Pute " + surveyVotes);
-                            if (surveyVoteNotCreated)
-                                Response(res, "Error : SurveyVote not created", null, 0);
-                            else
-                                Response(res, "SurveyVotes created", surveyVotes, 1);
-                            callback();
+                            // Create all new surveyVotes
+                    function createSurveyVotes(callback) {
+                                if (surveyVotesDeleted) {
+                                    // Create a new vote for each SurveyItem
+                                    async.each(surveyItems,
+                                        function createSurveyVote(v, callbackItem) {
+                                            var sv = new SurveyVote();
+
+                                            sv.author = req.session.userId;
+                                            sv.survey = survey._id;
+                                            sv.value = v;
+
+                                            surveyVotes.push(sv);
+
+                                            sv.save(function (err) {
+                                                if (err)
+                                                    surveyVoteNotCreated = true;
+                                                callbackItem();
+                                            });
+                                        });
+                                }
+                                callback();
+                    },
+                            // Use results of creation and deletion
+                    function useResult(callback) {
+                                // Check if surveyVotes has been correctly deleted
+                                if (!surveyVotesDeleted)
+                                    Response(res,
+                                        "Error : During deletion of old surveyVotes",
+                                        deletionError, 0);
+                                // Check if surveyVotes has been correctly created
+                                else if (surveyVoteNotCreated)
+                                    Response(res,
+                                        "Error : SurveyVote not created",
+                                        null, 0);
+                                else
+                                    Response(res, "SurveyVotes created",
+                                        surveyVotes, 1);
+                                callback();
                     }
                 ]);
-                }
-            });
+                    }
+                });
         });
 }
 
@@ -176,6 +199,14 @@ function createSurveyVote(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getSurveyVotes(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level < User.Level.Admin) {
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
+
     SurveyVote.find({
         survey: req.params.survey_id
     }, function (err, sv) {
@@ -193,6 +224,14 @@ function getSurveyVotes(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getSurveyVote(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level < User.Level.Admin) {
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
+
     SurveyVote.findById(req.params.surveyVote_id, function (err, sv) {
         if (err) Response(res, "Error", err, 0);
         else if (sv == null) Response(res, "Error : SurveyVote not found", null, 0);
@@ -209,11 +248,21 @@ function getSurveyVote(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getSessionSurveyVote(req, res) {
-    SurveyVote.findById(req.params.surveyVote_id, function (err, sv) {
-        if (err) Response(res, "Error", err, 0);
-        else if (sv == null) Response(res, "Error : SurveyVote not found", null, 0);
-        else Response(res, "SurveyVote found", sv, 1);
-    });
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    }
+
+    SurveyVote.find({
+            survey: req.params.survey_id,
+            // Use userId from logged client to find his surveyVotes
+            author: req.session.userId
+        },
+        function (err, sv) {
+            if (err) Response(res, "Error", err, 0);
+            else if (sv == null) Response(res, "Error : SurveyVote not found", null, 0);
+            else Response(res, "SurveyVote found", sv, 1);
+        });
 }
 
 /**
@@ -225,10 +274,20 @@ function getSessionSurveyVote(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function deleteSurveyVote(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level < User.Level.Admin) {
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
+
     SurveyVote.remove({
         _id: req.params.surveyVote_id
     }, function (err, sv) {
         if (err) Response(res, "Error", err, 0);
+        else if (sv == null || sv == [])
+            Response(res, "Error : SurveyVote not found", null, 0);
         else Response(res, "SurveyVote deleted", sv, 1);
     });
 }
@@ -242,10 +301,19 @@ function deleteSurveyVote(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function deleteSessionSurveyVote(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    }
+
     SurveyVote.remove({
-        _id: req.params.surveyVote_id
+        survey: req.params.survey_id,
+        // Use userId from logged client to find his surveyVotes
+        author: req.session.userId
     }, function (err, sv) {
         if (err) Response(res, "Error", err, 0);
+        else if (sv == null || sv == [])
+            Response(res, "Error : SurveyVote not found", null, 0);
         else Response(res, "SurveyVote deleted", sv, 1);
     });
 }
@@ -256,12 +324,40 @@ function deleteSessionSurveyVote(req, res) {
  * - a field with id of surveyItem for each surveyItem<br>
  * (example : data.54f2e15d4a1d54e2)<br>
  * - data.total for the total number of votes<br>
- * <b>Level needed :</b> Admin
+ * <b>Level needed :</b> Member
  * @memberof SurveyVote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.surveyVote_id - id of the surveyVote
  * @param {Express.Response} res - variable to send the response
  */
 function getSurveyVoteResult(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } 
 
+    // Search all votes for the survey
+    SurveyVote.find({
+        survey: req.params.survey_id
+    }, function (err, sv) {
+        if (err) Response(res, "Error", err, 0);
+        else if (sv == null || sv == [])
+            Response(res, "Error : SurveyVotes not found", {total : 0}, 0);
+        else{
+            var data = {total : 0};
+            // For each votes found
+            for (var i = 0; i < sv.length; i++){
+                // sv[i].value == vote.value == a surveyItem (see SurveyVote Model)
+                // Initialize data field if not exist
+                if (data[sv[i].value] == null)
+                    data[sv[i].value] = 0;
+                
+                // Add a vote to field and to total
+                data[sv[i].value]++;
+                data.total++;
+            }
+            
+            Response(res, "SurveyVotes found", data, 1);
+        }
+    });
 }

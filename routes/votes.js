@@ -278,7 +278,7 @@ function getVoteResult(req, res) {
         function (err, votes) {
             if (err) Response(res, "Error", err, 0);
             // If not found, send a empty data array
-            else if (votes == null) Response(res, "Error : Votes not found", {
+            else if (votes == null || votes == []) Response(res, "Error : Votes not found", {
                 negative: 0,
                 neutral: 0,
                 positive: 0,
