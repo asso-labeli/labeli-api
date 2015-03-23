@@ -187,7 +187,7 @@ describe('Vote', function () {
             var req = request(apiUrl).post('/votes/' + projectTest);
             agent.attachCookies(req);
             req.send({
-                    value: -1;
+                    value: -1
                 })
                 .end(function (err, res) {
                     if (err) return done(err);
@@ -251,7 +251,7 @@ describe('Vote', function () {
             req.end(function (err, res) {
                     if (err) return done(err);
                     expect(res.body.success).to.equal(0);
-                    expect(res.body.message).to.equal("Error : You cannot change vote"
+                    expect(res.body.message).to.equal("Error : You cannot change vote");
                     done();
                 });
         });
