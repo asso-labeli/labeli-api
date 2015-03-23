@@ -1,9 +1,6 @@
 # Label[i] - API
 
-
 Remote API for the Label[i] platform
-
-## How does the API work ?
 
 ### Communication
 
