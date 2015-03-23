@@ -1,24 +1,52 @@
-/**
- * {@link SurveyVote.getSurveyVotes}, {@link SurveyVote.getSurveyVote} and {@link SurveyVote.deleteSurveyVote} need admin rights to protect anonymity of votes.<br>
- * <h2>Model</h2>
- * <table>
- * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
- * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
- * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
- * <tr><td>survey</td><td>ObjectId</td></tr>
- * <tr><td>value</td><td>ObjectId</td></tr>
- * <tr><td>author</td><td>ObjectId</td></tr>
- * </table><br>
- * <h2>Routing Table</h2>
- * <table>
- * <tr><td>POST /surveyVotes/:project_id</td><td>{@link SurveyVote.createSurveyVote}</td></tr>
- * <tr><td>GET /surveyVotes/:project_id</td><td>{@link SurveyVote.getSurveyVotes}</td></tr>
- * <tr><td>GET /surveyVote/:surveyVote_id</td><td>{@link SurveyVote.getSurveyVote}</td></tr>
- * <tr><td>DELETE /surveyVote/:surveyVote_id</td><td>{@link SurveyVote.deleteSurveyVote}</td></tr>
- * <tr><td>GET /surveyVoteForProject/:project_id</td><td>{@link SurveyVote.getSessionSurveyVote}</td></tr>
- * <tr><td>DELETE /surveyVoteForProject/:project_id</td><td>{@link SurveyVote.deleteSessionSurveyVote}</td></tr>
- * <tr><td>GET /surveyVoteResult/:project_id</td><td>{@link SurveyVote.getSurveyVoteResult}</td></tr>
- * </table><br></table><br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: surveyVotes.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: surveyVotes.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * {@link SurveyVote.getSurveyVotes}, {@link SurveyVote.getSurveyVote} and {@link SurveyVote.deleteSurveyVote} need admin rights to protect anonymity of votes.&lt;br>
+ * &lt;h2>Model&lt;/h2>
+ * &lt;table>
+ * &lt;tr>&lt;td>&lt;b>Name&lt;/b>&lt;/td>&lt;td>&lt;b>Type&lt;/b>&lt;/td>&lt;td>&lt;b>Default Value&lt;/b>&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>created&lt;/td>&lt;td>Date&lt;/td>&lt;td>Date.now&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>lastEdited&lt;/td>&lt;td>Date&lt;/td>&lt;td>Date.now&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>survey&lt;/td>&lt;td>ObjectId&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>value&lt;/td>&lt;td>ObjectId&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>author&lt;/td>&lt;td>ObjectId&lt;/td>&lt;/tr>
+ * &lt;/table>&lt;br>
+ * &lt;h2>Routing Table&lt;/h2>
+ * &lt;table>
+ * &lt;tr>&lt;td>POST /surveyVotes/:project_id&lt;/td>&lt;td>{@link SurveyVote.createSurveyVote}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>GET /surveyVotes/:project_id&lt;/td>&lt;td>{@link SurveyVote.getSurveyVotes}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>GET /surveyVote/:surveyVote_id&lt;/td>&lt;td>{@link SurveyVote.getSurveyVote}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>DELETE /surveyVote/:surveyVote_id&lt;/td>&lt;td>{@link SurveyVote.deleteSurveyVote}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>GET /surveyVoteForProject/:project_id&lt;/td>&lt;td>{@link SurveyVote.getSessionSurveyVote}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>DELETE /surveyVoteForProject/:project_id&lt;/td>&lt;td>{@link SurveyVote.deleteSessionSurveyVote}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>GET /surveyVoteResult/:project_id&lt;/td>&lt;td>{@link SurveyVote.getSurveyVoteResult}&lt;/td>&lt;/tr>
+ * &lt;/table>&lt;br>&lt;/table>&lt;br>
  * @namespace SurveyVote
  * @author Florian Kauder
  */
@@ -46,8 +74,8 @@ router.route('/surveyVoteResult/:survey_id').get(getSurveyVoteResult);
 module.exports = router;
 
 /**
- * Create or edit one or some surveyVotes on a survey<br>
- * <b>Level needed :</b> Member
+ * Create or edit one or some surveyVotes on a survey&lt;br>
+ * &lt;b>Level needed :&lt;/b> Member
  * @memberof SurveyVote
  * @param {Express.Request} req - request send
  * @param {Array(ObjectID)} req.body.items - array with id of items
@@ -191,8 +219,8 @@ function createSurveyVote(req, res) {
 }
 
 /**
- * Get all SurveyVotes of a survey<br>
- * <b>Level needed :</b> Admin
+ * Get all SurveyVotes of a survey&lt;br>
+ * &lt;b>Level needed :&lt;/b> Admin
  * @memberof SurveyVote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.survey_id - id of the survey
@@ -202,7 +230,7 @@ function getSurveyVotes(req, res) {
     if (req.session.level == User.Level.Guest) {
         Response(res, "Error : Not logged", null, 0);
         return;
-    } else if (req.session.level < User.Level.Admin) {
+    } else if (req.session.level &lt; User.Level.Admin) {
         Response(res, "Error : You're not an admin", null, 0);
         return;
     }
@@ -216,8 +244,8 @@ function getSurveyVotes(req, res) {
 }
 
 /**
- * Get a specific surveyVote<br>
- * <b>Level needed :</b> Admin
+ * Get a specific surveyVote&lt;br>
+ * &lt;b>Level needed :&lt;/b> Admin
  * @memberof SurveyVote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.surveyVote_id - id of the surveyVote
@@ -227,7 +255,7 @@ function getSurveyVote(req, res) {
     if (req.session.level == User.Level.Guest) {
         Response(res, "Error : Not logged", null, 0);
         return;
-    } else if (req.session.level < User.Level.Admin) {
+    } else if (req.session.level &lt; User.Level.Admin) {
         Response(res, "Error : You're not an admin", null, 0);
         return;
     }
@@ -240,8 +268,8 @@ function getSurveyVote(req, res) {
 }
 
 /**
- * Get survey vote on a survey of logged client<br>
- * <b>Level needed :</b> Member
+ * Get survey vote on a survey of logged client&lt;br>
+ * &lt;b>Level needed :&lt;/b> Member
  * @memberof SurveyVote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.survey_id - id of the survey
@@ -266,8 +294,8 @@ function getSessionSurveyVote(req, res) {
 }
 
 /**
- * Delete a surveyVote<br>
- * <b>Level needed :</b> Admin
+ * Delete a surveyVote&lt;br>
+ * &lt;b>Level needed :&lt;/b> Admin
  * @memberof SurveyVote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.surveyVote_id - id of the surveyVote
@@ -277,7 +305,7 @@ function deleteSurveyVote(req, res) {
     if (req.session.level == User.Level.Guest) {
         Response(res, "Error : Not logged", null, 0);
         return;
-    } else if (req.session.level < User.Level.Admin) {
+    } else if (req.session.level &lt; User.Level.Admin) {
         Response(res, "Error : You're not an admin", null, 0);
         return;
     }
@@ -293,8 +321,8 @@ function deleteSurveyVote(req, res) {
 }
 
 /**
- * Delete surveyVotes on a survey of logged client<br>
- * <b>Level needed :</b> Member
+ * Delete surveyVotes on a survey of logged client&lt;br>
+ * &lt;b>Level needed :&lt;/b> Member
  * @memberof SurveyVote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.survey_id - id of the survey
@@ -319,12 +347,12 @@ function deleteSessionSurveyVote(req, res) {
 }
 
 /**
- * Get results for a survey<br>
- * Result has this form :<br>
- * - a field with id of surveyItem for each surveyItem<br>
- * (example : data.54f2e15d4a1d54e2)<br>
- * - data.total for the total number of votes<br>
- * <b>Level needed :</b> Member
+ * Get results for a survey&lt;br>
+ * Result has this form :&lt;br>
+ * - a field with id of surveyItem for each surveyItem&lt;br>
+ * (example : data.54f2e15d4a1d54e2)&lt;br>
+ * - data.total for the total number of votes&lt;br>
+ * &lt;b>Level needed :&lt;/b> Member
  * @memberof SurveyVote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.surveyVote_id - id of the surveyVote
@@ -346,7 +374,7 @@ function getSurveyVoteResult(req, res) {
         else{
             var data = {total : 0};
             // For each votes found
-            for (var i = 0; i < sv.length; i++){
+            for (var i = 0; i &lt; sv.length; i++){
                 // sv[i].value == vote.value == a surveyItem (see SurveyVote Model)
                 // Initialize data field if not exist
                 if (data[sv[i].value] == null)
@@ -360,4 +388,26 @@ function getSurveyVoteResult(req, res) {
             Response(res, "SurveyVotes found", data, 1);
         }
     });
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Message.html">Message</a></li><li><a href="Project.html">Project</a></li><li><a href="ProjectUser.html">ProjectUser</a></li><li><a href="Survey.html">Survey</a></li><li><a href="SurveyItem.html">SurveyItem</a></li><li><a href="SurveyVote.html">SurveyVote</a></li><li><a href="User.html">User</a></li><li><a href="Vote.html">Vote</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Mon Mar 23 2015 18:20:00 GMT+0100 (Paris, Madrid)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
