@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: ProjectUser</title>
+    <title>JSDoc: Namespace: Authentification</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: ProjectUser</h1>
+    <h1 class="page-title">Namespace: Authentification</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-        ProjectUser
+        Authentification
         </h2>
         
     
@@ -39,7 +39,7 @@
     <div class="container-overview">
     
         
-            <div class="description">This is the link between User module and Project module.<br>Creator can only be set during creation of project.<br><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>level</td><td>Number</td><td>0</td></tr><tr><td>author</td><td>ObjectId</td></tr><tr><td>project</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /projectUsers/:project_id</td><td><a href="ProjectUser.html#.createOrEditProjectUser">ProjectUser.createOrEditProjectUser</a></td></tr><tr><td>GET /projectUsers/:project_id</td><td><a href="ProjectUser.html#.getProjectUsers">ProjectUser.getProjectUsers</a></td></tr><tr><td>GET /projectUser/:projectUser_id</td><td><a href="ProjectUser.html#.getProjectUser">ProjectUser.getProjectUser</a></td></tr><tr><td>DELETE /projectUser/:projectUser_id</td><td><a href="ProjectUser.html#.deleteProjectUser">ProjectUser.deleteProjectUser</a></td></tr></table><br><h2>Constants</h2><h5>ProjectUser.Level</h5><table><tr><td>Member</td><td>0</td></tr><tr><td>Administrator</td><td>1</td></tr><tr><td>Creator</td><td>2</td></tr></table></div>
+            <div class="description"><h2>Routing Table</h2><table><tr><td>GET /auth</td><td><a href="Authentification.html#.getAuth">Authentification.getAuth</a></td></tr><tr><td>POST /auth</td><td><a href="Authentification.html#.login">Authentification.login</a></td></tr><tr><td>DELETE /auth</td><td><a href="Authentification.html#.logout">Authentification.logout</a></td></tr></table><br></div>
         
 
         
@@ -81,7 +81,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line1">line 1</a>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -117,14 +117,322 @@
 
     
 
-    <h4 class="name" id=".createOrEditProjectUser"><span class="type-signature">(static) </span>createOrEditProjectUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".encryptPassword"><span class="type-signature">(static) </span>encryptPassword<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Create or edit a new projectUser<br><b>Level needed :</b><br>- At least <i>ProjectUser.Level.Admin</i> to invite someone or to name a new admin<br>- <i>User.Member</i> to join a project
+    Encrypt the password<br><b>[Private Function]</b>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line105">line 105</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getAuth"><span class="type-signature">(static) </span>getAuth<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get current authentification<br><b>Level needed :</b> Guest<br>Return the user as data if logged
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".login"><span class="type-signature">(static) </span>login<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Login a user<br><b>Level needed :</b> Guest
 </div>
 
 
@@ -190,11 +498,7 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -202,45 +506,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>body.level</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">level to give to user in project</td>
-        </tr>
-
     
 
         <tr>
@@ -251,38 +516,24 @@
             <td class="type">
             
                 
-<span class="param-type">ObjectID</span>
+<span class="param-type">String</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">name of user to join to the project</td>
+            <td class="description last">username to login</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>params.project_id</code></td>
+                <td class="name"><code>body.password</code></td>
             
 
             <td class="type">
@@ -295,22 +546,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">ID of the reference project</td>
+            <td class="description last">password of user</td>
         </tr>
 
     
@@ -381,7 +620,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line59">line 59</a>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line50">line 50</a>
     </li></ul></dd>
     
 
@@ -412,14 +651,14 @@
 
     
 
-    <h4 class="name" id=".deleteProjectUser"><span class="type-signature">(static) </span>deleteProjectUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".logout"><span class="type-signature">(static) </span>logout<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Delete a projectUser<br><br><b>/!\</b> : Creator cannot be kicked.<br>To delete him, you must delete the project.<br><b>Level needed :</b> <br>- At least <i>ProjectUser.Level.Admin</i> to kick someone<br>- <i>ProjectUser.Level.Member</i> to leave the project
+    Logout the current user<br><b>Level needed :</b> OldMember
 </div>
 
 
@@ -471,56 +710,7 @@
 
             
 
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params.projectUser_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">ID of the projectUser to delete</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last">request send</td>
         </tr>
 
     
@@ -584,413 +774,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line227">line 227</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".getProjectUser"><span class="type-signature">(static) </span>getProjectUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Get a specific projectUser<br><b>Level needed :</b> Guest
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params.projectUser_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">ID of the projectUser</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line203">line 203</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".getProjectUsers"><span class="type-signature">(static) </span>getProjectUsers<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Get all projectUsers of a project<br><b>Level needed :</b> Guest
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params.project_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">ID of the reference project</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projectUsers.js.html">projectUsers.js</a>, <a href="projectUsers.js.html#line184">line 184</a>
+        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line86">line 86</a>
     </li></ul></dd>
     
 
