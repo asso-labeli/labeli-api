@@ -11,8 +11,8 @@
  * </table><br>
  * <h2>Routing Table</h2>
  * <table>
- * <tr><td>POST /projectUsers/</td><td>{@link ProjectUser.createOrEditProjectUser}</td></tr>
- * <tr><td>GET /projectUsers/</td><td>{@link ProjectUser.getProjectUsers}</td></tr>
+ * <tr><td>POST /projectUsers/:project_id</td><td>{@link ProjectUser.createOrEditProjectUser}</td></tr>
+ * <tr><td>GET /projectUsers/:project_id</td><td>{@link ProjectUser.getProjectUsers}</td></tr>
  * <tr><td>GET /projectUser/:projectUser_id</td><td>{@link ProjectUser.getProjectUser}</td></tr>
  * <tr><td>DELETE /projectUser/:projectUser_id</td><td>{@link ProjectUser.deleteProjectUser}</td></tr></table><br>
  * <h2>Constants</h2>
