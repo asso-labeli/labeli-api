@@ -162,7 +162,7 @@ describe('SurveyItem', function () {
                 });
         });
 
-        it('must add a new surveyItem', function (done) {
+        it('survey\'s admin can add a new surveyItem', function (done) {
             var req = request(apiUrl).post('/surveyItems/' + surveyTest);
             agent.attachCookies(req);
             req.send({
@@ -175,6 +175,20 @@ describe('SurveyItem', function () {
                     expect(res.body.data.name).to.equal("Mon Item");
                     surveyItemTest = res.body.data._id;
                     surveyItemName = res.body.data.name;
+                    done();
+                });
+        });
+        
+        it('simple member cannot add a new surveyItem', function (done) {
+            var req = request(apiUrl).post('/surveyItems/' + surveyTest);
+            agent2.attachCookies(req);
+            req.send({
+                    name: "Mon Item2"
+                })
+                .end(function (err, res) {
+                    if (err) return err;
+                    expect(res.body.success).to.equal(0);
+                    expect(res.body.message).to.equal("Error : You're not an admin");
                     done();
                 });
         });
