@@ -8,7 +8,7 @@
  * <tr><td>numberChoices</td><td>Number</td><td>1</td></tr>
  * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
  * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
- * <tr><td>author</td><td>ObjectId, ref : "User"</td></tr>
+ * <tr><td>author</td><td>ObjectId</td></tr>
  * </table><br>
  * <h2>Routing Table</h2>
  * <table>
@@ -22,7 +22,7 @@
  * <table>
  * <tr><td>IsClosed</td><td>0</td></tr>
  * <tr><td>IsOpened</td><td>1</td></tr></table>
- * @namespace Project
+ * @namespace Survey
  * @author Florian Kauder
  */
 
@@ -50,49 +50,53 @@ module.exports = router;
  * @memberof Survey
  * @param {Express.Request} req - request send
  * @param {String} req.body.name - name of the survey
+ * @param {String} [req.body.description] - description of the survey
+ * @param {Number} [req.body.state] - new state (0 : closed - 1 : opened)
  * @param {Express.Response} res - variable to send the response
  */
-function createSurvey(req, res){
+function createSurvey(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level < User.Level.OldMember) {
+        Response(res, "Error : You're not a member", null, 0);
+        return;
+    }
+
     var survey = new Survey();
-    var userFound = true;
     var surveyNameFound = false;
-    
-    if (!('name' in req.body)){
+
+    // Check variables in req.body
+    if (!('name' in req.body)) {
         Response(res, "Error : No name given", null, 0);
         return;
     }
-    else
-        survey.name = req.body.name;
     
-    if (!('username' in req.body)){
-        Response(res, "Error : No username given", null, 0);
-        return;
-    }
-    else {
-        calls.push(function(callback){
-            User.findOne({username : req.body.username}, function(err, user){
-                if (err || user == null) userFound = false;
-                else survey.author = user._id;
+    if ('description' in req.body) survey.description = req.body.description;
+    if ('state' in req.body) {
+            if (state > 1) survey.state = 1;
+            else if (state < 0) survey.state = 0;
+            else survey.state = req.body.state;
+        }
+
+    // Assign values to survey
+    survey.name = req.body.name;
+    survey.author = req.session.userId;
+
+    async.parallel([
+        function searchSurveyWithSameName(callback) {
+            Survey.findOne({
+                name: req.body.name
+            }, function (err, s) {
+                if (err || s == null) surveyNameFound = false;
+                else surveyNameFound = true;
                 callback();
             });
-        });
-    }
-    
-    calls.push(function(callback){
-        Survey.findOne({name : req.body.name}, function(err, s){
-            if (err || s == null) surveyNameFound = false;
-            else surveyNameFound = true;
-            callback();
-        });
-    });
-    
-    async.parallel(calls, function(){
-        if (!userFound)
-            Response(res, "Error : User not found", null, 0);
-        else if (surveyNameFound)
+    }], function () {
+        if (surveyNameFound)
             Response(res, "Error : Survey's name already exists", null, 0);
         else
-            survey.save(function(err){
+            survey.save(function (err) {
                 if (err) Response(res, "Error", err, 0);
                 else Response(res, "Survey created", survey, 1);
             });
@@ -101,13 +105,13 @@ function createSurvey(req, res){
 
 /**
  * Get all surveys<br>
- * <b>Level needed :</b> Member
+ * <b>Level needed :</b> Guest
  * @memberof Survey
  * @param {Express.Request} req - request send
  * @param {Express.Response} res - variable to send the response
  */
-function getSurveys(req, res){
-    Survey.find(function(err, surveys){
+function getSurveys(req, res) {
+    Survey.find(function (err, surveys) {
         if (err) Response(res, "Error", err, 0);
         else Response(res, "Surveys found", surveys, 1);
     });
@@ -115,19 +119,19 @@ function getSurveys(req, res){
 
 /**
  * Get a specific survey<br>
- * <b>Level needed :</b> Member
+ * <b>Level needed :</b> Guest
  * @memberof Survey
  * @param {Express.Request} req - request send
  * @param {ObjectID} req.params.survey_id - ID of survey
  * @param {Express.Response} res - variable to send the response
  */
-function getSurvey(req, res){
-    Survey.findById(req.params.survey_id, function(err, survey){
-        if (err) 
+function getSurvey(req, res) {
+    Survey.findById(req.params.survey_id, function (err, survey) {
+        if (err)
             Response(res, "Error", err, 0);
-        else if (survey == null) 
+        else if (survey == null)
             Response(res, "Error : Survey not found", null, 0);
-        else 
+        else
             Response(res, "Survey found", survey, 1);
     });
 }
@@ -143,13 +147,25 @@ function getSurvey(req, res){
  * @param {ObjectID} req.params.survey_id - ID of survey
  * @param {Express.Response} res - variable to send the response
  */
-function editSurvey(req, res){
-    Survey.findById(req.params.survey_id, function(err, survey){
+function editSurvey(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    }
+
+    Survey.findById(req.params.survey_id, function (err, survey) {
         if (err) {
             Response(res, "Error", err, 0);
             return;
+        } else if (survey == null) {
+            Response(res, "Error : Survey not found", null, 0);
+            return;
+        } else if ((survey.author != req.session.userId) && (req.session.level < User.Level.Admin)) {
+            Response(res, "Error : You're not an admin", null, 0);
+            return;
         }
-        
+
+        // Change values 
         if ('description' in req.body) survey.description = req.body.description;
         if ('name' in req.body) survey.name = req.body.name;
         if ('state' in req.body) {
@@ -157,8 +173,8 @@ function editSurvey(req, res){
             else if (state < 0) survey.state = 0;
             else survey.state = req.body.state;
         }
-        
-        survey.save(function(err){
+
+        survey.save(function (err) {
             if (err) Response(res, "Error", err, 0);
             else Response(res, "Survey updated", survey, 1);
         });
@@ -173,9 +189,30 @@ function editSurvey(req, res){
  * @param {ObjectID} req.params.survey_id - ID of survey
  * @param {Express.Response} res - variable to send the response
  */
-function deleteSurvey(req, res){
-    Survey.remove({_id : req.params.survey_id}, function(err, survey){
-        if (err) Response(res, "Error", err, 0);
-        else Response(res, "Survey deleted", survey, 1);
+function deleteSurvey(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    }
+
+    Survey.findById(req.params.survey_id, function (err, survey) {
+        if (err) {
+            Response(res, "Error", err, 0);
+            return;
+        } else if (survey == null) {
+            Response(res, "Error : Survey not found", null, 0);
+            return;
+        } else if ((survey.author != req.session.userId) && (req.session.level < User.Level.Admin)) {
+            Response(res, "Error : You're not an admin", null, 0);
+            return;
+        }
+
+        Survey.remove({
+            _id: req.params.survey_id
+        }, function (err, survey) {
+            if (err) Response(res, "Error", err, 0);
+            else Response(res, "Survey deleted", survey, 1);
+        });
     });
+
 }
