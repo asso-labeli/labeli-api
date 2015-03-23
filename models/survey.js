@@ -5,7 +5,7 @@ var SurveySchema   = new Schema(
 {
     description : String,
     name : String,
-    isClosed : {type : Number, default : 0},
+    state : {type : Number, default : 0},
     numberChoices : {type : Number, default : 1},
     created : {type : Date, default : Date.now},
     lastEdited : {type : Date, default : Date.now},
@@ -13,3 +13,8 @@ var SurveySchema   = new Schema(
 });
 
 module.exports = mongoose.model('Survey', SurveySchema);
+
+module.exports.State = {};
+module.exports.State.IsOpened = 0;
+module.exports.State.IsClosed = 1;
+
