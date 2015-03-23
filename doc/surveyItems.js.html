@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: surveyItems.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: surveyItems.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * &lt;h2>Model&lt;/h2>
+ * &lt;table>
+ * &lt;tr>&lt;td>&lt;b>Name&lt;/b>&lt;/td>&lt;td>&lt;b>Type&lt;/b>&lt;/td>&lt;td>&lt;b>Default Value&lt;/b>&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>name&lt;/td>&lt;td>String&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>created&lt;/td>&lt;td>Date&lt;/td>&lt;td>Date.now&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>lastEdited&lt;/td>&lt;td>Date&lt;/td>&lt;td>Date.now&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>survey&lt;/td>&lt;td>ObjectId&lt;/td>&lt;/tr>
+ * &lt;/table>&lt;br>
+ * &lt;h2>Routing Table&lt;/h2>
+ * &lt;table>
+ * &lt;tr>&lt;td>POST /surveyItems/:survey_id&lt;/td>&lt;td>{@link SurveyItem.createSurveyItem}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>GET /surveyItems/:survey_id&lt;/td>&lt;td>{@link SurveyItem.getSurveyItems}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>GET /surveyItem/:surveyItem_id&lt;/td>&lt;td>{@link SurveyItem.getSurveyItem}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>PUT /surveyItem/:surveyItem_id&lt;/td>&lt;td>{@link SurveyItem.editSurveyItem}&lt;/td>&lt;/tr>
+ * &lt;tr>&lt;td>DELETE /surveyItem/:surveyItem_id&lt;/td>&lt;td>{@link SurveyItem.deleteSurveyItem}&lt;/td>&lt;/tr>&lt;/table>&lt;br>
+ * @namespace SurveyItem
+ * @author Florian Kauder
+ */
+
+var Survey = require('../models/survey');
+var SurveyItem = require('../models/surveyItem');
+var Response = require('../modules/response');
+var User = require('../models/user');
+
+var express = require('express');
+var async = require('async');
+var calls = [];
+
+var router = express.Router();
+
+router.route('/surveyItems/:survey_id').post(createSurveyItem);
+router.route('/surveyItems/:survey_id').get(getSurveyItems);
+router.route('/surveyItem/:surveyItem_id').get(getSurveyItem);
+router.route('/surveyItem/:surveyItem_id').put(editSurveyItem);
+router.route('/surveyItem/:surveyItem_id').delete(deleteSurveyItem);
+
+module.exports = router;
+
+/**
+ * Create a new surveyItem&lt;br>
+ * &lt;b>Level needed :&lt;/b> Owner | Admin
+ * @memberof SurveyItem
+ * @param {Express.Request} req - request send
+ * @param {String} req.body.name - name of the item
+ * @param {ObjectId} req.params.survey_id - ID of survey
+ * @param {Express.Response} res - variable to send the response
+ */
+function createSurveyItem(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    }
+
+    // Check variables in req.body
+    if (!('name' in req.body)) {
+        Response(res, "Error : No name given", null, 0);
+        return;
+    }
+
+    var surveyItem = new SurveyItem();
+    var surveyFound = true;
+    var survey = null;
+
+    surveyItem.name = req.body.name;
+
+    async.parallel([
+        // Search Survey to check author
+        function searchSurvey(callback) {
+            Survey.findById(req.params.survey_id, function (err, s) {
+                if (err || s == null) surveyFound = false;
+                else surveyItem.survey = s._id;
+
+                survey = s;
+                callback();
+            });
+    }], function useResult() {
+        if (!surveyFound) Response(res, "Error : Survey not found", null, 0);
+        // Check if the logged client isn't survey's owner or an admin
+        else if ((survey.author != req.session.userId) &amp;&amp;
+            (req.session.level &lt; User.Level.Admin))
+            Response(res, "Error : You're not an admin", null, 0);
+        else surveyItem.save(function (err) {
+            if (err) Response(res, "Error", err, 0);
+            else Response(res, "SurveyItem created", surveyItem, 1);
+        });
+    });
+}
+
+/**
+ * Get all surveyItems of a survey&lt;br>
+ * &lt;b>Level needed :&lt;/b> Guest
+ * @memberof SurveyItem
+ * @param {Express.Request} req - request send
+ * @param {ObjectId} req.params.survey_id - ID of survey
+ * @param {Express.Response} res - variable to send the response
+ */
+function getSurveyItems(req, res) {
+    SurveyItem.find({
+        survey: req.params.survey_id
+    }, function (err, sis) {
+        if (err) Response(res, "Error", err, 0);
+        else Response(res, "SurveyItems found", sis, 1);
+    });
+}
+
+/**
+ * Get a specific surveyItem&lt;br>
+ * &lt;b>Level needed :&lt;/b> Guest
+ * @memberof SurveyItem
+ * @param {Express.Request} req - request send
+ * @param {ObjectId} req.params.surveyItem_id - ID of surveyItem
+ * @param {Express.Response} res - variable to send the response
+ */
+function getSurveyItem(req, res) {
+    SurveyItem.findById(req.params.surveyItem_id, function (err, si) {
+        if (err) Response(res, "Error", err, 0);
+        else if (si == null) Response(res, "Error : SurveyItem not found", null, 0);
+        else Response(res, "SurveyItem found", si, 1);
+    });
+}
+
+/**
+ * Edit a surveyItem&lt;br>
+ * &lt;b>Level needed :&lt;/b> Owner | Admin
+ * @memberof SurveyItem
+ * @param {Express.Request} req - request send
+ * @param {String} [req.body.name] - new name
+ * @param {ObjectId} req.params.surveyItem_id - ID of surveyItem
+ * @param {Express.Response} res - variable to send the response
+ */
+function editSurveyItem(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    }
+
+    // Get the surveyItem
+    SurveyItem.findById(req.params.surveyItem_id, function (err, si) {
+        if (err) {
+            Response(res, "Error", err, 0);
+            return;
+        } else if (si == null) {
+            Response(res, "Error : SurveyItem not found", null, 0);
+            return;
+        }
+
+        // Get the survey of surveyItem
+        Survey.findById(si.survey, function (err, s) {
+            if (err || s == null) Response(res, "Error", err, 0);
+            // Check if the logged client isn't survey's owner or an admin
+            else if ((s.author != req.session.userId) &amp;&amp;
+                (req.session.level &lt; User.Level.Admin))
+                Response(res, "Error : You're not an admin", null, 0);
+            else {
+                if ('name' in req.body) si.name = req.body.name;
+
+                si.save(function (err) {
+                    if (err) Response(res, "Error", err, 0);
+                    else Response(res, "SurveyItem updated", si, 1);
+                });
+            }
+        });
+    });
+}
+
+/**
+ * Delete a surveyItem&lt;br>
+ * &lt;b>Level needed :&lt;/b> Owner | Admin
+ * @memberof SurveyItem
+ * @param {Express.Request} req - request send
+ * @param {ObjectId} req.params.surveyItem_id - ID of surveyItem
+ * @param {Express.Response} res - variable to send the response
+ */
+function deleteSurveyItem(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    }
+
+    // Get the surveyItem
+    SurveyItem.findById(req.params.surveyItem_id, function (err, si) {
+        if (err) {
+            Response(res, "Error", err, 0);
+            return;
+        } else if (si == null) {
+            Response(res, "Error : SurveyItem not found", null, 0);
+            return;
+        }
+
+        // Get the survey of surveyItem
+        Survey.findById(si.survey, function (err, s) {
+            if (err || s == null) Response(res, "Error", err, 0);
+            // Check if the logged client isn't survey's owner or an admin
+            else if ((s.author != req.session.userId) &amp;&amp;
+                (req.session.level &lt; User.Level.Admin))
+                Response(res, "Error : You're not an admin", null, 0);
+            else {
+                SurveyItem.remove({
+                    _id: req.params.surveyItem_id
+                }, function (err, si) {
+                    if (err) Response(res, "Error", err, 0);
+                    else Response(res, "SurveyItem deleted", si, 1);
+                });
+            }
+        });
+    });
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Message.html">Message</a></li><li><a href="Project.html">Project</a></li><li><a href="ProjectUser.html">ProjectUser</a></li><li><a href="Survey.html">Survey</a></li><li><a href="SurveyItem.html">SurveyItem</a></li><li><a href="User.html">User</a></li><li><a href="Vote.html">Vote</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Mon Mar 23 2015 16:39:58 GMT+0100 (Paris, Madrid)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

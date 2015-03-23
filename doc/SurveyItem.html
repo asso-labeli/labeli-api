@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: Project</title>
+    <title>JSDoc: Namespace: SurveyItem</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: Project</h1>
+    <h1 class="page-title">Namespace: SurveyItem</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-        Project
+        SurveyItem
         </h2>
         
     
@@ -39,7 +39,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>name</td><td>String</td></tr><tr><td>picture</td><td>String</td><td>null</td></tr><tr><td>type</td><td>Number</td><td>0</td></tr><tr><td>description</td><td>String</td><td>' '</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>status</td><td>Number</td><td>0</td></tr><tr><td>author</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /projects/</td><td><a href="Project.html#.createProject">Project.createProject</a></td></tr><tr><td>GET /projects/</td><td><a href="Project.html#.getProjects">Project.getProjects</a></td></tr><tr><td>GET /projects/:project_id</td><td><a href="Project.html#.getProject">Project.getProject</a></td></tr><tr><td>PUT /projects/:project_id</td><td><a href="Project.html#.editProject">Project.editProject</a></td></tr><tr><td>DELETE /projects/:project_id</td><td><a href="Project.html#.deleteProject">Project.deleteProject</a></td></tr></table><br><h2>Constants</h2><h5>Project.Type</h5><table><tr><td>Project</td><td>0</td></tr><tr><td>Event</td><td>1</td></tr><tr><td>Team</td><td>2</td></tr></table><h5>Project.Status</h5><table><tr><td>Preparation</td><td>0</td></tr><tr><td>Vote</td><td>1</td></tr><tr><td>Working</td><td>2</td></tr><tr><td>Archived</td><td>3</td></tr></table></div>
+            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>name</td><td>String</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>survey</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /surveyItems/:survey_id</td><td><a href="SurveyItem.html#.createSurveyItem">SurveyItem.createSurveyItem</a></td></tr><tr><td>GET /surveyItems/:survey_id</td><td><a href="SurveyItem.html#.getSurveyItems">SurveyItem.getSurveyItems</a></td></tr><tr><td>GET /surveyItem/:surveyItem_id</td><td><a href="SurveyItem.html#.getSurveyItem">SurveyItem.getSurveyItem</a></td></tr><tr><td>PUT /surveyItem/:surveyItem_id</td><td><a href="SurveyItem.html#.editSurveyItem">SurveyItem.editSurveyItem</a></td></tr><tr><td>DELETE /surveyItem/:surveyItem_id</td><td><a href="SurveyItem.html#.deleteSurveyItem">SurveyItem.deleteSurveyItem</a></td></tr></table><br></div>
         
 
         
@@ -81,7 +81,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projects.js.html">projects.js</a>, <a href="projects.js.html#line1">line 1</a>
+        <a href="surveyItems.js.html">surveyItems.js</a>, <a href="surveyItems.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -117,14 +117,14 @@
 
     
 
-    <h4 class="name" id=".createProject"><span class="type-signature">(static) </span>createProject<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".createSurveyItem"><span class="type-signature">(static) </span>createSurveyItem<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Create a new project<br><b>Level needed :</b> Admin
+    Create a new surveyItem<br><b>Level needed :</b> Owner | Admin
 </div>
 
 
@@ -218,20 +218,20 @@
 
             
 
-            <td class="description last">name of the project</td>
+            <td class="description last">name of the item</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>body.type</code></td>
+                <td class="name"><code>params.survey_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">ObjectId</span>
 
 
             
@@ -241,30 +241,7 @@
 
             
 
-            <td class="description last">type of the project</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.authorUsername</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">author username of the project</td>
+            <td class="description last">ID of survey</td>
         </tr>
 
     
@@ -335,7 +312,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projects.js.html">projects.js</a>, <a href="projects.js.html#line68">line 68</a>
+        <a href="surveyItems.js.html">surveyItems.js</a>, <a href="surveyItems.js.html#line49">line 49</a>
     </li></ul></dd>
     
 
@@ -366,14 +343,14 @@
 
     
 
-    <h4 class="name" id=".deleteProject"><span class="type-signature">(static) </span>deleteProject<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".deleteSurveyItem"><span class="type-signature">(static) </span>deleteSurveyItem<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Delete a project<br><b>Level needed :</b> Admin
+    Delete a surveyItem<br><b>Level needed :</b> Owner | Admin
 </div>
 
 
@@ -439,8 +416,6 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -453,33 +428,23 @@
 
         <tr>
             
-                <td class="name"><code>params.project_id</code></td>
+                <td class="name"><code>params.surveyItem_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ObjectID</span>
+<span class="param-type">ObjectId</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last">ID of project to delete</td>
+            <td class="description last">ID of surveyItem</td>
         </tr>
 
     
@@ -550,7 +515,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projects.js.html">projects.js</a>, <a href="projects.js.html#line224">line 224</a>
+        <a href="surveyItems.js.html">surveyItems.js</a>, <a href="surveyItems.js.html#line175">line 175</a>
     </li></ul></dd>
     
 
@@ -581,14 +546,14 @@
 
     
 
-    <h4 class="name" id=".editProject"><span class="type-signature">(static) </span>editProject<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".editSurveyItem"><span class="type-signature">(static) </span>editSurveyItem<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Edit a project<br><b>Level needed :</b> Owner | Admin
+    Edit a surveyItem<br><b>Level needed :</b> Owner | Admin
 </div>
 
 
@@ -694,20 +659,20 @@
 
             
 
-            <td class="description last">New name</td>
+            <td class="description last">new name</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>body.status</code></td>
+                <td class="name"><code>params.surveyItem_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">ObjectId</span>
 
 
             
@@ -715,8 +680,6 @@
 
             
                 <td class="attributes">
-                
-                    &lt;optional><br>
                 
 
                 
@@ -727,139 +690,7 @@
 
             
 
-            <td class="description last">New status</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.description</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New description</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New type</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.authorUsername</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New author username</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>params.project_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ObjectID</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">ID of project to edit</td>
+            <td class="description last">ID of surveyItem</td>
         </tr>
 
     
@@ -930,7 +761,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projects.js.html">projects.js</a>, <a href="projects.js.html#line168">line 168</a>
+        <a href="surveyItems.js.html">surveyItems.js</a>, <a href="surveyItems.js.html#line132">line 132</a>
     </li></ul></dd>
     
 
@@ -961,14 +792,14 @@
 
     
 
-    <h4 class="name" id=".getProject"><span class="type-signature">(static) </span>getProject<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".getSurveyItem"><span class="type-signature">(static) </span>getSurveyItem<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Get a specific project<br><b>Level needed :</b> Guest
+    Get a specific surveyItem<br><b>Level needed :</b> Guest
 </div>
 
 
@@ -1034,8 +865,6 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -1048,33 +877,23 @@
 
         <tr>
             
-                <td class="name"><code>params.project_id</code></td>
+                <td class="name"><code>params.surveyItem_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ObjectID</span>
+<span class="param-type">ObjectId</span>
 
 
             
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last">ID of project</td>
+            <td class="description last">ID of surveyItem</td>
         </tr>
 
     
@@ -1145,7 +964,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projects.js.html">projects.js</a>, <a href="projects.js.html#line146">line 146</a>
+        <a href="surveyItems.js.html">surveyItems.js</a>, <a href="surveyItems.js.html#line115">line 115</a>
     </li></ul></dd>
     
 
@@ -1176,14 +995,14 @@
 
     
 
-    <h4 class="name" id=".getProjects"><span class="type-signature">(static) </span>getProjects<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".getSurveyItems"><span class="type-signature">(static) </span>getSurveyItems<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Get all projects<br><b>Level needed :</b> Guest
+    Get all surveyItems of a survey<br><b>Level needed :</b> Guest
 </div>
 
 
@@ -1235,7 +1054,56 @@
 
             
 
-            <td class="description last">request send</td>
+            <td class="description last">request send
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params.survey_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectId</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ID of survey</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1299,7 +1167,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="projects.js.html">projects.js</a>, <a href="projects.js.html#line129">line 129</a>
+        <a href="surveyItems.js.html">surveyItems.js</a>, <a href="surveyItems.js.html#line98">line 98</a>
     </li></ul></dd>
     
 
