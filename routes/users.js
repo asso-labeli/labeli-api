@@ -121,7 +121,7 @@ function getUsers(req, res) {
  * <b>Level needed :</b> Guest
  * @memberof User
  * @param {Express.Request} req - request send
- * @param {String} req.params.user_id - User Id OR User username
+ * @param {ObjectId} req.params.user_id - User Id OR User username
  * @param {Express.Response} res - variable to send the response
  */
 function getUser(req, res) {
