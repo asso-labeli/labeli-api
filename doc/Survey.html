@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: Message</title>
+    <title>JSDoc: Namespace: Survey</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: Message</h1>
+    <h1 class="page-title">Namespace: Survey</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-        Message
+        Survey
         </h2>
         
     
@@ -39,7 +39,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>content</td><td>String</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>project</td><td>ObjectId</td></tr><tr><td>author</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /messages/:project_id</td><td><a href="Message.html#.createMessage">Message.createMessage</a></td></tr><tr><td>GET /messages/:project_id</td><td><a href="Message.html#.getMessages">Message.getMessages</a></td></tr><tr><td>GET /messages/:message_id</td><td><a href="Message.html#.getMessage">Message.getMessage</a></td></tr><tr><td>PUT /messages/:message_id</td><td><a href="Message.html#.editMessage">Message.editMessage</a></td></tr><tr><td>DELETE /messages/:message_id</td><td><a href="Message.html#.deleteMessage">Message.deleteMessage</a></td></tr></table><br></div>
+            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>description</td><td>String</td></tr><tr><td>name</td><td>String</td></tr><tr><td>state</td><td>Number</td><td>1</td></tr><tr><td>numberChoices</td><td>Number</td><td>1</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>author</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /surveys/</td><td><a href="Survey.html#.createSurvey">Survey.createSurvey</a></td></tr><tr><td>GET /surveys/</td><td><a href="Survey.html#.getSurveys">Survey.getSurveys</a></td></tr><tr><td>GET /surveys/:survey_id</td><td><a href="Survey.html#.getSurvey">Survey.getSurvey</a></td></tr><tr><td>PUT /surveys/:survey_id</td><td><a href="Survey.html#.editSurvey">Survey.editSurvey</a></td></tr><tr><td>DELETE /surveys/:survey_id</td><td><a href="Survey.html#.deleteSurvey">Survey.deleteSurvey</a></td></tr></table><br><h2>Constants</h2><h5>Survey.State</h5><table><tr><td>IsClosed</td><td>0</td></tr><tr><td>IsOpened</td><td>1</td></tr></table></div>
         
 
         
@@ -81,7 +81,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line1">line 1</a>
+        <a href="surveys.js.html">surveys.js</a>, <a href="surveys.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -117,466 +117,14 @@
 
     
 
-    <h4 class="name" id=".createMessage"><span class="type-signature">(static) </span>createMessage<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".createSurvey"><span class="type-signature">(static) </span>createSurvey<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Create a new message<br><b>Level needed :</b> Member
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>body.content</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">content of message</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.authorUsername</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">username of author</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>params.project_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ObjectID</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">id of project</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line52">line 52</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".deleteMessage"><span class="type-signature">(static) </span>deleteMessage<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Delete a message<br><b>Level needed :</b> Owner | Admin
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params.message_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ObjectID</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">id of message</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line173">line 173</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".editMessage"><span class="type-signature">(static) </span>editMessage<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Edit a message<br><b>Level needed :</b> Owner | Admin
+    Create a new survey<br><b>Level needed :</b> Member
 </div>
 
 
@@ -656,13 +204,13 @@
 
         <tr>
             
-                <td class="name"><code>params.message_id</code></td>
+                <td class="name"><code>body.name</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ObjectID</span>
+<span class="param-type">String</span>
 
 
             
@@ -680,14 +228,14 @@
 
             
 
-            <td class="description last">id of message</td>
+            <td class="description last">name of the survey</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>body.content</code></td>
+                <td class="name"><code>body.description</code></td>
             
 
             <td class="type">
@@ -713,7 +261,40 @@
 
             
 
-            <td class="description last">new content</td>
+            <td class="description last">description of the survey</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>body.state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">new state (0 : closed - 1 : opened)</td>
         </tr>
 
     
@@ -784,7 +365,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line139">line 139</a>
+        <a href="surveys.js.html">surveys.js</a>, <a href="surveys.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -815,14 +396,14 @@
 
     
 
-    <h4 class="name" id=".getMessage"><span class="type-signature">(static) </span>getMessage<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".deleteSurvey"><span class="type-signature">(static) </span>deleteSurvey<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Get a specific message<br><b>Level needed :</b> Guest
+    Delete a survey<br><b>Level needed :</b> Owner | Admin
 </div>
 
 
@@ -900,7 +481,7 @@
 
         <tr>
             
-                <td class="name"><code>params.message_id</code></td>
+                <td class="name"><code>params.survey_id</code></td>
             
 
             <td class="type">
@@ -916,7 +497,7 @@
 
             
 
-            <td class="description last">id of message</td>
+            <td class="description last">ID of survey</td>
         </tr>
 
     
@@ -987,7 +568,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line121">line 121</a>
+        <a href="surveys.js.html">surveys.js</a>, <a href="surveys.js.html#line192">line 192</a>
     </li></ul></dd>
     
 
@@ -1018,14 +599,326 @@
 
     
 
-    <h4 class="name" id=".getMessages"><span class="type-signature">(static) </span>getMessages<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".editSurvey"><span class="type-signature">(static) </span>editSurvey<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Get all messages from a project<br><b>Level needed :</b> Guest
+    Edit a survey<br><b>Level needed :</b> Owner | Admin
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>body.description</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">new description</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>body.name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">new name</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>body.state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">new state (0 : closed - 1 : opened)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params.survey_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectID</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">ID of survey</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="surveys.js.html">surveys.js</a>, <a href="surveys.js.html#line150">line 150</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getSurvey"><span class="type-signature">(static) </span>getSurvey<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get a specific survey<br><b>Level needed :</b> Guest
 </div>
 
 
@@ -1103,7 +996,7 @@
 
         <tr>
             
-                <td class="name"><code>params.project_id</code></td>
+                <td class="name"><code>params.survey_id</code></td>
             
 
             <td class="type">
@@ -1119,7 +1012,7 @@
 
             
 
-            <td class="description last">id of project</td>
+            <td class="description last">ID of survey</td>
         </tr>
 
     
@@ -1190,7 +1083,161 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="messages.js.html">messages.js</a>, <a href="messages.js.html#line102">line 102</a>
+        <a href="surveys.js.html">surveys.js</a>, <a href="surveys.js.html#line128">line 128</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getSurveys"><span class="type-signature">(static) </span>getSurveys<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get all surveys<br><b>Level needed :</b> Guest
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="surveys.js.html">surveys.js</a>, <a href="surveys.js.html#line113">line 113</a>
     </li></ul></dd>
     
 
