@@ -340,7 +340,7 @@ describe('Vote', function () {
 
     describe('.deleteVote()', function () {
         it('admin can delete someone\'s testVote', function (done) {
-            var req = request(apiUrl).delete('/votes/' + vote2Test);
+            var req = request(apiUrl).delete('/vote/' + vote2Test);
             agentAdmin.attachCookies(req);
             req.end(function (err, res) {
                 if (err) return done(err);
@@ -360,7 +360,7 @@ describe('Vote', function () {
         });
 
         it('userTest cannot delete specific vote', function (done) {
-            var req = request(apiUrl).delete('/votes/' + voteTest);
+            var req = request(apiUrl).delete('/vote/' + voteTest);
             agent.attachCookies(req);
             req.end(function (err, res) {
                 if (err) return done(err);
