@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: User</title>
+    <title>JSDoc: Namespace: Vote</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: User</h1>
+    <h1 class="page-title">Namespace: Vote</h1>
 
     
 
@@ -29,7 +29,7 @@
 <header>
     
         <h2>
-        User
+        Vote
         </h2>
         
     
@@ -39,7 +39,7 @@
     <div class="container-overview">
     
         
-            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>lastName</td><td>String</td></tr><tr><td>firstName</td><td>String</td></tr><tr><td>username</td><td>String</td></tr><tr><td>email</td><td>String</td></tr><tr><td>passwordHash</td><td>String</td></tr><tr><td>privateKey</td><td>String</td></tr><tr><td>picture</td><td>String</td><td>null</td></tr><tr><td>level</td><td>Number</td><td>1</td></tr><tr><td>description</td><td>String</td><td> ' '</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>birthday</td><td>Date</td><td>new Date('01.01.1970T01:00')</td></tr><tr><td>universityGroup</td><td>String</td><td>'Inconnu'</td></tr><tr><td>website</td><td>String</td><td>null</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /users/</td><td><a href="User.html#.createUser">User.createUser</a></td></tr><tr><td>GET /users/</td><td><a href="User.html#.getUsers">User.getUsers</a></td></tr><tr><td>GET /users/:user_id</td><td><a href="User.html#.getUser">User.getUser</a></td></tr><tr><td>PUT /users/:user_id</td><td><a href="User.html#.editUser">User.editUser</a></td></tr><tr><td>DELETE /users/:user_id</td><td><a href="User.html#.deleteUser">User.deleteUser</a></td></tr></table><br><h2>Constants</h2><h5>User.Level</h5><table><tr><td>Guest</td><td>-1</td></tr><tr><td>OldMember</td><td>0</td></tr><tr><td>Member</td><td>1</td></tr><tr><td>Admin</td><td>3</td></tr></table></div>
+            <div class="description"><a href="Vote.html#.getVotes">Vote.getVotes</a>, <a href="Vote.html#.getVote">Vote.getVote</a> and <a href="Vote.html#.deleteVote">Vote.deleteVote</a> need admin rights to protect anonymity of votes.<br><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>value</td><td>Number</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>project</td><td>ObjectId</td></tr><tr><td>author</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /votes/:project_id</td><td><a href="Vote.html#.createOrEditVote">Vote.createOrEditVote</a></td></tr><tr><td>GET /votes/:project_id</td><td><a href="Vote.html#.getVotes">Vote.getVotes</a></td></tr><tr><td>GET /vote/:vote_id</td><td><a href="Vote.html#.getVote">Vote.getVote</a></td></tr><tr><td>DELETE /vote/:vote_id</td><td><a href="Vote.html#.deleteVote">Vote.deleteVote</a></td></tr><tr><td>GET /voteForProject/:project_id</td><td><a href="Vote.html#.getSessionVote">Vote.getSessionVote</a></td></tr><tr><td>DELETE /voteForProject/:project_id</td><td><a href="Vote.html#.deleteSessionVote">Vote.deleteSessionVote</a></td></tr><tr><td>GET /voteResult/:project_id</td><td><a href="Vote.html#.getVoteResult">Vote.getVoteResult</a></td></tr></table><br></table><br><h2>Constants</h2><h5>Vote.Value</h5><table><tr><td>Negative</td><td>-1</td></tr><tr><td>Neutral</td><td>0</td></tr><tr><td>Positive</td><td>1</td></tr></table></div>
         
 
         
@@ -81,7 +81,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="users.js.html">users.js</a>, <a href="users.js.html#line1">line 1</a>
+        <a href="votes.js.html">votes.js</a>, <a href="votes.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -117,14 +117,14 @@
 
     
 
-    <h4 class="name" id=".createUser"><span class="type-signature">(static) </span>createUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".createOrEditVote"><span class="type-signature">(static) </span>createOrEditVote<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Create a new user<br><b>Level needed :</b> Admin
+    Create or edit a vote on project<br><b>Level needed :</b> Member
 </div>
 
 
@@ -202,908 +202,7 @@
 
         <tr>
             
-                <td class="name"><code>body.firstName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">first name of user</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.lastName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">last name of user</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.email</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">email of user</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="users.js.html">users.js</a>, <a href="users.js.html#line65">line 65</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".deleteUser"><span class="type-signature">(static) </span>deleteUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Delete a user<br><b>Level needed :</b> Admin
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params.user_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ObjectID</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">ID of user to delete</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="users.js.html">users.js</a>, <a href="users.js.html#line197">line 197</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".editUser"><span class="type-signature">(static) </span>editUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Edit a user<br><b>Level needed :</b> Owner | Admin
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>body.firstName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New first name</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.lastName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New last name</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.email</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New email</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.website</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New website</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.universityGroup</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New university group</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.birthday</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New birthday (LocaleDateString)</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.description</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New description</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>body.picture</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">New url for picture</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>params.user_id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ObjectID</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">ID of user to edit</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="users.js.html">users.js</a>, <a href="users.js.html#line164">line 164</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".generateRandomString"><span class="type-signature">(static) </span>generateRandomString<span class="signature">(length)</span><span class="type-signature"> &rarr; {String}</span></h4>
-
-    
-
-
-
-<div class="description">
-    Generate a random string<br><b>[Private Function]</b>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>length</code></td>
+                <td class="name"><code>body.value</code></td>
             
 
             <td class="type">
@@ -1119,7 +218,60 @@
 
             
 
-            <td class="description last">Length of the generated string</td>
+            <td class="description last">value of the vote</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>params.project_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectId</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id of the project</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
         </tr>
 
     
@@ -1160,7 +312,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="users.js.html">users.js</a>, <a href="users.js.html#line235">line 235</a>
+        <a href="votes.js.html">votes.js</a>, <a href="votes.js.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -1183,28 +335,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    the random String
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">String</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -1213,14 +343,14 @@
 
     
 
-    <h4 class="name" id=".getUser"><span class="type-signature">(static) </span>getUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".deleteSessionVote"><span class="type-signature">(static) </span>deleteSessionVote<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Get a specific user<br><b>Level needed :</b> Guest
+    Delete vote of logged client on a project<br><b>Level needed :</b> Member
 </div>
 
 
@@ -1298,7 +428,7 @@
 
         <tr>
             
-                <td class="name"><code>params.user_id</code></td>
+                <td class="name"><code>params.project_id</code></td>
             
 
             <td class="type">
@@ -1314,7 +444,7 @@
 
             
 
-            <td class="description last">User Id OR User username</td>
+            <td class="description last">id of the project</td>
         </tr>
 
     
@@ -1385,7 +515,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="users.js.html">users.js</a>, <a href="users.js.html#line127">line 127</a>
+        <a href="votes.js.html">votes.js</a>, <a href="votes.js.html#line229">line 229</a>
     </li></ul></dd>
     
 
@@ -1416,14 +546,14 @@
 
     
 
-    <h4 class="name" id=".getUsers"><span class="type-signature">(static) </span>getUsers<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".deleteVote"><span class="type-signature">(static) </span>deleteVote<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Get all users<br><b>Level needed :</b> Guest
+    Delete a specific vote<br><b>Level needed :</b> Admin
 </div>
 
 
@@ -1475,7 +605,56 @@
 
             
 
-            <td class="description last">request send</td>
+            <td class="description last">request send
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params.vote_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectId</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id of the vote to delete</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1539,7 +718,819 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="users.js.html">users.js</a>, <a href="users.js.html#line110">line 110</a>
+        <a href="votes.js.html">votes.js</a>, <a href="votes.js.html#line204">line 204</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getSessionVote"><span class="type-signature">(static) </span>getSessionVote<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get vote of logged client on a project<br><b>Level needed :</b> Member
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params.project_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectId</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id of the project</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="votes.js.html">votes.js</a>, <a href="votes.js.html#line178">line 178</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getVote"><span class="type-signature">(static) </span>getVote<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get a specific vote<br><b>Level needed :</b> Admin
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params.vote_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectId</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id of the vote</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="votes.js.html">votes.js</a>, <a href="votes.js.html#line154">line 154</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getVoteResult"><span class="type-signature">(static) </span>getVoteResult<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get result votes for a specific project<br>Result is an associative array with :<br>- data.negative for number of negative votes<br>- data.neutral for number of neutral votes<br>- data.positive for number of positive votes<br>- data.total for total score<br><b>Level needed :</b> Member
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params.project_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectId</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id of the project</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="votes.js.html">votes.js</a>, <a href="votes.js.html#line267">line 267</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".getVotes"><span class="type-signature">(static) </span>getVotes<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Get all votes of a project<br><b>Level needed :</b> Admin
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">request send
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params.project_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ObjectId</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id of the project</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="votes.js.html">votes.js</a>, <a href="votes.js.html#line127">line 127</a>
     </li></ul></dd>
     
 
