@@ -62,4 +62,6 @@ To generate documentation :
 
 > jsdoc ./routes -c ./config.json -d ./doc -t ./node_modules/ink-docstrap/template -r ./doc_readme.md
 
+> cp ./site.yeti.css ./doc/styles/
+
 This command will generate documentation of _./routes_ folder in _./doc_ folder, and user the _./doc_readme.md_ file to generate index.html.
