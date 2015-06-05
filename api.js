@@ -6,6 +6,8 @@ var vhost       = require('vhost');
 var app         = express();
 var router      = express.Router();
 
+var favicon = require('serve-favicon');
+
 var mongoose   = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/labeli-api');
 
