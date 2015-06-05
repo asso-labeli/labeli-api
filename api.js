@@ -32,13 +32,13 @@ app.use(function(req, res, next)
 app.use(function(req, res, next)
 {
     console.log("request by "+req.session.userId);
-    
+
     if(req.session.userId == undefined)
     {
         req.session.userId = null;
         req.session.level = -1;
     }
-    
+
     next();
 });
 
@@ -54,6 +54,9 @@ app.use(require('./routes/surveyVotes'));
 
 // Add doc
 app.use("/", express.static("./doc/"));
+
+// Add favicon
+app.use(favicon(__dirname + "/styles/favicon.ico"));
 
 app.use(router);
 app.listen(9010);
