@@ -101,7 +101,7 @@ function createMessage(req, res) {
  */
 function getMessages(req, res) {
     Message.find({
-        thread: req.params.project_id
+        project: req.params.project_id
     }, function (err, messages) {
         if (err) Response(res, "Error", err, 0);
         else if (messages == null)

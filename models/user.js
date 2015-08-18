@@ -5,9 +5,9 @@ var Schema       = mongoose.Schema;
 * -1 : Guest
 * 0 : Old Member
 * 1 : Member
-* 2 : 
+* 2 :
 * 3 : Administrator
-* 4 : 
+* 4 :
 **/
 
 var UserSchema   = new Schema(
@@ -18,6 +18,7 @@ var UserSchema   = new Schema(
     email : String,
     passwordHash : String,
     privateKey : String,
+    role : {type : String, default : "Membre"},
     picture : {type : String, default : null},
     level : {type : Number, default : 1},
     description : {type : String, default : ''},
