@@ -91,7 +91,7 @@ function createUser(req, res) {
 
     // Create random passwords and salt
     user.privateKey = generateRandomString(32);
-    var password = generateRandomPassword(9);
+    var password = generateRandomString(9);
 
     crypto.pbkdf2(password, user.privateKey, apiConf.cryptIterations, apiConf.cryptLen, function (err, key) {
         if (!err) {
