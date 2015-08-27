@@ -8,6 +8,7 @@
  * <tr><td>description</td><td>String</td><td>' '</td></tr>
  * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
  * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>picture</td><td>String</td><td>' '</td></tr>
  * <tr><td>status</td><td>Number</td><td>0</td></tr>
  * <tr><td>author</td><td>ObjectId</td></tr>
  * </table><br>
@@ -179,12 +180,13 @@ function editProject(req, res) {
         }
 
         var usernameFound = true;
-        
+
         // Edit project values
         if ("name" in req.body) project.name = req.body.name;
         if ("status" in req.body) project.status = req.body.status;
         if ("description" in req.body) project.description = req.body.description;
         if ("type" in req.body) project.type = req.body.type;
+        if ("picture" in req.body) project.picture = req.body.picture;
         if ("authorUsername" in req.body)
             calls.push(function (callback) {
                 User.findOne({
@@ -192,11 +194,11 @@ function editProject(req, res) {
                     },
                     function (err, user) {
                         if (err) usernameFound = false;
-                        else project.author = user;
+                        else project.author = user._id;
                         callback();
                     });
             });
-        
+
         project.lastEdited = Date.now();
 
         // Wait and save the project
@@ -226,7 +228,7 @@ function deleteProject(req, res) {
         Response(res, "Error : You're not an admin", null, 0);
         return;
     }
-    
+
     // Remove the project
     Project.remove({
         _id: req.params.project_id

@@ -9,6 +9,7 @@
  * <tr><td>passwordHash</td><td>String</td></tr>
  * <tr><td>privateKey</td><td>String</td></tr>
  * <tr><td>picture</td><td>String</td><td>null</td></tr>
+ * <tr><td>role</td><td>String</td><td>Membre</td></tr>
  * <tr><td>level</td><td>Number</td><td>1</td></tr>
  * <tr><td>description</td><td>String</td><td> ' '</td></tr>
  * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
@@ -206,7 +207,7 @@ function deleteUser(req, res) {
         });
 }
 
-// Function available only in debug mode 
+// Function available only in debug mode
 function createAdmin(req, res) {
     var user = new User();
 
@@ -216,7 +217,7 @@ function createAdmin(req, res) {
     user.level = User.Level.Admin;
 
     user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
-    user.privateKey = generateRandomString(32);
+    user.privateKey = "poulpe";
     user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
 
     user.save(function (err) {

@@ -143,6 +143,7 @@ describe('Message', function () {
                 content: "No",
             }).end(function (err, res) {
                 if (err) return done(err);
+                console.log(res.body);
                 expect(res.body.success).to.equal(1);
                 expect(res.body.data.content).to.equal('No');
                 expect(res.body.data.project).to.equal(projectTest);
@@ -320,7 +321,7 @@ describe('Message', function () {
                     done();
                 });
         });
-        
+
         it('must logout the current user', function (done) {
             var req = request(apiUrl).delete('/auth')
             agent.attachCookies(req);
@@ -340,7 +341,7 @@ describe('Message', function () {
                     done();
                 });
         });
-        
+
         it('must delete the admin test', function (done) {
             var req = request(apiUrl).delete('/users/' + adminTest);
             agentAdmin.attachCookies(req);
