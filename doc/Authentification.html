@@ -1,29 +1,52 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Namespace: Authentification</title>
+<meta charset="utf-8">
+<title>Label[i] API Namespace: Authentification</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+<link type="text/css" rel="stylesheet" href="styles/site.yeti.css">
+
 </head>
 
 <body>
 
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+<div class="navbar-header">
+<a class="navbar-brand" href="index.html">Label[i] API</a>
+</div>
+<div class="navbar-collapse">
+<ul class="nav navbar-nav">
+
+<li class="dropdown">
+<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+<ul class="dropdown-menu ">
+<li><a href="Authentification.html">Authentification</a></li><li><a href="Message.html">Message</a></li><li><a href="Project.html">Project</a></li><li><a href="ProjectUser.html">ProjectUser</a></li><li><a href="Survey.html">Survey</a></li><li><a href="SurveyItem.html">SurveyItem</a></li><li><a href="SurveyVote.html">SurveyVote</a></li><li><a href="User.html">User</a></li><li><a href="Vote.html">Vote</a></li>
+</ul>
+</li>
+
+</ul>
+</div>
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+
+
+<div class="col-md-8">
+
 <div id="main">
 
-    <h1 class="page-title">Namespace: Authentification</h1>
 
-    
-
-
-
-
+	<h1 class="page-title">Namespace: Authentification</h1>
 <section>
 
 <header>
@@ -35,6 +58,7 @@
     
 </header>
 
+
 <article>
     <div class="container-overview">
     
@@ -43,9 +67,14 @@
         
 
         
-
-
 <dl class="details">
+	
+
+	
+
+	
+
+	
 
     
 
@@ -55,41 +84,32 @@
 
     
 
-    
+	
 
-    
+	
+	<dt class="tag-author">Author:</dt>
+	<dd class="tag-author">
+		<ul>
+			<li>Florian Kauder</li>
+			</ul>
+	</dd>
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li>Florian Kauder</li>
-        </ul>
-    </dd>
-    
+	
 
-    
 
-    
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line1">line 1</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
@@ -103,7 +123,7 @@
 
     
 
-     
+    
 
     
 
@@ -112,51 +132,221 @@
     
         <h3 class="subsection-title">Methods</h3>
 
+        <dl>
+            
+<dt>
+    <h4 class="name" id=".encryptPassword"><span class="type-signature">&lt;static> </span>encryptPassword<span class="signature">(password, privateKey, usePassword)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Encrypt the password<br><b>[Private Function]</b>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+        <h5>Parameters:</h5>
         
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
             
 
+            <td class="type">
+            
+                
+<span class="param-type">Express.Request</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the password to encrypt</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>privateKey</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the key to use</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>usePassword</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the function which will use the encrypted password</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
     
 
-    <h4 class="name" id=".encryptPassword"><span class="type-signature">(static) </span>encryptPassword<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    
 
     
 
-
-
-<div class="description">
-    Encrypt the password<br><b>[Private Function]</b>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
     
 
-<table class="params">
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id=".getAuth"><span class="type-signature">&lt;static> </span>getAuth<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get current authentification<br><b>Level needed :</b> Guest<br>Return the user as data if logged
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
+	<tr>
+		
+		<th>Name</th>
+		
 
-        <th>Type</th>
+		<th>Type</th>
 
-        
+		
 
-        
+		
 
-        <th class="last">Description</th>
-    </tr>
-    </thead>
+		<th class="last">Description</th>
+	</tr>
+	</thead>
 
-    <tbody>
-    
+	<tbody>
+	
 
         <tr>
             
@@ -179,7 +369,7 @@
             <td class="description last">request send</td>
         </tr>
 
-    
+	
 
         <tr>
             
@@ -202,16 +392,21 @@
             <td class="description last">variable to send the response</td>
         </tr>
 
-    
-    </tbody>
+	
+	</tbody>
 </table>
 
-
-
-
-
-
+    
+    
+    
 <dl class="details">
+	
+
+	
+
+	
+
+	
 
     
 
@@ -221,250 +416,86 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line105">line 105</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
+    
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
+</dd>
 
         
             
+<dt>
+    <h4 class="name" id=".login"><span class="type-signature">&lt;static> </span>login<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Login a user<br><b>Level needed :</b> Guest
+    </div>
+    
 
     
 
-    <h4 class="name" id=".getAuth"><span class="type-signature">(static) </span>getAuth<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
     
-
-
-
-<div class="description">
-    Get current authentification<br><b>Level needed :</b> Guest<br>Return the user as data if logged
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
     
+    
+    
+        <h5>Parameters:</h5>
+        
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
+	<tr>
+		
+		<th>Name</th>
+		
 
-        <th>Type</th>
+		<th>Type</th>
 
-        
+		
 
-        
+		
 
-        <th class="last">Description</th>
-    </tr>
-    </thead>
+		<th class="last">Description</th>
+	</tr>
+	</thead>
 
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Request</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">request send</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Express.Response</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">variable to send the response</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line32">line 32</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".login"><span class="type-signature">(static) </span>login<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Login a user<br><b>Level needed :</b> Guest
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
+	<tbody>
+	
 
         <tr>
             
@@ -488,25 +519,25 @@
                 <h6>Properties</h6>
                 
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
+	<tr>
+		
+		<th>Name</th>
+		
 
-        <th>Type</th>
+		<th>Type</th>
 
-        
+		
 
-        
+		
 
-        <th class="last">Description</th>
-    </tr>
-    </thead>
+		<th class="last">Description</th>
+	</tr>
+	</thead>
 
-    <tbody>
-    
+	<tbody>
+	
 
         <tr>
             
@@ -529,7 +560,7 @@
             <td class="description last">username to login</td>
         </tr>
 
-    
+	
 
         <tr>
             
@@ -552,14 +583,14 @@
             <td class="description last">password of user</td>
         </tr>
 
-    
-    </tbody>
+	
+	</tbody>
 </table>
 
             </td>
         </tr>
 
-    
+	
 
         <tr>
             
@@ -582,16 +613,21 @@
             <td class="description last">variable to send the response</td>
         </tr>
 
-    
-    </tbody>
+	
+	</tbody>
 </table>
 
-
-
-
-
-
+    
+    
+    
 <dl class="details">
+	
+
+	
+
+	
+
+	
 
     
 
@@ -601,96 +637,86 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line50">line 50</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
+    
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
+</dd>
 
         
             
+<dt>
+    <h4 class="name" id=".logout"><span class="type-signature">&lt;static> </span>logout<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Logout the current user<br><b>Level needed :</b> OldMember
+    </div>
+    
 
     
 
-    <h4 class="name" id=".logout"><span class="type-signature">(static) </span>logout<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
-
     
-
-
-
-<div class="description">
-    Logout the current user<br><b>Level needed :</b> OldMember
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
     
+    
+    
+        <h5>Parameters:</h5>
+        
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
-    <tr>
-        
-        <th>Name</th>
-        
+	<tr>
+		
+		<th>Name</th>
+		
 
-        <th>Type</th>
+		<th>Type</th>
 
-        
+		
 
-        
+		
 
-        <th class="last">Description</th>
-    </tr>
-    </thead>
+		<th class="last">Description</th>
+	</tr>
+	</thead>
 
-    <tbody>
-    
+	<tbody>
+	
 
         <tr>
             
@@ -713,7 +739,7 @@
             <td class="description last">request send</td>
         </tr>
 
-    
+	
 
         <tr>
             
@@ -736,16 +762,21 @@
             <td class="description last">variable to send the response</td>
         </tr>
 
-    
-    </tbody>
+	
+	</tbody>
 </table>
 
-
-
-
-
-
+    
+    
+    
 <dl class="details">
+	
+
+	
+
+	
+
+	
 
     
 
@@ -755,52 +786,44 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="auth.js.html">auth.js</a>, <a href="auth.js.html#line86">line 86</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
+    
+    
 
+    
 
+    
 
+    
+    
+    
+    
+    
+    
+    
+</dd>
 
-
-
-
-
-
-
-
-
-
-
-
-        
+        </dl>
     
 
     
@@ -814,18 +837,102 @@
 
 
 </div>
+</div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Authentification.html">Authentification</a></li><li><a href="Message.html">Message</a></li><li><a href="Project.html">Project</a></li><li><a href="ProjectUser.html">ProjectUser</a></li><li><a href="Survey.html">Survey</a></li><li><a href="SurveyItem.html">SurveyItem</a></li><li><a href="SurveyVote.html">SurveyVote</a></li><li><a href="User.html">User</a></li><li><a href="Vote.html">Vote</a></li></ul>
-</nav>
+<div class="clearfix"></div>
 
-<br class="clear">
+
+<div class="col-md-3">
+<div id="toc" class="col-md-3"></div>
+</div>
+
+
+</div>
+</div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Mon Mar 23 2015 19:06:06 GMT+0100 (Paris, Madrid)
+
+
+<span class="copyright">
+DocStrap Copyright © 2012-2013 The contributors to the JSDoc3 and DocStrap projects.
+</span>
+<br />
+
+<span class="jsdoc-message">
+Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0</a>
+on 2015-06-05T17:11:18+02:00 using the <a
+href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<!--<script src="scripts/sunlight.js"></script>-->
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/bootstrap-dropdown.js"></script>
+<script src="scripts/toc.js"></script>
+
+<script>
+$( function () {
+$( "[id*='$']" ).each( function () {
+var $this = $( this );
+
+$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+} );
+
+$( "#toc" ).toc( {
+anchorName  : function ( i, heading, prefix ) {
+var id = $( heading ).attr( "id" );
+return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+},
+selectors   : "h1,h2,h3,h4",
+showAndHide : false,
+scrollTo    : "100px"
+} );
+
+$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+$( '.dropdown-toggle' ).dropdown();
+//            $( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+var $this = $( this );
+
+var example = $this.find( "code" );
+exampleText = example.html();
+var lang = /{@lang (.*?)}/.exec( exampleText );
+if ( lang && lang[1] ) {
+exampleText = exampleText.replace( lang[0], "" );
+example.html( exampleText );
+lang = lang[1];
+} else {
+lang = "javascript";
+}
+
+if ( lang ) {
+
+$this
+.addClass( "sunlight-highlight-" + lang )
+.addClass( "linenums" )
+.html( example.html() );
+
+}
+} );
+
+Sunlight.highlightAll( {
+lineNumbers : true,
+showMenu : true,
+enableDoclinks : true
+} );
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
 </body>
 </html>

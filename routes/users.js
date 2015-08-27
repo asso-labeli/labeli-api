@@ -38,6 +38,8 @@
 
 var User = require('../models/user');
 var Response = require('../modules/response');
+var crypto = require('crypto');
+var apiConf = require('../modules/apiConf');
 
 var isMongooseId = require('mongoose').Types.ObjectId.isValid;
 var express = require('express');
@@ -45,10 +47,11 @@ var router = express.Router();
 
 router.route('/users').post(createUser);
 router.route('/users').get(getUsers);
+router.route('/users').put(editLoggedUser);
 router.route('/users/:user_id').get(getUser);
 router.route('/users/:user_id').put(editUser);
 router.route('/users/:user_id').delete(deleteUser);
-if (require('../modules/apiConf').debugMode)
+if (apiConf.debugMode)
     router.route('/admin').post(createAdmin);
 
 module.exports = router;
@@ -64,13 +67,6 @@ module.exports = router;
  * @param {Express.Response} res - variable to send the response
  */
 function createUser(req, res) {
-    if (req.session.level == -1) {
-        Response(res, "Error : Not logged", null, 0);
-        return;
-    } else if (req.session.level < User.Level.Admin) {
-        Response(res, "Error : You're not an admin", null, 0);
-        return;
-    }
 
     var user = new User();
 
@@ -92,12 +88,21 @@ function createUser(req, res) {
     user.email = req.body.email;
 
     user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
-    user.privateKey = generateRandomString(32);
-    user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
 
-    user.save(function (err) {
-        if (err) Response(res, "Error", err, 0);
-        else Response(res, 'User created', user, 1);
+    // Create random passwords and salt
+    user.privateKey = generateRandomString(32);
+    var password = generateRandomPassword(9);
+
+    crypto.pbkdf2(password, user.privateKey, apiConf.cryptIterations, apiConf.cryptLen, function (err, key) {
+        if (!err) {
+            // Stock the password in readable format
+            user.passwordHash = key.toString("base64");
+            user.save(function (err) {
+                if (err) Response(res, "Error", err, 0);
+                else Response(res, 'User created', user, 1);
+            });
+        } else
+            Response(res, "Error during creating password", err, 0);
     });
 }
 
@@ -159,6 +164,7 @@ function getUser(req, res) {
  * @param {String} [req.body.birthday] - New birthday (LocaleDateString)
  * @param {String} [req.body.description] - New description
  * @param {String} [req.body.picture] - New url for picture
+ * @param {String} [req.body.password] - New password
  * @param {ObjectID} [req.params.user_id] - ID of user to edit
  * @param {Express.Response} res - variable to send the response
  */
@@ -178,13 +184,38 @@ function editUser(req, res) {
             if ("birthday" in req.body) user.birthday = new Date(req.body.birthday);
             if ("description" in req.body) user.description = req.body.description;
             if ("picture" in req.body) user.picture = req.body.picture;
+            if ("password" in req.body) {
+                // Create random salt
+                user.privateKey = generateRandomString(32);
 
-            user.save(function (err) {
+                crypto.pbkdf2(req.body.password, user.privateKey, apiConf.cryptIterations, apiConf.cryptLen, function (err, key) {
+                    if (!err) {
+                        // Stock the password in readable format
+                        user.passwordHash = key.toString("base64");
+                        user.save(function (err) {
+                            if (err) Response(res, "Error", err, 0);
+                            else Response(res, 'User updated', user, 1);
+                        });
+                    } else
+                        Response(res, "Error during creating password", err, 0);
+                });
+            } else user.save(function (err) {
                 if (err) Response(res, "Error", err, 0);
                 else Response(res, 'User updated', user, 1);
             });
         }
     });
+}
+
+/**
+ * Edit the current logged user
+ * @memberof User
+ * @param {Express.Request}  req - request send
+ * @param {Express.Response} res - variable to send the response
+ */
+function editLoggedUser(req, res){
+    req.params.user_id = req.session.userId;
+    editUser(req, res);
 }
 
 /**

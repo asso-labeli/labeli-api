@@ -12,6 +12,10 @@
 var User = require('../models/user');
 var Response = require('../modules/response');
 
+var async = require('async');
+var crypto = require('crypto');
+var apiConf = require('../modules/apiConf');
+
 var express = require('express');
 var router = express.Router();
 
@@ -63,17 +67,22 @@ function login(req, res) {
             if (err) Response(res, "Error", err, 0);
             else if (user == null)
                 Response(res, "Error : User not found", null, 0);
-            else if (user.passwordHash != encryptPassword(req.body.password))
-                Response(res, "Error : Bad combinaison username/password", null, 0);
             else {
-                console.log("login");
-                req.session.userId = user._id;
-                req.session.level = user.level;
-                req.session.save();
-                Response(res, "Authentification successfull", user, 1);
+                encryptPassword(req.body.password, user.privateKey, function usePassword(passwordHash) {
+                    if (user.passwordHash != passwordHash)
+                        Response(res, "Error : Bad combinaison username/password",
+                            null, 0);
+                    else {
+                        console.log("login");
+                        req.session.userId = user._id;
+                        req.session.level = user.level;
+                        req.session.save();
+                        Response(res, "Authentification successfull", user, 1);
+                    }
+                });
             }
-        });
 
+        });
 }
 
 /**
@@ -99,9 +108,15 @@ function logout(req, res) {
  * Encrypt the password<br>
  * <b>[Private Function]</b>
  * @memberof Authentification
- * @param {Express.Request} req - request send
- * @param {Express.Response} res - variable to send the response
+ * @param {Express.Request} password - the password to encrypt
+ * @param {Express.Response} privateKey - the key to use
+ * @param {Function} usePassword - the function which will use the encrypted password
  */
-function encryptPassword(password) {
-    return '098f6bcd4621d373cade4e832627b4f6';
+function encryptPassword(password, privateKey, usePassword) {
+    var passwordHash = undefined;
+
+    crypto.pbkdf2(password, privateKey, apiConf.cryptIterations, apiConf.cryptLen, function (err, key) {
+        if (!err) passwordHash = key.toString("base64");
+        usePassword(passwordHash);
+    });
 }

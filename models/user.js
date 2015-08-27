@@ -15,7 +15,7 @@ var UserSchema   = new Schema(
     lastName : String,
     firstName : String,
     username : String,
-    email : String,
+    email : {type : String, required : true},
     passwordHash : String,
     privateKey : String,
     role : {type : String, default : "Membre"},

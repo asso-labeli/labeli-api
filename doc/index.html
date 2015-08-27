@@ -1,32 +1,55 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+<meta charset="utf-8">
+<title>Label[i] API Index</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+<link type="text/css" rel="stylesheet" href="styles/site.yeti.css">
+
 </head>
 
 <body>
 
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+<div class="navbar-header">
+<a class="navbar-brand" href="index.html">Label[i] API</a>
+</div>
+<div class="navbar-collapse">
+<ul class="nav navbar-nav">
+
+<li class="dropdown">
+<a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a>
+<ul class="dropdown-menu ">
+<li><a href="Authentification.html">Authentification</a></li><li><a href="Message.html">Message</a></li><li><a href="Project.html">Project</a></li><li><a href="ProjectUser.html">ProjectUser</a></li><li><a href="Survey.html">Survey</a></li><li><a href="SurveyItem.html">SurveyItem</a></li><li><a href="SurveyVote.html">SurveyVote</a></li><li><a href="User.html">User</a></li><li><a href="Vote.html">Vote</a></li>
+</ul>
+</li>
+
+</ul>
+</div>
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+
+
+<div class="col-md-8">
+
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
 
-    
-
-
-
-    
-
-
-    <h3> </h3>
+	
+	<span class="page-title">Index</span>
+	
+	
 
 
 
@@ -37,26 +60,54 @@
 
 
 
-    
+
+	
+	
 
 
 
 
-    <section>
+
+    <section class="readme-section">
         <article><h1>Label[i] - API</h1><p>Remote API for the Label[i] platform</p>
-<h3>Communication</h3><p>Routes are detailled in differents namespaces in documentation.<br>You need to send your datas with the content type <strong>application/x-www-form-urlencoded</strong>.  </p>
-<h3>Model</h3><p>All datas have a model to describe them.<br>Theses models are placed in <em>./models</em> folder.</p>
-<p>To use them, you need <a href="http://mongoosejs.com/">mongoose</a>.<br>Mongoose's documentation is available <a href="http://mongoosejs.com/docs/guide.html">here</a>.</p>
-<h3>Routes</h3><p>Routes are the link between REST requests and NodeJS functions.<br>They're defined in <em>./routes</em> folder and in <em>./api.js</em> file.  </p>
-<p><em>api.js</em> is the center of the API. It collect all routes defined in the <em>./routes</em> folder to create the API.  </p>
-<h4>Add a new route</h4><p>You just need to create a new file in the <em>./routes</em> folder and add the file to the <em>api.js</em> file with this line :<br><code>app.use(require('./routes/myFile'));</code> </p>
-<p>Next, add a new router and the model to your new module.<br><code>var MyModel = require('../models/mymodel'); // Add the model</code><br><code>var express = require('express'); // Get ExpressJS module</code><br><code>var router = express.Router(); // Get the router for the app</code><br><code>router.route('/myFile').get(myFileFunction); // Route a URL to a function</code><br><code>module.exports = router; // Export the router</code>  </p>
-<h4>Use Express.Request and Express.Response</h4><p><code>function myFileFunction(req, res)</code>  </p>
-<p>These two parameters are detailled in <a href="http://expressjs.com/">Express</a> documentation (available <a href="http://expressjs.com/4x/api.html">here</a>).  </p>
-<h3>Tests</h3><p>To use tests, you need <a href="http://mochajs.org/">Mocha</a> and <a href="http://chaijs.com/">Chai</a>.  </p>
-<p>To launch all tests :<br><code>cd ./api_folder</code><br><code>mocha</code>  </p>
-<h3>Documentation</h3><p>To re-generate a new documentation, you need <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> (documentation <a href="http://usejsdoc.org/">here</a>).  </p>
-<p>To generate documentation :<br><code>cd ./api_folder</code><br><code>jsdoc ./routes -d ./doc --readme ./doc_readme.md</code>  </p>
+<h3>Communication</h3><p>Routes are detailled in differents namespaces in documentation.
+You need to send your datas with the content type <strong>application/x-www-form-urlencoded</strong>.</p>
+<h3>Model</h3><p>All datas have a model to describe them.
+Theses models are placed in <em>./models</em> folder.</p>
+<p>To use them, you need <a href="http://mongoosejs.com/">mongoose</a>.
+Mongoose's documentation is available <a href="http://mongoosejs.com/docs/guide.html">here</a>.</p>
+<h3>Routes</h3><p>Routes are the link between REST requests and NodeJS functions.
+They're defined in <em>./routes</em> folder and in <em>./api.js</em> file.</p>
+<p><em>api.js</em> is the center of the API. It collect all routes defined in the <em>./routes</em> folder to create the API.</p>
+<h4>Add a new route</h4><p>You just need to create a new file in the <em>./routes</em> folder and add the file to the <em>api.js</em> file with this line :</p>
+<blockquote>
+<p>app.use(require('./routes/myFile'));</p>
+</blockquote>
+<p>Next, add a new router and the model to your new module.</p>
+<blockquote>
+<p>var MyModel = require('../models/mymodel'); // Add the model</p>
+<p>var express = require('express'); // Get ExpressJS module</p>
+<p>var router = express.Router(); // Get the router for the app</p>
+<p>router.route('/myFile').get(myFileFunction); // Route a URL to a function</p>
+<p>module.exports = router; // Export the router</p>
+</blockquote>
+<h4>Use Express.Request and Express.Response</h4><blockquote>
+<p>function myFileFunction(req, res)</p>
+</blockquote>
+<p>These two parameters are detailled in <a href="http://expressjs.com/">Express</a> documentation (available <a href="http://expressjs.com/4x/api.html">here</a>).</p>
+<h3>Tests</h3><p>To use tests, you need <a href="http://mochajs.org/">Mocha</a> and <a href="http://chaijs.com/">Chai</a>.</p>
+<p>To launch all tests :</p>
+<blockquote>
+<p>cd ./api_folder</p>
+<p>mocha</p>
+</blockquote>
+<h3>Documentation</h3><p>To re-generate a new documentation, you need <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> (documentation <a href="http://usejsdoc.org/">here</a>) and <a href="https://github.com/terryweiss/docstrap">Ink-Docstrap</a>.</p>
+<p>To generate documentation :</p>
+<blockquote>
+<p>cd ./api_folder</p>
+<p>jsdoc ./routes -c ./config.json -d ./doc -t ./node_modules/ink-docstrap/template -r ./doc_readme.md</p>
+<p>cp ./site.yeti.css ./doc/styles/</p>
+</blockquote>
 <p>This command will generate documentation of <em>./routes</em> folder in <em>./doc</em> folder, and user the <em>./doc_readme.md</em> file to generate index.html.</p></article>
     </section>
 
@@ -65,19 +116,104 @@
 
 
 
+
+</div>
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Authentification.html">Authentification</a></li><li><a href="Message.html">Message</a></li><li><a href="Project.html">Project</a></li><li><a href="ProjectUser.html">ProjectUser</a></li><li><a href="Survey.html">Survey</a></li><li><a href="SurveyItem.html">SurveyItem</a></li><li><a href="SurveyVote.html">SurveyVote</a></li><li><a href="User.html">User</a></li><li><a href="Vote.html">Vote</a></li></ul>
-</nav>
+<div class="clearfix"></div>
 
-<br class="clear">
+
+<div class="col-md-3">
+<div id="toc" class="col-md-3"></div>
+</div>
+
+
+</div>
+</div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Mon Mar 23 2015 19:06:06 GMT+0100 (Paris, Madrid)
+
+
+<span class="copyright">
+DocStrap Copyright © 2012-2013 The contributors to the JSDoc3 and DocStrap projects.
+</span>
+<br />
+
+<span class="jsdoc-message">
+Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0</a>
+on 2015-06-05T17:11:18+02:00 using the <a
+href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<!--<script src="scripts/sunlight.js"></script>-->
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/bootstrap-dropdown.js"></script>
+<script src="scripts/toc.js"></script>
+
+<script>
+$( function () {
+$( "[id*='$']" ).each( function () {
+var $this = $( this );
+
+$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+} );
+
+$( "#toc" ).toc( {
+anchorName  : function ( i, heading, prefix ) {
+var id = $( heading ).attr( "id" );
+return id && id.replace(/\~/g, '-inner-').replace(/\./g, '-static-') || ( prefix + i );
+},
+selectors   : "h1,h2,h3,h4",
+showAndHide : false,
+scrollTo    : "100px"
+} );
+
+$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+$( '.dropdown-toggle' ).dropdown();
+//            $( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+var $this = $( this );
+
+var example = $this.find( "code" );
+exampleText = example.html();
+var lang = /{@lang (.*?)}/.exec( exampleText );
+if ( lang && lang[1] ) {
+exampleText = exampleText.replace( lang[0], "" );
+example.html( exampleText );
+lang = lang[1];
+} else {
+lang = "javascript";
+}
+
+if ( lang ) {
+
+$this
+.addClass( "sunlight-highlight-" + lang )
+.addClass( "linenums" )
+.html( example.html() );
+
+}
+} );
+
+Sunlight.highlightAll( {
+lineNumbers : true,
+showMenu : true,
+enableDoclinks : true
+} );
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
 </body>
 </html>
