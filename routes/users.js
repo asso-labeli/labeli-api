@@ -67,7 +67,13 @@ module.exports = router;
  * @param {Express.Response} res - variable to send the response
  */
 function createUser(req, res) {
-
+    if (req.session.level == User.Level.Guest){
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level < User.Level.Admin){
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
     var user = new User();
 
     // Check req variables
