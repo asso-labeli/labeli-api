@@ -74,7 +74,7 @@ app.get('/uploadAFile', function (req, res) {
     res.writeHead(200, {
         'Content-Type': 'text/html'
     });
-    var form = '<form action="/upload" enctype="multipart/form-data" method="post">Add a title: <input name="title" type="text" /><br><br><input multiple="multiple" name="upload" type="file" /><br><br><input type="submit" value="Upload" /></form>';
+    var form = '<form action="/upload" enctype="multipart/form-data" method="post">Add a title: <input name="name" type="text" /><br><br><input multiple="multiple" name="upload" type="file" /><br><br><input type="submit" value="Upload" /></form>';
     res.end(form);
 });
 app.listen(8080);

@@ -16,11 +16,15 @@ module.exports = router;
 
 function uploadPicture(req, res) {
     var form = new formidable.IncomingForm();
+    var file_name = "";
+
     form.parse(req, function (err, fields, files) {
+        file_name = fields.name;
+
         res.writeHead(200, {
             'content-type': 'text/plain'
         });
-        res.write('received upload:\n\n');
+        res.write('Upload successfull !\n\n');
         res.end(util.inspect({
             fields: fields,
             files: files
@@ -29,17 +33,20 @@ function uploadPicture(req, res) {
 
     form.on('end', function (fields, files) {
         /* Temporary location of our uploaded file */
+        console.log(fields);
+        console.log(this.openedFiles);
         var temp_path = this.openedFiles[0].path;
         /* The file name of the uploaded file */
-        var file_name = this.openedFiles[0].name;
+        if (file_name == "")
+            file_name = this.openedFiles[0].name;
         /* Location where we want to copy the uploaded file */
-        var new_location = 'uploads/';
+        var new_location = 'images/';
 
         fs.copy(temp_path, new_location + file_name, function (err) {
             if (err) {
                 console.error(err);
             } else {
-                console.log("success!")
+                console.log("Success !")
             }
         });
     });
