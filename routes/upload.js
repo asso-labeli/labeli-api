@@ -20,11 +20,12 @@ function uploadPicture(req, res) {
 
     form.parse(req, function (err, fields, files) {
         file_name = fields.name;
+        fields.message = "Success";
+        fields.success = 1;
 
         res.writeHead(200, {
             'content-type': 'text/plain'
         });
-        res.write('Upload successfull !\n\n');
         res.end(util.inspect({
             fields: fields,
             files: files
@@ -33,8 +34,6 @@ function uploadPicture(req, res) {
 
     form.on('end', function (fields, files) {
         /* Temporary location of our uploaded file */
-        console.log(fields);
-        console.log(this.openedFiles);
         var temp_path = this.openedFiles[0].path;
         /* The file name of the uploaded file */
         if (file_name == "")
@@ -46,7 +45,7 @@ function uploadPicture(req, res) {
             if (err) {
                 console.error(err);
             } else {
-                console.log("Success !")
+                console.log("Upload successfull ! New file : " + file_name);
             }
         });
     });
