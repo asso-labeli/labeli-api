@@ -68,7 +68,7 @@ app.use(require('./routes/surveyVotes'));
 app.use(require('./routes/upload'));
 
 // Use quickthumb
-app.use(qt.static(__dirname + '/'));
+app.use(qt.static(__dirname + '/'), { type : 'resize' });
 // Show the upload form
 app.get('/uploadAFile', function (req, res) {
     res.writeHead(200, {
@@ -83,7 +83,7 @@ app.listen(8080);
 app.use("/", express.static("./doc/"));
 
 // Add favicon
-app.use(favicon(__dirname + "/styles/favicon.ico", { type : 'resize' }));
+app.use(favicon(__dirname + "/styles/favicon.ico"));
 
 app.use(router);
 app.listen(9010);
