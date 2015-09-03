@@ -68,7 +68,7 @@ app.use(require('./routes/surveyVotes'));
 app.use(require('./routes/upload'));
 
 // Use quickthumb
-app.use(qt.static(__dirname + '/'), { type : 'resize' });
+app.use(qt.static(__dirname + '/', { type : 'resize' }));
 // Show the upload form
 app.get('/uploadAFile', function (req, res) {
     res.writeHead(200, {
