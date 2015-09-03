@@ -83,7 +83,7 @@ app.listen(8080);
 app.use("/", express.static("./doc/"));
 
 // Add favicon
-app.use(favicon(__dirname + "/styles/favicon.ico"));
+app.use(favicon(__dirname + "/styles/favicon.ico", { type : 'resize' }));
 
 app.use(router);
 app.listen(9010);
