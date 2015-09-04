@@ -41,7 +41,7 @@ function uploadPicture(req, res) {
         /* Location where we want to copy the uploaded file */
         var new_location = 'images/';
 
-        fs.copy(temp_path, new_location + file_name, function (err) {
+        fs.rename(temp_path, new_location + file_name, function (err) {
             if (err) {
                 console.error(err);
             } else {
