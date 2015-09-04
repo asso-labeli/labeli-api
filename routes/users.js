@@ -182,6 +182,7 @@ function editUser(req, res) {
         else if ((user._id != req.session.userId) && (req.session.level < User.Level.Admin))
             Response(res, "Error : You're not an admin", null, 0);
         else {
+            user.lastEdited = Date.now();
             if ("firstName" in req.body) user.firstName = req.body.firstName;
             if ("lastName" in req.body) user.lastName = req.body.lastName;
             if ("email" in req.body) user.email = req.body.email;

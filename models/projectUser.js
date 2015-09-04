@@ -12,6 +12,7 @@ var ProjectUserSchema   = new Schema(
 {
     created : {type : Date, default : Date.now},
     level : {type : Number, default : 0},
+    lastEdited : {type : Date, default : Date.now},
     author : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     project : {type : mongoose.Schema.Types.ObjectId, ref: 'Project'}
 });
