@@ -60,6 +60,8 @@ To re-generate a new documentation, you need [JSDoc](https://github.com/jsdoc3/j
 To generate documentation :
 > cd ./api_folder
 
+> cp ./layout.tmpl ./node_modules/ink-docstrap/template/tmpl
+
 > jsdoc ./routes -c ./config.json -d ./doc -t ./node_modules/ink-docstrap/template -r ./doc_readme.md
 
 > cp ./site.yeti.css ./doc/styles/

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Label[i] API Index</title>
+<title>Label[i] API Namespace: Upload</title>
 
 <!--[if lt IE 9]>
 <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -46,10 +46,28 @@
 <div id="main">
 
 
-	
-	<span class="page-title">Index</span>
-	
-	
+	<h1 class="page-title">Namespace: Upload</h1>
+<section>
+
+<header>
+
+        <h2>
+        Upload
+        </h2>
+
+
+</header>
+
+
+<article>
+    <div class="container-overview">
+
+
+            <div class="description"><h2>Routing Table</h2><table><tr><td>POST /upload</td><td><a href="Upload.html#.uploadPicture">Upload.uploadPicture</a></td></tr></table><br></div>
+
+
+
+<dl class="details">
 
 
 
@@ -61,59 +79,289 @@
 
 
 
-	
-	
 
 
 
 
 
-    <section class="readme-section">
-        <article><h1>Label[i] - API</h1><p>Remote API for the Label[i] platform</p>
-<h3>Communication</h3><p>Routes are detailled in differents namespaces in documentation.
-You need to send your datas with the content type <strong>application/x-www-form-urlencoded</strong>.</p>
-<h3>Model</h3><p>All datas have a model to describe them.
-Theses models are placed in <em>./models</em> folder.</p>
-<p>To use them, you need <a href="http://mongoosejs.com/">mongoose</a>.
-Mongoose's documentation is available <a href="http://mongoosejs.com/docs/guide.html">here</a>.</p>
-<h3>Routes</h3><p>Routes are the link between REST requests and NodeJS functions.
-They're defined in <em>./routes</em> folder and in <em>./api.js</em> file.</p>
-<p><em>api.js</em> is the center of the API. It collect all routes defined in the <em>./routes</em> folder to create the API.</p>
-<h4>Add a new route</h4><p>You just need to create a new file in the <em>./routes</em> folder and add the file to the <em>api.js</em> file with this line :</p>
-<blockquote>
-<p>app.use(require('./routes/myFile'));</p>
-</blockquote>
-<p>Next, add a new router and the model to your new module.</p>
-<blockquote>
-<p>var MyModel = require('../models/mymodel'); // Add the model</p>
-<p>var express = require('express'); // Get ExpressJS module</p>
-<p>var router = express.Router(); // Get the router for the app</p>
-<p>router.route('/myFile').get(myFileFunction); // Route a URL to a function</p>
-<p>module.exports = router; // Export the router</p>
-</blockquote>
-<h4>Use Express.Request and Express.Response</h4><blockquote>
-<p>function myFileFunction(req, res)</p>
-</blockquote>
-<p>These two parameters are detailled in <a href="http://expressjs.com/">Express</a> documentation (available <a href="http://expressjs.com/4x/api.html">here</a>).</p>
-<h3>Tests</h3><p>To use tests, you need <a href="http://mochajs.org/">Mocha</a> and <a href="http://chaijs.com/">Chai</a>.</p>
-<p>To launch all tests :</p>
-<blockquote>
-<p>cd ./api_folder</p>
-<p>mocha</p>
-</blockquote>
-<h3>Documentation</h3><p>To re-generate a new documentation, you need <a href="https://github.com/jsdoc3/jsdoc">JSDoc</a> (documentation <a href="http://usejsdoc.org/">here</a>) and <a href="https://github.com/terryweiss/docstrap">Ink-Docstrap</a>.</p>
-<p>To generate documentation :</p>
-<blockquote>
-<p>cd ./api_folder</p>
-<p>cp ./layout.tmpl ./node_modules/ink-docstrap/template/tmpl</p>
-<p>jsdoc ./routes -c ./config.json -d ./doc -t ./node_modules/ink-docstrap/template -r ./doc_readme.md</p>
-<p>cp ./site.yeti.css ./doc/styles/</p>
-</blockquote>
-<p>This command will generate documentation of <em>./routes</em> folder in <em>./doc</em> folder, and user the <em>./doc_readme.md</em> file to generate index.html.</p></article>
-    </section>
 
 
 
+	<dt class="tag-author">Author:</dt>
+	<dd class="tag-author">
+		<ul>
+			<li>Florian Kauder</li>
+			</ul>
+	</dd>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</dl>
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+
+<dt>
+    <h4 class="name" id=".uploadPicture"><span class="type-signature">&lt;static> </span>uploadPicture<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
+
+
+</dt>
+<dd>
+
+
+    <div class="description">
+        Upload a picture on the server<br><b>Level needed :</b> Member
+    </div>
+
+
+
+
+
+
+
+
+        <h5>Parameters:</h5>
+
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+
+		<th>Name</th>
+
+
+		<th>Type</th>
+
+
+
+
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+
+
+        <tr>
+
+                <td class="name"><code>req</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Express.Request</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last">request send
+                <h6>Properties</h6>
+
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+
+		<th>Name</th>
+
+
+		<th>Type</th>
+
+
+
+
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+
+
+        <tr>
+
+                <td class="name"><code>body.name</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">String</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last">new name of file (with extension)</td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>body.image</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">File</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last">image file</td>
+        </tr>
+
+
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>res</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Express.Response</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last">variable to send the response</td>
+        </tr>
+
+
+	</tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</dd>
+
+        </dl>
+
+
+
+
+
+</article>
+
+</section>
 
 
 

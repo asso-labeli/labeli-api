@@ -13,6 +13,7 @@
  * <tr><td>level</td><td>Number</td><td>1</td></tr>
  * <tr><td>description</td><td>String</td><td> ' '</td></tr>
  * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+ * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
  * <tr><td>birthday</td><td>Date</td><td>new Date('01.01.1970T01:00')</td></tr>
  * <tr><td>universityGroup</td><td>String</td><td>'Inconnu'</td></tr>
  * <tr><td>website</td><td>String</td><td>null</td></tr>

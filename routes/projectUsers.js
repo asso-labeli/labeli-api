@@ -6,6 +6,7 @@
  * <tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
  * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
  * <tr><td>level</td><td>Number</td><td>0</td></tr>
+ * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
  * <tr><td>author</td><td>ObjectId</td></tr>
  * <tr><td>project</td><td>ObjectId</td></tr>
  * </table><br>
@@ -186,7 +187,7 @@ function getProjectUsers(req, res) {
         project: req.params.project_id
     }, function (err, projectUsers) {
         if (err) Response(res, "Error", err, 0);
-        else if (projectUsers == null) 
+        else if (projectUsers == null)
             Response(res, "Error : No ProjectUsers found", null, 0);
         else Response(res, "ProjectUsers found", projectUsers, 1);
     });
