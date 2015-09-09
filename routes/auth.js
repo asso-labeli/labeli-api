@@ -4,6 +4,7 @@
  * <tr><td>GET /auth</td><td>{@link Authentification.getAuth}</td></tr>
  * <tr><td>POST /auth</td><td>{@link Authentification.login}</td></tr>
  * <tr><td>DELETE /auth</td><td>{@link Authentification.logout}</td></tr>
+ * <tr><td>POST /resetPassword/:user_id</td><td>{@link Authentification.resetPassword}</td></tr>
  * </table><br>
  * @namespace Authentification
  * @author Florian Kauder
@@ -112,9 +113,9 @@ function logout(req, res) {
 /**
  * Reset a user's parssword<br>
  * @memberof Authentification
- * @param {Express.Request} password - the password to encrypt
+ * @param {Express.Request} req - request send
  * @param {String} req.params.user_id - id of user
- * @param {Express.Response} privateKey - the key to use
+ * @param {Express.Response} res - variable to send the response
  */
 function resetPassword(req, res) {
     if (req.session.level == User.Level.Guest) {
