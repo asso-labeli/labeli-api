@@ -41,6 +41,7 @@ var ProjectUser = require('../models/projectUser');
 var Vote = require('../models/vote');
 var Message = require('../models/message');
 var Response = require('../modules/response');
+var Log = require('../modules/log');
 
 var express = require('express');
 var async = require('async');
@@ -67,10 +68,10 @@ module.exports = router;
  * @param {Express.Response} res - variable to send the response
  */
 function createProject(req, res) {
-    if (req.session.level == User.Level.Guest){
+    if (req.session.level == User.Level.Guest) {
         Response(res, "Error : Not logged", null, 0);
         return;
-    } else if (req.session.level < User.Level.Admin){
+    } else if (req.session.level < User.Level.Admin) {
         Response(res, "Error : You're not an admin", null, 0);
         return;
     }
@@ -112,7 +113,11 @@ function createProject(req, res) {
 
                         projectUser.save(function (err) {
                             if (err) Response(res, "Error", err, 0);
-                            else Response(res, 'Project created', project, 1);
+                            else {
+                                Response(res, 'Project created', project, 1);
+                                Log.i("Project \"" + project.name + "\"(" + project._id +
+                                    ") created by user " + req.session.userId);
+                            }
                         });
                     }
                 });
@@ -208,7 +213,11 @@ function editProject(req, res) {
                 else if (!usernameFound)
                     Response(res, 'Error : Project updated but authorUsername not found',
                         project, 0);
-                else Response(res, 'Project updated', project, 1);
+                else {
+                    Response(res, 'Project updated', project, 1);
+                    Log.i("Project \"" + project.name + "\"(" + project._id +
+                          ") edited by user " + req.session.userId);
+                }
             });
         });
 
@@ -286,9 +295,11 @@ function deleteProject(req, res) {
                 if (!projectUserDeleted) errorMessage += "ProjectUser ";
                 if (!messageDeleted) errorMessage += "Message ";
 
-                if (voteDeleted && projectUserDeleted && messageDeleted)
+                if (voteDeleted && projectUserDeleted && messageDeleted) {
                     Response(res, 'Project deleted', project, 1);
-                else
+                    Log.i("Project \"" + project.name + "\"(" + project._id +
+                          ") deleted by user " + req.session.userId);
+                } else
                     Response(res, errorMessage, errors, 0);
             });
         }

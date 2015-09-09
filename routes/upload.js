@@ -13,6 +13,7 @@ var express = require('express'),
     util = require('util'),
     fs = require('fs-extra'),
     qt = require('quickthumb');
+var Log = require('../modules/log');
 var calls = [];
 
 // Code orignal from http://tonyspiro.com/uploading-resizing-images-fly-node-js-express/
@@ -67,9 +68,11 @@ function uploadPicture(req, res) {
 
         fs.rename(temp_path, new_location + file_name, function (err) {
             if (err) {
-                console.error(err);
+                Log.e("Error during upload file : " + err);
             } else {
-                console.log("Upload successfull ! New file : " + file_name);
+                Log.i("File " + file_name +
+                      " uploaded by user " +
+                      req.session.userId);
             }
         });
     });

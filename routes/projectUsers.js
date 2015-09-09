@@ -114,8 +114,8 @@ function createOrEditProjectUser(req, res) {
                     author: req.session.userId,
                     project: projectUser.project
                 }, function (err, pu) {
-                    console.log("found : " + pu);
                     projectUserOfClient = pu;
+
                     callback();
                 });
         }],

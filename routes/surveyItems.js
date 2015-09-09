@@ -22,6 +22,7 @@ var Survey = require('../models/survey');
 var SurveyItem = require('../models/surveyItem');
 var Response = require('../modules/response');
 var User = require('../models/user');
+var Log = require('../modules/log');
 
 var express = require('express');
 var async = require('async');
@@ -82,7 +83,11 @@ function createSurveyItem(req, res) {
             Response(res, "Error : You're not an admin", null, 0);
         else surveyItem.save(function (err) {
             if (err) Response(res, "Error", err, 0);
-            else Response(res, "SurveyItem created", surveyItem, 1);
+            else {
+                Response(res, "SurveyItem created", surveyItem, 1);
+                Log.i("SurveyItem \"" + surveyItem.name + "\"(" + surveyItem._id +
+                      ") created by user " + req.session.userId);
+            }
         });
     });
 }
@@ -157,7 +162,11 @@ function editSurveyItem(req, res) {
 
                 si.save(function (err) {
                     if (err) Response(res, "Error", err, 0);
-                    else Response(res, "SurveyItem updated", si, 1);
+                    else {
+                        Response(res, "SurveyItem updated", si, 1);
+                        Log.i("SurveyItem \"" + si.name + "\"(" + si._id +
+                              ") updated by user " + req.session.userId);
+                    }
                 });
             }
         });
@@ -200,7 +209,11 @@ function deleteSurveyItem(req, res) {
                     _id: req.params.surveyItem_id
                 }, function (err, si) {
                     if (err) Response(res, "Error", err, 0);
-                    else Response(res, "SurveyItem deleted", si, 1);
+                    else {
+                        Response(res, "SurveyItem deleted", si, 1);
+                        Log.i("SurveyItem \"" + si.name + "\"(" + si._id +
+                              ") deleted by user " + req.session.userId);
+                    }
                 });
             }
         });

@@ -11,6 +11,7 @@
 
 var User = require('../models/user');
 var Response = require('../modules/response');
+var Log = require('../modules/log');
 
 var async = require('async');
 var Mailer = require('../modules/mail');
@@ -80,7 +81,9 @@ function login(req, res) {
                             req.session.userId = user._id;
                             req.session.level = user.level;
                             req.session.save();
+
                             Response(res, "Authentification successfull", user, 1);
+                            Log.i("Login : " + req.body.username);
                         }
                     });
             }
@@ -100,7 +103,6 @@ function logout(req, res) {
         Response(res, "Error : Not logged", null, 0);
         return;
     } else {
-        console.log("logout");
         req.session.destroy(function () {
             Response(res, "Disconnected", null, 1);
         });
@@ -145,6 +147,9 @@ function resetPassword(req, res) {
                                     user.email,
                                     user.username,
                                     newPassword);
+                                Log.i("Password reset send to " +
+                                      user.username + " on " + user.email +
+                                     " by " + req.session.userId);
                             }
                         });
                     } else

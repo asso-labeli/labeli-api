@@ -28,6 +28,7 @@ var SurveyItem = require('../models/surveyItem');
 var SurveyVote = require('../models/surveyVote');
 var User = require('../models/user');
 var Response = require('../modules/response');
+var Log = require('../modules/log');
 
 var express = require('express');
 var async = require('async');
@@ -125,7 +126,7 @@ function createSurveyVote(req, res) {
                     // Check if all surveyItems are in the good survey
                     else if (!surveyItemValid)
                         Response(res, "Error : One SurveyItem not valid");
-                    // Check number of surveyItems 
+                    // Check number of surveyItems
                     else if (surveyItems.length > survey.numberChoices)
                         Response(res, "Error : Too many surveyItems",
                             null, 0);
@@ -334,7 +335,7 @@ function getSurveyVoteResult(req, res) {
     if (req.session.level == User.Level.Guest) {
         Response(res, "Error : Not logged", null, 0);
         return;
-    } 
+    }
 
     // Search all votes for the survey
     SurveyVote.find({
@@ -351,12 +352,12 @@ function getSurveyVoteResult(req, res) {
                 // Initialize data field if not exist
                 if (data[sv[i].value] == null)
                     data[sv[i].value] = 0;
-                
+
                 // Add a vote to field and to total
                 data[sv[i].value]++;
                 data.total++;
             }
-            
+
             Response(res, "SurveyVotes found", data, 1);
         }
     });

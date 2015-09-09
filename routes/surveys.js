@@ -29,6 +29,7 @@
 var User = require('../models/user');
 var Survey = require('../models/survey');
 var Response = require('../modules/response');
+var Log = require('../modules/log');
 
 var express = require('express');
 var async = require('async');
@@ -71,7 +72,7 @@ function createSurvey(req, res) {
         Response(res, "Error : No name given", null, 0);
         return;
     }
-    
+
     if ('description' in req.body) survey.description = req.body.description;
     if ('state' in req.body) {
             if (state > 1) survey.state = 1;
@@ -98,7 +99,11 @@ function createSurvey(req, res) {
         else
             survey.save(function (err) {
                 if (err) Response(res, "Error", err, 0);
-                else Response(res, "Survey created", survey, 1);
+                else {
+                    Response(res, "Survey created", survey, 1);
+                    Log.i("Survey \"" + survey.name + "\"(" + survey._id +
+                          ") created by user " + req.session.userId);
+                }
             });
     });
 }
@@ -165,7 +170,7 @@ function editSurvey(req, res) {
             return;
         }
 
-        // Change values 
+        // Change values
         if ('description' in req.body) survey.description = req.body.description;
         if ('name' in req.body) survey.name = req.body.name;
         if ('state' in req.body) {
@@ -176,7 +181,11 @@ function editSurvey(req, res) {
 
         survey.save(function (err) {
             if (err) Response(res, "Error", err, 0);
-            else Response(res, "Survey updated", survey, 1);
+            else {
+                Response(res, "Survey updated", survey, 1);
+                Log.i("Survey \"" + survey.name + "\"(" + survey._id +
+                      ") edited by user " + req.session.userId);
+            }
         });
     });
 }
@@ -211,7 +220,11 @@ function deleteSurvey(req, res) {
             _id: req.params.survey_id
         }, function (err, survey) {
             if (err) Response(res, "Error", err, 0);
-            else Response(res, "Survey deleted", survey, 1);
+            else {
+                Response(res, "Survey deleted", survey, 1);
+                Log.i("Survey \"" + survey.name + "\"(" + survey._id +
+                      ") deleted by user " + req.session.userId);
+            }
         });
     });
 

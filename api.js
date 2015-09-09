@@ -1,16 +1,6 @@
-(function() {
-    var childProcess = require("child_process");
-    var oldSpawn = childProcess.spawn;
-    function mySpawn() {
-        console.log('spawn called');
-        console.log(arguments);
-        var result = oldSpawn.apply(this, arguments);
-        return result;
-    }
-    childProcess.spawn = mySpawn;
-})();
-
 var User = require('./models/user');
+var Log = require('./modules/log');
+Log.init('file.log');
 
 var express = require('express');
 var session = require('express-session');
@@ -21,8 +11,13 @@ var qt = require('quickthumb');
 
 var favicon = require('serve-favicon');
 
+Log.i('Connection to Mongo Database');
+
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/labeli-api');
+
+
+Log.i('Preparing API');
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
@@ -46,8 +41,6 @@ app.use(function (req, res, next) {
 });
 
 app.use(function (req, res, next) {
-    console.log("request by " + req.session.userId);
-
     if (req.session.userId == undefined) {
         req.session.userId = null;
         req.session.level = -1;
@@ -69,15 +62,6 @@ app.use(require('./routes/upload'));
 
 // Use quickthumb
 app.use(qt.static(__dirname + '/', { type : 'resize' }));
-// Show the upload form
-app.get('/uploadAFile', function (req, res) {
-    res.writeHead(200, {
-        'Content-Type': 'text/html'
-    });
-    var form = '<form action="/upload" enctype="multipart/form-data" method="post">Add a title: <input name="name" type="text" /><br><br><input multiple="multiple" name="upload" type="file" /><br><br><input type="submit" value="Upload" /></form>';
-    res.end(form);
-});
-app.listen(8080);
 
 // Add doc
 app.use("/", express.static("./doc/"));
@@ -86,4 +70,7 @@ app.use("/", express.static("./doc/"));
 app.use(favicon(__dirname + "/styles/favicon.ico"));
 
 app.use(router);
+
+Log.i('API Ready');
+
 app.listen(9010);

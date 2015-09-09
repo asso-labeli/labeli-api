@@ -42,6 +42,7 @@ var Response = require('../modules/response');
 var apiConf = require('../modules/apiConf');
 var Mailer = require('../modules/mail');
 var PasswordGenerator = require('../modules/passwordGenerator');
+var Log = require('../modules/log');
 
 var isMongooseId = require('mongoose').Types.ObjectId.isValid;
 var express = require('express');
@@ -113,6 +114,8 @@ function createUser(req, res) {
                             user.email,
                             user.username,
                             password);
+                        Log.i("User \"" + user.username + "\"(" + user._id +
+                              ") created by user " + req.session.userId);
                     }
                 });
             });
@@ -251,7 +254,11 @@ function editUser(req, res) {
                             user.passwordHash = key.toString("base64");
                             user.save(function (err) {
                                 if (err) Response(res, "Error", err, 0);
-                                else Response(res, 'User updated', user, 1);
+                                else {
+                                    Response(res, 'User updated', user, 1);
+                                    Log.i("User \"" + user.username + "\"(" + user._id +
+                                          ") edited by user " + req.session.userId);
+                                }
                             });
                         } else
                             Response(res, "Error during creating password", err, 0);
@@ -291,7 +298,11 @@ function deleteUser(req, res) {
             _id: req.params.user_id
         }, function (err, user) {
             if (err) Response(res, "Error", err, 0);
-            else Response(res, 'User deleted', user, 1);
+            else {
+                Response(res, 'User deleted', user, 1);
+                Log.i("User \"" + user.username + "\"(" + user._id +
+                      ") deleted by user " + req.session.userId);
+            }
         });
 }
 

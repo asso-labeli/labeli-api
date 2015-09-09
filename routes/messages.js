@@ -24,6 +24,7 @@ var Project = require('../models/project');
 var User = require('../models/user');
 var Message = require('../models/message');
 var Response = require('../modules/response');
+var Log = require('../modules/log');
 
 var express = require('express');
 var async = require('async');
@@ -85,7 +86,11 @@ function createMessage(req, res) {
             message.save(function (err) {
                 if (err)
                     Response(res, "Error", err, 0);
-                else Response(res, 'Message created', message, 1);
+                else {
+                    Response(res, 'Message created', message, 1);
+                    Log.i("Message \"" + message.content + "\"(" + message._id +
+                        ") created by user " + req.session.userId);
+                }
             });
         }
     });
@@ -156,7 +161,11 @@ function editMessage(req, res) {
 
         message.save(function (err) {
             if (err) Response(res, "Error", err, 0);
-            else Response(res, 'Message edited', message, 1);
+            else {
+                Response(res, 'Message edited', message, 1);
+                Log.i("Message \"" + message.content + "\"(" + message._id +
+                      ") edited by user " + req.session.userId);
+            }
         });
 
     });
@@ -187,7 +196,11 @@ function deleteMessage(req, res) {
             _id: req.params.message_id
         }, function (err, obj) {
             if (err) Response(res, "Error", err, 0);
-            else Response(res, 'Message deleted', obj, 1);
+            else {
+                Response(res, 'Message deleted', obj, 1);
+                Log.i("Message \"" + message.content + "\"(" + message._id +
+                      ") deleted by user " + req.session.userId);
+            }
         });
     });
 }
