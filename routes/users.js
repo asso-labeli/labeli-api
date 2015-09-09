@@ -39,8 +39,9 @@
 
 var User = require('../models/user');
 var Response = require('../modules/response');
-var crypto = require('crypto');
 var apiConf = require('../modules/apiConf');
+var Mailer = require('../modules/mail');
+var PasswordGenerator = require('../modules/passwordGenerator');
 
 var isMongooseId = require('mongoose').Types.ObjectId.isValid;
 var express = require('express');
@@ -68,10 +69,10 @@ module.exports = router;
  * @param {Express.Response} res - variable to send the response
  */
 function createUser(req, res) {
-    if (req.session.level == User.Level.Guest){
+    if (req.session.level == User.Level.Guest) {
         Response(res, "Error : Not logged", null, 0);
         return;
-    } else if (req.session.level < User.Level.Admin){
+    } else if (req.session.level < User.Level.Admin) {
         Response(res, "Error : You're not an admin", null, 0);
         return;
     }
@@ -94,22 +95,71 @@ function createUser(req, res) {
     user.lastName = req.body.lastName;
     user.email = req.body.email;
 
-    user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
+    createUsername(res, user, function (user) {
+        // Create random passwords and salt
+        user.privateKey = PasswordGenerator.generateRandomString(32);
+        var password = PasswordGenerator.generateRandomString(9);
 
-    // Create random passwords and salt
-    user.privateKey = generateRandomString(32);
-    var password = generateRandomString(9);
-
-    crypto.pbkdf2(password, user.privateKey, apiConf.cryptIterations, apiConf.cryptLen, function (err, key) {
-        if (!err) {
-            // Stock the password in readable format
-            user.passwordHash = key.toString("base64");
-            user.save(function (err) {
-                if (err) Response(res, "Error", err, 0);
-                else Response(res, 'User created', user, 1);
+        PasswordGenerator.encryptPassword(password,
+            user.privateKey,
+            function usePassword(key) {
+                if (!err) {
+                    // Stock the password in readable format
+                    user.passwordHash = key.toString("base64");
+                    user.save(function (err) {
+                        if (err) Response(res, "Error", err, 0);
+                        else {
+                            Response(res, 'User created', user, 1);
+                            Mailer.sendInscriptionMail(
+                                user.email,
+                                user.username,
+                                password);
+                        }
+                    });
+                } else
+                    Response(res, "Error during creating password", err, 0);
             });
-        } else
-            Response(res, "Error during creating password", err, 0);
+    });
+}
+
+function createUsername(res, user, callback) {
+    var username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
+
+    User.find({
+        username: {
+            "$regex": username,
+            "$options": "i"
+        }
+    }, function useResult(err, users) {
+        if (err) Response(res, "Error", err, 0);
+        else {
+            if (typeof users === 'undefined' || users.length == 0) {
+                user.username = username;
+                callback(user);
+            } else {
+                var tmp = 1;
+                var usernameFound = false;
+
+                while (!usernameFound) {
+                    var usernameExist = false;
+
+                    for (var i = 0; i < users.length; i++) {
+                        if (users[i].username == (username + tmp))
+                            usernameExist = true;
+                    }
+
+                    if (!usernameExist) {
+                        usernameFound = true;
+                        username = username + tmp;
+                    } else
+                        tmp++;
+                }
+
+                user.username = username;
+
+                callback(user);
+            }
+        }
     });
 }
 
@@ -194,19 +244,21 @@ function editUser(req, res) {
             if ("picture" in req.body) user.picture = req.body.picture;
             if ("password" in req.body) {
                 // Create random salt
-                user.privateKey = generateRandomString(32);
+                user.privateKey = PasswordGenerator.generateRandomString(32);
 
-                crypto.pbkdf2(req.body.password, user.privateKey, apiConf.cryptIterations, apiConf.cryptLen, function (err, key) {
-                    if (!err) {
-                        // Stock the password in readable format
-                        user.passwordHash = key.toString("base64");
-                        user.save(function (err) {
-                            if (err) Response(res, "Error", err, 0);
-                            else Response(res, 'User updated', user, 1);
-                        });
-                    } else
-                        Response(res, "Error during creating password", err, 0);
-                });
+                PasswordGenerator.encryptPassword(req.body.password,
+                    user.privateKey,
+                    function (err, key) {
+                        if (!err) {
+                            // Stock the password in readable format
+                            user.passwordHash = key.toString("base64");
+                            user.save(function (err) {
+                                if (err) Response(res, "Error", err, 0);
+                                else Response(res, 'User updated', user, 1);
+                            });
+                        } else
+                            Response(res, "Error during creating password", err, 0);
+                    });
             } else user.save(function (err) {
                 if (err) Response(res, "Error", err, 0);
                 else Response(res, 'User updated', user, 1);
@@ -221,7 +273,7 @@ function editUser(req, res) {
  * @param {Express.Request}  req - request send
  * @param {Express.Response} res - variable to send the response
  */
-function editLoggedUser(req, res){
+function editLoggedUser(req, res) {
     req.params.user_id = req.session.userId;
     editUser(req, res);
 }
@@ -263,19 +315,4 @@ function createAdmin(req, res) {
         if (err) Response(res, "Error", err, 0);
         else Response(res, 'Admin created', user, 1);
     });
-}
-
-/**
- * Generate a random string<br>
- * <b>[Private Function]</b>
- * @memberof User
- * @param {Number} length - Length of the generated string
- * @return {String} the random String
- */
-function generateRandomString(length) {
-    var result = "";
-    var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < length; i++)
-        result += charset.charAt(Math.floor(Math.random() * charset.length));
-    return result;
 }

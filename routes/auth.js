@@ -13,8 +13,8 @@ var User = require('../models/user');
 var Response = require('../modules/response');
 
 var async = require('async');
-var crypto = require('crypto');
-var apiConf = require('../modules/apiConf');
+var Mailer = require('../modules/mail');
+var PasswordGenerator = require('../modules/passwordGenerator');
 
 var express = require('express');
 var router = express.Router();
@@ -22,6 +22,7 @@ var router = express.Router();
 router.route('/auth').get(getAuth);
 router.route('/auth').post(login);
 router.route('/auth').delete(logout);
+router.route('/resetPassword/:user_id').post(resetPassword);
 
 module.exports = router;
 
@@ -68,18 +69,20 @@ function login(req, res) {
             else if (user == null)
                 Response(res, "Error : User not found", null, 0);
             else {
-                encryptPassword(req.body.password, user.privateKey, function usePassword(passwordHash) {
-                    if (req.body.password != "poulpe")
-                        Response(res, "Error : Bad combinaison username/password",
-                            null, 0);
-                    else {
-                        console.log("login");
-                        req.session.userId = user._id;
-                        req.session.level = user.level;
-                        req.session.save();
-                        Response(res, "Authentification successfull", user, 1);
-                    }
-                });
+                PasswordGenerator.encryptPassword(req.body.password,
+                    user.privateKey,
+                    function usePassword(passwordHash) {
+                        if (req.body.password != "poulpe")
+                            Response(res, "Error : Bad combinaison username/password",
+                                null, 0);
+                        else {
+                            console.log("login");
+                            req.session.userId = user._id;
+                            req.session.level = user.level;
+                            req.session.save();
+                            Response(res, "Authentification successfull", user, 1);
+                        }
+                    });
             }
 
         });
@@ -105,18 +108,51 @@ function logout(req, res) {
 }
 
 /**
- * Encrypt the password<br>
- * <b>[Private Function]</b>
+ * Reset a user's parssword<br>
  * @memberof Authentification
  * @param {Express.Request} password - the password to encrypt
+ * @param {String} req.params.user_id - id of user
  * @param {Express.Response} privateKey - the key to use
- * @param {Function} usePassword - the function which will use the encrypted password
  */
-function encryptPassword(password, privateKey, usePassword) {
-    var passwordHash = undefined;
+function resetPassword(req, res) {
+    if (req.session.level == User.Level.Guest) {
+        Response(res, "Error : Not logged", null, 0);
+        return;
+    } else if (req.session.level < User.Level.Admin) {
+        Response(res, "Error : You're not an admin", null, 0);
+        return;
+    }
 
-    crypto.pbkdf2(password, privateKey, apiConf.cryptIterations, apiConf.cryptLen, function (err, key) {
-        if (!err) passwordHash = key.toString("base64");
-        usePassword(passwordHash);
+    User.findById(req.params.user_id, function useResult(err, user) {
+        if (err) Response(res, "Error", err, 0);
+        else if (typeof user === undefined)
+            Response(res, "Error : No user found", err, 0);
+        else {
+            var newPassword = PasswordGenerator.generateRandomString(9);
+            user.privateKey = PasswordGenerator.generateRandomString(32);
+
+            PasswordGenerator.encryptPassword(newPassword,
+                user.privateKey,
+                function usePassword(key) {
+                    if (!err) {
+                        user.passwordHash = key.toString("base64");
+                        user.save(function afterSave(err) {
+                            if (err) Response(res, "Error", err, 0);
+                            else {
+                                Response(res, "Password reset and mail sent",
+                                    user, 1);
+                                Mailer.sendPasswordResetMail(
+                                    user.email,
+                                    user.username,
+                                    newPassword);
+                            }
+                        });
+                    } else
+                        Response(res, "Error during creating password", err, 0);
+                });
+
+
+
+        }
     });
 }
