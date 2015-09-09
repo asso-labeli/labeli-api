@@ -103,21 +103,18 @@ function createUser(req, res) {
         PasswordGenerator.encryptPassword(password,
             user.privateKey,
             function usePassword(key) {
-                if (!err) {
-                    // Stock the password in readable format
-                    user.passwordHash = key.toString("base64");
-                    user.save(function (err) {
-                        if (err) Response(res, "Error", err, 0);
-                        else {
-                            Response(res, 'User created', user, 1);
-                            Mailer.sendInscriptionMail(
-                                user.email,
-                                user.username,
-                                password);
-                        }
-                    });
-                } else
-                    Response(res, "Error during creating password", err, 0);
+                // Stock the password in readable format
+                user.passwordHash = key.toString("base64");
+                user.save(function (err) {
+                    if (err) Response(res, "Error", err, 0);
+                    else {
+                        Response(res, 'User created', user, 1);
+                        Mailer.sendInscriptionMail(
+                            user.email,
+                            user.username,
+                            password);
+                    }
+                });
             });
     });
 }
