@@ -286,6 +286,7 @@ function getUser(req, res) {
  * <tr><td>-20</td><td>MangoDB error</td></tr>
  * <tr><td>-21</td><td>User not found</td></tr>
  * <tr><td>-22</td><td>Error during password creation</td></tr>
+ * <tr><td>-31</td><td>ID not valid</td></tr>
  * </table>
  * @memberof User
  * @param {Express.Request} req - request send
