@@ -149,7 +149,7 @@ function createProject(req, res) {
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-21</td><td>No project found</td></tr>
- * <tr><td>-29</td><td>MongoDB error during save()</td></tr>
+ * <tr><td>-27</td><td>MongoDB error during find()</td></tr>
  * </table>
  * @memberof Project
  * @param {Express.Request} req - request send
@@ -157,7 +157,7 @@ function createProject(req, res) {
  */
 function getProjects(req, res) {
   Project.find(function(err, projects) {
-    if (err) Response(res, "Error", err, -29);
+    if (err) Response(res, "Error", err, -27);
     else if (typeof projects === 'undefined' ||  projects.length == 0)
       Response(res, "Error : No projects found", null, -21);
     else Response(res, "Projects found", projects, 1);
@@ -172,7 +172,7 @@ function getProjects(req, res) {
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-21</td><td>No project found</td></tr>
- * <tr><td>-29</td><td>MongoDB error during save()</td></tr>
+ * <tr><td>-27</td><td>MongoDB error during find()</td></tr>
  * <tr><td>-31</td><td>ID not valid</td></tr>
  * </table>
  * @memberof Project
@@ -183,7 +183,7 @@ function getProjects(req, res) {
 function getProject(req, res) {
   if (isMongooseId(req.params.project_id))
     Project.findById(req.params.project_id, function(err, project) {
-      if (err) Response(res, "Error", err, -29);
+      if (err) Response(res, "Error", err, -27);
       else if (project == null)
         Response(res, "Error : Project not found", null, -21);
       else Response(res, "Project Found", project, 1);
