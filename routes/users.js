@@ -61,12 +61,12 @@ module.exports = router;
 
 /**
  * Get string select query for a specific level.<br>
- * This functions select datas who must to be send.<br>
+ * This function select datas who must to be send.<br>
  * <b>PRIVATE FUNCTION</b>
  * @memberof User
  * @param {Number} level - level of user
  */
-function getSelectQueryForLevel(level){
+function getSelectQueryForLevel(level) {
   if (level < User.Level.Member)
     return 'firstName lastName role level';
   else
@@ -76,11 +76,18 @@ function getSelectQueryForLevel(level){
 /**
  * Create a new user<br>
  * <b>Level needed :</b> Admin<br>
- * <b>Return Table<b>
+ * <h5>Return Table:</h5>
  * <table>
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
- * <tr><td><b>1</b></td><td><b>Success</b></td></tr>
- * <tr><td><b>-1</b></td><td><b>Not logged</b></td></tr>
+ * <tr><td>1</td><td>Success</td></tr>
+ * <tr><td>-1</td><td>Not logged</td></tr>
+ * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+ * <tr><td>-11</td><td>Missing firstName</td></tr>
+ * <tr><td>-12</td><td>Missing lastName</td></tr>
+ * <tr><td>-13</td><td>Missing email</td></tr>
+ * <tr><td>-20</td><td>MangoDB error</td></tr>
+ * <tr><td>-21</td><td>Email already exists</td></tr>
+ * <tr><td>-22</td><td>Error during creating username</td></tr>
  * </table>
  * @memberof User
  * @param {Express.Request} req - request send
@@ -91,10 +98,10 @@ function getSelectQueryForLevel(level){
  */
 function createUser(req, res) {
   if (req.session.level == User.Level.Guest) {
-    Response(res, "Error : Not logged", null, 0);
+    Response(res, "Error : Not logged", null, -1);
     return;
   } else if (req.session.level < User.Level.Admin) {
-    Response(res, "Error : You're not an admin", null, 0);
+    Response(res, "Error : You're not an admin", null, -2);
     return;
   }
 
@@ -102,13 +109,13 @@ function createUser(req, res) {
 
   // Check req variables
   if (!("firstName" in req.body)) {
-    Response(res, "Error : No firstName given", null, 0);
+    Response(res, "Error : No firstName given", null, -11);
     return;
   } else if (!("lastName" in req.body)) {
-    Response(res, "Error : No lastName given", null, 0);
+    Response(res, "Error : No lastName given", null, -12);
     return;
   } else if (!("email" in req.body)) {
-    Response(res, "Error : No email given", null, 0);
+    Response(res, "Error : No email given", null, -13);
     return;
   }
 
@@ -130,9 +137,9 @@ function createUser(req, res) {
         user.save(function(err) {
           if (err) {
             if (err.code == 11000) // Duplicate email
-              Response(res, "Error : A user already have this e-mail", err, 0);
+              Response(res, "Error : A user already have this e-mail", err, -21);
             else
-              Response(res, "Error", err, 0);
+              Response(res, "Error", err, -20);
           } else {
             Response(res, 'User created', user, 1);
             Mailer.sendInscriptionMail(
@@ -164,7 +171,7 @@ function createUsername(res, user, callback) {
       "$options": "i"
     }
   }, function useResult(err, users) {
-    if (err) Response(res, "Error", err, 0);
+    if (err) Response(res, "Error", err, -22);
     else {
       if (typeof users === 'undefined' || users.length == 0) {
         user.username = username;
@@ -200,7 +207,14 @@ function createUsername(res, user, callback) {
  * Get all users<br>
  * Under Level.Member, datas are : firstName - lastName - role - level
  * Else, all datas (except passwordhash and privateKey) are get
- * <b>Level needed :</b> Guest
+ * <b>Level needed :</b> Guest<br>
+ * <h5>Return Table:</h5>
+ * <table>
+ * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+ * <tr><td>1</td><td>Success</td></tr>
+ * <tr><td>-20</td><td>MangoDB error</td></tr>
+ * <tr><td>-21</td><td>No users found</td></tr>
+ * </table>
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {Express.Response} res - variable to send the response
@@ -210,16 +224,25 @@ function getUsers(req, res) {
 
   User.find().select(selectQuery)
     .exec(function useResult(err, users) {
-      if (err) Response(res, "Error", err, 0);
-      else if (users == null)
-        Response(res, "Error : No users found", null, 0);
+      if (err) Response(res, "Error", err, -20);
+      else if (typeof users === 'undefined')
+        Response(res, "Error : No users found", null, -21);
       else Response(res, "Users found", users, 1);
     });
 }
 
 /**
  * Get a specific user<br>
- * <b>Level needed :</b> Guest
+ * <b>Level needed :</b> Guest<br>
+ * Under Level.Member, datas are : firstName - lastName - role - level
+ * Else, all datas (except passwordhash and privateKey) are get
+ * <h5>Return Table:</h5>
+ * <table>
+ * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+ * <tr><td>1</td><td>Success</td></tr>
+ * <tr><td>-20</td><td>MangoDB error</td></tr>
+ * <tr><td>-21</td><td>User not found</td></tr>
+ * </table>
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.user_id - User Id OR User username
@@ -233,9 +256,9 @@ function getUser(req, res) {
     User.findById(req.params.user_id)
       .select('-passwordHash -privateKey')
       .exec(function useResult(err, user) {
-        if (err) Response(res, "Error", err, 0);
+        if (err) Response(res, "Error", err, -20);
         else if (user == null)
-          Response(res, 'Error : User not found', null, 0);
+          Response(res, 'Error : User not found', null, -21);
         else Response(res, 'User found', user, 1);
       });
   } else { // Username case
@@ -243,9 +266,9 @@ function getUser(req, res) {
         username: req.params.user_id
       }).select('-passwordHash -privateKey')
       .exec(function useResult(err, user) {
-        if (err) Response(res, "Error", err, 0);
+        if (err) Response(res, "Error", err, -20);
         else if (user == null)
-          Response(res, 'Error : User not found', null, 0);
+          Response(res, 'Error : User not found', null, -21);
         else Response(res, 'User found', user, 1);
       });
   }
@@ -253,7 +276,17 @@ function getUser(req, res) {
 
 /**
  * Edit a user<br>
- * <b>Level needed :</b> Owner | Admin
+ * <b>Level needed :</b> Owner | Admin<br>
+ * <h5>Return Table:</h5>
+ * <table>
+ * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+ * <tr><td>1</td><td>Success</td></tr>
+ * <tr><td>-1</td><td>Not logged</td></tr>
+ * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+ * <tr><td>-20</td><td>MangoDB error</td></tr>
+ * <tr><td>-21</td><td>User not found</td></tr>
+ * <tr><td>-22</td><td>Error during password creation</td></tr>
+ * </table>
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {String} [req.body.firstName] - New first name
@@ -269,55 +302,60 @@ function getUser(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function editUser(req, res) {
-  User.findById(req.params.user_id, function(err, user) {
-    if (err) Response(res, "Error", err, 0);
-    else if (user == null)
-      Response(res, "Error : User not found", null, 0);
-    else if ((user._id != req.session.userId) && (req.session.level < User.Level.Admin))
-      Response(res, "Error : You're not an admin", null, 0);
-    else {
-      user.lastEdited = Date.now();
-      if ("firstName" in req.body) user.firstName = req.body.firstName;
-      if ("lastName" in req.body) user.lastName = req.body.lastName;
-      if ("email" in req.body) user.email = req.body.email;
-      if ("website" in req.body) user.website = req.body.website;
-      if ("universityGroup" in req.body) user.universityGroup = req.body.universityGroup;
-      if ("birthday" in req.body) user.birthday = new Date(req.body.birthday);
-      if ("description" in req.body) user.description = req.body.description;
-      if ("picture" in req.body) user.picture = req.body.picture;
-      // Edit role if logged user is an admin
-      if ("role" in req.body && req.session.level == User.Level.Admin) user.role = req.body.role;
-      if ("password" in req.body) {
-        // Create random salt
-        user.privateKey = PasswordGenerator.generateRandomString(32);
+  if (req.session.level < User.Level.OldMember)
+    Response(res, "Error : Not logged", null, -1);
+  else
+    User.findById(req.params.user_id, function(err, user) {
+      if (err) Response(res, "Error", err, -20);
+      else if (user == null)
+        Response(res, "Error : User not found", null, -21);
+      else if ((user._id != req.session.userId) && (req.session.level < User.Level.Admin))
+        Response(res, "Error : You're not an admin", null, -2);
+      else {
+        user.lastEdited = Date.now();
+        if ("firstName" in req.body) user.firstName = req.body.firstName;
+        if ("lastName" in req.body) user.lastName = req.body.lastName;
+        if ("email" in req.body) user.email = req.body.email;
+        if ("website" in req.body) user.website = req.body.website;
+        if ("universityGroup" in req.body) user.universityGroup = req.body.universityGroup;
+        if ("birthday" in req.body) user.birthday = new Date(req.body.birthday);
+        if ("description" in req.body) user.description = req.body.description;
+        if ("picture" in req.body) user.picture = req.body.picture;
+        // Edit role if logged user is an admin
+        if ("role" in req.body && req.session.level == User.Level.Admin) user.role = req.body.role;
+        if ("password" in req.body) {
+          // Create random salt
+          user.privateKey = PasswordGenerator.generateRandomString(32);
 
-        PasswordGenerator.encryptPassword(req.body.password,
-          user.privateKey,
-          function(err, key) {
-            if (!err) {
-              // Stock the password in readable format
-              user.passwordHash = key.toString("base64");
-              user.save(function(err) {
-                if (err) Response(res, "Error", err, 0);
-                else {
-                  Response(res, 'User updated', user, 1);
-                  Log.i("User \"" + user.username + "\"(" + user._id +
-                    ") edited by user " + req.session.userId);
-                }
-              });
-            } else
-              Response(res, "Error during creating password", err, 0);
-          });
-      } else user.save(function(err) {
-        if (err) Response(res, "Error", err, 0);
-        else Response(res, 'User updated', user, 1);
-      });
-    }
-  });
+          PasswordGenerator.encryptPassword(req.body.password,
+            user.privateKey,
+            function(err, key) {
+              if (!err) {
+                // Stock the password in readable format
+                user.passwordHash = key.toString("base64");
+                user.save(function(err) {
+                  if (err) Response(res, "Error", err, -20);
+                  else {
+                    Response(res, 'User updated', user, 1);
+                    Log.i("User \"" + user.username + "\"(" + user._id +
+                      ") edited by user " + req.session.userId);
+                  }
+                });
+              } else
+                Response(res, "Error during creating password", err, -22);
+            });
+        } else user.save(function(err) {
+          if (err) Response(res, "Error", err, -20);
+          else Response(res, 'User updated', user, 1);
+        });
+      }
+    });
 }
 
 /**
- * Edit the current logged user
+ * Edit the current logged user<br>
+ * <b>Level needed :</b> Member<br>
+ * Same documentation for : {@link User.editUser}
  * @memberof User
  * @param {Express.Request}  req - request send
  * @param {Express.Response} res - variable to send the response
@@ -329,20 +367,30 @@ function editLoggedUser(req, res) {
 
 /**
  * Delete a user<br>
- * <b>Level needed :</b> Admin
+ * <b>Level needed :</b> Admin<br>
+ * <h5>Return Table:</h5>
+ * <table>
+ * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+ * <tr><td>1</td><td>Success</td></tr>
+ * <tr><td>-1</td><td>Not logged</td></tr>
+ * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+ * <tr><td>-20</td><td>MangoDB error</td></tr>
+ * </table>
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {ObjectID} [req.params.user_id] - ID of user to delete
  * @param {Express.Response} res - variable to send the response
  */
 function deleteUser(req, res) {
-  if (req.session.level < User.Level.Admin)
-    Response(res, "Error : You're not an admin", null, 0);
+  if (req.session.level < User.Level.OldMember)
+    Response(res, "Error : Not logged", null, -1);
+  else if (req.session.level < User.Level.Admin)
+    Response(res, "Error : You're not an admin", null, -2);
   else
     User.remove({
       _id: req.params.user_id
     }, function(err, user) {
-      if (err) Response(res, "Error", err, 0);
+      if (err) Response(res, "Error", err, -20);
       else {
         Response(res, 'User deleted', user, 1);
         Log.i("User \"" + user.username + "\"(" + user._id +
