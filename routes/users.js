@@ -225,7 +225,7 @@ function getUsers(req, res) {
   User.find().select(selectQuery)
     .exec(function useResult(err, users) {
       if (err) Response(res, "Error", err, -20);
-      else if (typeof users === 'undefined')
+      else if (typeof users === 'undefined' || users.length == 0)
         Response(res, "Error : No users found", null, -21);
       else Response(res, "Users found", users, 1);
     });
