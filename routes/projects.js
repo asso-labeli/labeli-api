@@ -223,55 +223,55 @@ function editProject(req, res) {
   else if (!isMongooseId(req.params.project_id))
     Response(res, "Error : ID not valid", null, -31);
   else
-  Project.findById(req.params.project_id, function(err, project) {
-    if (err) {
-      Response(res, "Error", err, -27);
-      return;
-    } else if (project == null) {
-      Response(res, "Error : Project not found", null, -21);
-      return;
-    } else if ((project.author != req.session.userId) && (req.session.level < User.Level.Admin)) {
-      Response(res, "Error : You're not an admin", null, -2);
-      return;
-    }
+    Project.findById(req.params.project_id, function(err, project) {
+      if (err) {
+        Response(res, "Error", err, -27);
+        return;
+      } else if (project == null) {
+        Response(res, "Error : Project not found", null, -21);
+        return;
+      } else if ((project.author != req.session.userId) && (req.session.level < User.Level.Admin)) {
+        Response(res, "Error : You're not an admin", null, -2);
+        return;
+      }
 
-    var usernameFound = true;
+      var usernameFound = true;
 
-    // Edit project values
-    if ("name" in req.body) project.name = req.body.name;
-    if ("status" in req.body) project.status = req.body.status;
-    if ("description" in req.body) project.description = req.body.description;
-    if ("type" in req.body) project.type = req.body.type;
-    if ("picture" in req.body) project.picture = req.body.picture;
-    if ("authorUsername" in req.body)
-      calls.push(function(callback) {
-        User.findOne({
-            username: req.body.authorUsername.toLowerCase()
-          },
-          function(err, user) {
-            if (err) usernameFound = false;
-            else project.author = user._id;
-            callback();
-          });
-      });
+      // Edit project values
+      if ("name" in req.body) project.name = req.body.name;
+      if ("status" in req.body) project.status = req.body.status;
+      if ("description" in req.body) project.description = req.body.description;
+      if ("type" in req.body) project.type = req.body.type;
+      if ("picture" in req.body) project.picture = req.body.picture;
+      if ("authorUsername" in req.body)
+        calls.push(function(callback) {
+          User.findOne({
+              username: req.body.authorUsername.toLowerCase()
+            },
+            function(err, user) {
+              if (err) usernameFound = false;
+              else project.author = user._id;
+              callback();
+            });
+        });
 
-    project.lastEdited = Date.now();
+      project.lastEdited = Date.now();
 
-    // Wait and save the project
-    async.parallel(calls, function() {
-      project.save(function(err) {
-        if (err) Response(res, "Error", err, -29);
-        else if (!usernameFound)
-          Response(res, 'Error : Project updated but authorUsername not found',
-            project, -22);
-        else {
-          Response(res, 'Project updated', project, 1);
-          Log.i("Project \"" + project.name + "\"(" + project._id +
-            ") edited by user " + req.session.userId);
-        }
+      // Wait and save the project
+      async.parallel(calls, function() {
+        project.save(function(err) {
+          if (err) Response(res, "Error", err, -29);
+          else if (!usernameFound)
+            Response(res, 'Error : Project updated but authorUsername not found',
+              project, -22);
+          else {
+            Response(res, 'Project updated', project, 1);
+            Log.i("Project \"" + project.name + "\"(" + project._id +
+              ") edited by user " + req.session.userId);
+          }
+        });
       });
     });
-  });
 }
 
 /**
@@ -292,11 +292,10 @@ function editProject(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function deleteProject(req, res) {
-  if (req.session.level < User.Level.OldMember){
+  if (req.session.level < User.Level.OldMember) {
     Response(res, "Error : Not logged", null, -1);
     return;
-  }
-  else if (req.session.level < User.Level.Admin) {
+  } else if (req.session.level < User.Level.Admin) {
     Response(res, "Error : You're not an admin", null, -2);
     return;
   }
