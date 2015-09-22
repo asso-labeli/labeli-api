@@ -14,11 +14,11 @@ var UserSchema   = new Schema(
 {
     lastName : String,
     firstName : String,
-    username : String,
-    email : {type : String, required : true},
+    username : {type : String, unique : true},
+    email : {type : String, required : true, unique : true},
     passwordHash : String,
     privateKey : String,
-    role : {type : String, default : "Membre"},
+    role : {type : String, default : "Membre"}, // Editable uniquement par les admins
     picture : {type : String, default : null},
     level : {type : Number, default : 1},
     description : {type : String, default : ''},
