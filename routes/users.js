@@ -75,7 +75,13 @@ function getSelectQueryForLevel(level){
 
 /**
  * Create a new user<br>
- * <b>Level needed :</b> Admin
+ * <b>Level needed :</b> Admin<br>
+ * <b>Return Table<b>
+ * <table>
+ * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+ * <tr><td><b>1</b></td><td><b>Success</b></td></tr>
+ * <tr><td><b>-1</b></td><td><b>Not logged</b></td></tr>
+ * </table>
  * @memberof User
  * @param {Express.Request} req - request send
  * @param {String} req.body.firstName - first name of user
