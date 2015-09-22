@@ -305,7 +305,7 @@ function getUser(req, res) {
 function editUser(req, res) {
   if (req.session.level < User.Level.OldMember)
     Response(res, "Error : Not logged", null, -1);
-  else if (!isMongooseId(req.params.project_id))
+  else if (!isMongooseId(req.params.user_id))
     Response(res, "Error : ID not valid", null, -31);
   else
     User.findById(req.params.user_id, function(err, user) {
