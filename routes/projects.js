@@ -71,8 +71,8 @@ module.exports = router;
  * <tr><td>-11</td><td>Missing name</td></tr>
  * <tr><td>-12</td><td>Missing type</td></tr>
  * <tr><td>-13</td><td>Missing authorUsername</td></tr>
- * <tr><td>-21</td><td>AuthorUsername not found</td></tr>
- * <tr><td>-22</td><td>Error during creation of projectUser</td></tr>
+ * <tr><td>-22</td><td>AuthorUsername not found</td></tr>
+ * <tr><td>-23</td><td>Error during creation of projectUser</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * <tr><td>-29</td><td>MangoDB error during save()</td></tr>
  * </table>
@@ -85,23 +85,27 @@ module.exports = router;
  */
 function createProject(req, res) {
   if (req.session.level == User.Level.Guest) {
-    Response(res, "Error : Not logged", null, -1);
-    return;
-  } else if (req.session.level < User.Level.Admin) {
-    Response(res, "Error : You're not an admin", null, -2);
+    Response.notLogged(res);
     return;
   }
+  else if (req.session.level < User.Level.Admin) {
+    Response.notAdmin();
+    return;
+  }
+
   var project = new Project();
 
   // Check request variables
   if (!("name" in req.body)) {
-    Response(res, "Error : No name given", null, -11);
+    Response.missing(res, 'name', -11);
     return;
-  } else if (!("type" in req.body)) {
-    Response(res, "Error : No type given", null, -12);
+  }
+  else if (!("type" in req.body)) {
+    Response.missing(res, 'type', -12);
     return;
-  } else if (!("authorUsername" in req.body)) {
-    Response(res, "Error : No authorUsername given", null, -13);
+  }
+  else if (!("authorUsername" in req.body)) {
+    Response.missing(res, 'authorUsername', -13);
     return;
   }
 
@@ -112,25 +116,26 @@ function createProject(req, res) {
   User.findOne({
       username: req.body.authorUsername.toLowerCase()
     },
-    function(err, user) {
-      if (err) {
-        Response(res, "Error", err, -27);
-      } else if (user === null) {
-        Response(res, "Error : authorUsername not found", null, -21);
-      } else {
+    function afterUserSearch(err, user) {
+      if (err)
+        Response.findError(res);
+      else if (user === null)
+        Response.notFound(res, 'authorUsername');
+      else {
         project.author = user._id;
-        project.save(function(err) {
-          if (err) Response(res, "Error", err, -29);
+        project.save(function afterProjectSave(err) {
+          if (err) Response.saveError(res);
           else {
             var projectUser = new ProjectUser();
             projectUser.author = project.author;
             projectUser.project = project;
             projectUser.level = ProjectUser.Level.Creator;
 
-            projectUser.save(function(err) {
-              if (err) Response(res, "Error", err, -22);
+            projectUser.save(function afterProjectUserSave(err) {
+              if (err) Response.serverError(res,
+                "Error during projectUser creation", null, -23);
               else {
-                Response(res, 'Project created', project, 1);
+                Response.success(res, 'Project created', project);
                 Log.i("Project \"" + project.name + "\"(" + project._id +
                   ") created by user " + req.session.userId);
               }
@@ -148,7 +153,7 @@ function createProject(req, res) {
  * <table>
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
- * <tr><td>-21</td><td>No project found</td></tr>
+ * <tr><td>-22</td><td>No project found</td></tr>
  * <tr><td>-27</td><td>MongoDB error during find()</td></tr>
  * </table>
  * @memberof Project
@@ -156,11 +161,11 @@ function createProject(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getProjects(req, res) {
-  Project.find(function(err, projects) {
-    if (err) Response(res, "Error", err, -27);
+  Project.find(function afterProjectSearch(err, projects) {
+    if (err) Response.findError(res);
     else if (typeof projects === 'undefined' ||  projects.length == 0)
-      Response(res, "Error : No projects found", null, -21);
-    else Response(res, "Projects found", projects, 1);
+      Response.notFound(res, 'project');
+    else Response.success(res, "Projects found", projects);
   });
 }
 
@@ -171,7 +176,7 @@ function getProjects(req, res) {
  * <table>
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
- * <tr><td>-21</td><td>No project found</td></tr>
+ * <tr><td>-22</td><td>No project found</td></tr>
  * <tr><td>-27</td><td>MongoDB error during find()</td></tr>
  * <tr><td>-31</td><td>ID not valid</td></tr>
  * </table>
@@ -182,14 +187,15 @@ function getProjects(req, res) {
  */
 function getProject(req, res) {
   if (isMongooseId(req.params.project_id))
-    Project.findById(req.params.project_id, function(err, project) {
-      if (err) Response(res, "Error", err, -27);
-      else if (project == null)
-        Response(res, "Error : Project not found", null, -21);
-      else Response(res, "Project Found", project, 1);
-    });
+    Project.findById(req.params.project_id,
+      function afterProjectSearch(err, project) {
+        if (err) Response.findError(res);
+        else if (project == null)
+          Response.notFound(res, 'project');
+        else Response.success(res, "Project Found", project);
+      });
   else
-    Response(res, "Error : ID not valid", null, -31);
+    Response.invalidID(res);
 }
 
 /**
@@ -201,8 +207,8 @@ function getProject(req, res) {
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-1</td><td>Not logged</td></tr>
  * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
- * <tr><td>-21</td><td>Project not found</td></tr>
- * <tr><td>-22</td><td>Project updated but authorUsername not found</td></tr>
+ * <tr><td>-22</td><td>Project not found</td></tr>
+ * <tr><td>-23</td><td>Project updated but authorUsername not found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * <tr><td>-29</td><td>MangoDB error during save()</td></tr>
  * <tr><td>-31</td><td>ID not valid</td></tr>
@@ -219,59 +225,65 @@ function getProject(req, res) {
  */
 function editProject(req, res) {
   if (req.session.level < User.Level.OldMember)
-    Response(res, "Error : Not logged", null, -1);
+    Response.notLogged(res);
   else if (!isMongooseId(req.params.project_id))
-    Response(res, "Error : ID not valid", null, -31);
+    Response.invalidID(res);
   else
-    Project.findById(req.params.project_id, function(err, project) {
-      if (err) {
-        Response(res, "Error", err, -27);
-        return;
-      } else if (project == null) {
-        Response(res, "Error : Project not found", null, -21);
-        return;
-      } else if ((project.author != req.session.userId) && (req.session.level < User.Level.Admin)) {
-        Response(res, "Error : You're not an admin", null, -2);
-        return;
-      }
+    Project.findById(req.params.project_id,
+      function afterProjectSearch(err, project) {
+        if (err) {
+          Response.findError(res);
+          return;
+        }
+        else if (project == null) {
+          Response.notFound(res, 'project');
+          return;
+        }
+        else if ((project.author != req.session.userId) &&
+          (req.session.level < User.Level.Admin)) {
+          Response.notAdmin();
+          return;
+        }
 
-      var usernameFound = true;
+        var usernameFound = true;
 
-      // Edit project values
-      if ("name" in req.body) project.name = req.body.name;
-      if ("status" in req.body) project.status = req.body.status;
-      if ("description" in req.body) project.description = req.body.description;
-      if ("type" in req.body) project.type = req.body.type;
-      if ("picture" in req.body) project.picture = req.body.picture;
-      if ("authorUsername" in req.body)
-        calls.push(function(callback) {
-          User.findOne({
-              username: req.body.authorUsername.toLowerCase()
-            },
-            function(err, user) {
-              if (err) usernameFound = false;
-              else project.author = user._id;
-              callback();
-            });
-        });
+        // Edit project values
+        if ("name" in req.body) project.name = req.body.name;
+        if ("status" in req.body) project.status = req.body.status;
+        if ("description" in req.body)
+          project.description = req.body.description;
+        if ("type" in req.body) project.type = req.body.type;
+        if ("picture" in req.body) project.picture = req.body.picture;
+        if ("authorUsername" in req.body)
+          calls.push(function searchUserWithUsername(callback) {
+            User.findOne({
+                username: req.body.authorUsername.toLowerCase()
+              },
+              function afterUserSearch(err, user) {
+                if (err) usernameFound = false;
+                else project.author = user._id;
+                callback();
+              });
+          });
 
-      project.lastEdited = Date.now();
+        project.lastEdited = Date.now();
 
-      // Wait and save the project
-      async.parallel(calls, function() {
-        project.save(function(err) {
-          if (err) Response(res, "Error", err, -29);
-          else if (!usernameFound)
-            Response(res, 'Error : Project updated but authorUsername not found',
-              project, -22);
-          else {
-            Response(res, 'Project updated', project, 1);
-            Log.i("Project \"" + project.name + "\"(" + project._id +
-              ") edited by user " + req.session.userId);
-          }
+        // Wait and save the project
+        async.parallel(calls, function afterProjectIsEdited() {
+          project.save(function afterProjectSave(err) {
+            if (err) Response.saveError(res);
+            else if (!usernameFound)
+              Response.serverError(res,
+                'Error : Project updated but authorUsername not found',
+                project, -23);
+            else {
+              Response.success(res, 'Project updated', project);
+              Log.i("Project \"" + project.name + "\"(" + project._id +
+                ") edited by user " + req.session.userId);
+            }
+          });
         });
       });
-    });
 }
 
 /**
@@ -283,7 +295,7 @@ function editProject(req, res) {
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-1</td><td>Not logged</td></tr>
  * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
- * <tr><td>-21</td><td>Project remove, but some datas always exist (datas are detailled in message)</td></tr>
+ * <tr><td>-23</td><td>Project remove, but some datas always exist (datas are detailled in message)</td></tr>
  * <tr><td>-28</td><td>MangoDB error during remove()</td></tr>
  * </table>
  * @memberof Project
@@ -293,18 +305,19 @@ function editProject(req, res) {
  */
 function deleteProject(req, res) {
   if (req.session.level < User.Level.OldMember) {
-    Response(res, "Error : Not logged", null, -1);
+    Response.notLogged(res);
     return;
-  } else if (req.session.level < User.Level.Admin) {
-    Response(res, "Error : You're not an admin", null, -2);
+  }
+  else if (req.session.level < User.Level.Admin) {
+    Response.notAdmin(res);
     return;
   }
 
   // Remove the project
   Project.remove({
     _id: req.params.project_id
-  }, function(err, project) {
-    if (err) Response(res, "Error", err, -28);
+  }, function afterProjectRemove(err, project) {
+    if (err) Response.removeError(res);
     else {
       var errors = [];
       var voteDeleted = true;
@@ -312,10 +325,10 @@ function deleteProject(req, res) {
       var messageDeleted = true;
 
       // Remove all votes with this project
-      calls.push(function(callback) {
+      calls.push(function removeVotes(callback) {
         Vote.remove({
           project: req.params.project_id
-        }, function(err) {
+        }, function afterVoteRemove(err) {
           if (err) {
             voteDeleted = false;
             errors.push(err);
@@ -325,10 +338,10 @@ function deleteProject(req, res) {
       });
 
       // Remove all projectUsers with this project
-      calls.push(function(callback) {
+      calls.push(function removeProjectUsers(callback) {
         ProjectUser.remove({
           project: req.params.project_id
-        }, function(err) {
+        }, function afterProjectUserRemove(err) {
           if (err) {
             projectUserDeleted = false;
             errors.push(err);
@@ -338,10 +351,10 @@ function deleteProject(req, res) {
       });
 
       // Remove all messages with this project
-      calls.push(function(callback) {
+      calls.push(function removeMessages(callback) {
         Message.remove({
           project: req.params.project_id
-        }, function(err) {
+        }, function afterMessageRemove(err) {
           if (err) {
             messageDeleted = false;
             errors.push(err);
@@ -351,18 +364,19 @@ function deleteProject(req, res) {
       });
 
       // Wait and send result of deleting
-      async.parallel(calls, function() {
+      async.parallel(calls, function afterDataRemove() {
         var errorMessage = "Error during delete :";
         if (!voteDeleted) errorMessage += "Vote ";
         if (!projectUserDeleted) errorMessage += "ProjectUser ";
         if (!messageDeleted) errorMessage += "Message ";
 
         if (voteDeleted && projectUserDeleted && messageDeleted) {
-          Response(res, 'Project deleted', project, 1);
+          Response.success(res, 'Project deleted', project);
           Log.i("Project \"" + project.name + "\"(" + project._id +
             ") deleted by user " + req.session.userId);
-        } else
-          Response(res, errorMessage, errors, -21);
+        }
+        else
+          Response.serverError(res, errorMessage, errors, -23);
       });
     }
   });

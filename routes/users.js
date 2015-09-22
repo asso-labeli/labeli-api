@@ -86,7 +86,6 @@ function getSelectQueryForLevel(level) {
  * <tr><td>-12</td><td>Missing lastName</td></tr>
  * <tr><td>-13</td><td>Missing email</td></tr>
  * <tr><td>-21</td><td>Email already exists</td></tr>
- * <tr><td>-22</td><td>Error during creating username</td></tr>
  * <tr><td>-29</td><td>MongoDB error during save()</td></tr>
  * </table>
  * @memberof User
@@ -98,10 +97,11 @@ function getSelectQueryForLevel(level) {
  */
 function createUser(req, res) {
   if (req.session.level == User.Level.Guest) {
-    Response(res, "Error : Not logged", null, -1);
+    Response.notLogged(res);
     return;
-  } else if (req.session.level < User.Level.Admin) {
-    Response(res, "Error : You're not an admin", null, -2);
+  }
+  else if (req.session.level < User.Level.Admin) {
+    Response.notAdmin(res);
     return;
   }
 
@@ -109,13 +109,15 @@ function createUser(req, res) {
 
   // Check req variables
   if (!("firstName" in req.body)) {
-    Response(res, "Error : No firstName given", null, -11);
+    Response.missing(res, 'firstName', -11);
     return;
-  } else if (!("lastName" in req.body)) {
-    Response(res, "Error : No lastName given", null, -12);
+  }
+  else if (!("lastName" in req.body)) {
+    Response.missing(res, 'lastName', -12);
     return;
-  } else if (!("email" in req.body)) {
-    Response(res, "Error : No email given", null, -13);
+  }
+  else if (!("email" in req.body)) {
+    Response.missing(res, 'email', -13);
     return;
   }
 
@@ -124,24 +126,28 @@ function createUser(req, res) {
   user.lastName = req.body.lastName;
   user.email = req.body.email;
 
-  createUsername(res, user, function(user) {
+  createUsername(res, user, function afterUsenameCreation(user) {
+    // Error send by createUsername, so leave the function
+    if (user == null) return;
+
     // Create random passwords and salt
     user.privateKey = PasswordGenerator.generateRandomString(32);
     var password = PasswordGenerator.generateRandomString(9);
 
     PasswordGenerator.encryptPassword(password,
       user.privateKey,
-      function usePassword(key) {
+      function afterPasswordCreation(key) {
         // Stock the password in readable format
         user.passwordHash = key.toString("base64");
-        user.save(function(err) {
+        user.save(function afterUserSave(err) {
           if (err) {
             if (err.code == 11000) // Duplicate email
-              Response(res, "Error : A user already have this e-mail", err, -21);
+              Response.alreadyExist(res, 'email');
             else
-              Response(res, "Error", err, -29);
-          } else {
-            Response(res, 'User created', user, 1);
+              Response.saveError(res);
+          }
+          else {
+            Response.success(res, 'User created', user);
             Mailer.sendInscriptionMail(
               user.email,
               user.username,
@@ -163,20 +169,25 @@ function createUser(req, res) {
  * @param {Function} callback - function to call when username is created
  */
 function createUsername(res, user, callback) {
-  var username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
+  var username = user.firstName.replace(/\s/g, '').toLowerCase() + "." +
+    user.lastName.replace(/\s/g, '').toLowerCase();
 
   User.find({
     username: {
       "$regex": username,
       "$options": "i"
     }
-  }, function useResult(err, users) {
-    if (err) Response(res, "Error", err, -22);
+  }, function afterUserSearch(err, users) {
+    if (err) {
+      Response.findError(res);
+      callback(null);
+    }
     else {
       if (typeof users === 'undefined' || users.length == 0) {
         user.username = username;
         callback(user);
-      } else {
+      }
+      else {
         var tmp = 1;
         var usernameFound = false;
 
@@ -191,7 +202,8 @@ function createUsername(res, user, callback) {
           if (!usernameExist) {
             usernameFound = true;
             username = username + tmp;
-          } else
+          }
+          else
             tmp++;
         }
 
@@ -212,7 +224,7 @@ function createUsername(res, user, callback) {
  * <table>
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
- * <tr><td>-21</td><td>No users found</td></tr>
+ * <tr><td>-22</td><td>No users found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * </table>
  * @memberof User
@@ -223,11 +235,11 @@ function getUsers(req, res) {
   var selectQuery = getSelectQueryForLevel(req.session.level);
 
   User.find().select(selectQuery)
-    .exec(function useResult(err, users) {
-      if (err) Response(res, "Error", err, -27);
-      else if (typeof users === 'undefined' || users.length == 0)
-        Response(res, "Error : No users found", null, -21);
-      else Response(res, "Users found", users, 1);
+    .exec(function afterUserSearch(err, users) {
+      if (err) Response.findError();
+      else if (typeof users === 'undefined' ||  users.length == 0)
+        Response.notFound(res, 'user');
+      else Response.success(res, "Users found", users);
     });
 }
 
@@ -240,7 +252,7 @@ function getUsers(req, res) {
  * <table>
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
- * <tr><td>-21</td><td>No users found</td></tr>
+ * <tr><td>-22</td><td>No users found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * </table>
  * @memberof User
@@ -255,21 +267,20 @@ function getUser(req, res) {
   if (isMongooseId(req.params.user_id)) {
     User.findById(req.params.user_id)
       .select('-passwordHash -privateKey')
-      .exec(function useResult(err, user) {
-        if (err) Response(res, "Error", err, -27);
-        else if (user == null)
-          Response(res, 'Error : User not found', null, -21);
-        else Response(res, 'User found', user, 1);
+      .exec(function afterUserSearch(err, user) {
+        if (err) Response.findError();
+        else if (user == null) Response.notFound(res, 'user');
+        else Response.success(res, "User found", users);
       });
-  } else { // Username case
+  }
+  else { // Username case
     User.findOne({
         username: req.params.user_id
       }).select('-passwordHash -privateKey')
-      .exec(function useResult(err, user) {
-        if (err) Response(res, "Error", err, -27);
-        else if (user == null)
-          Response(res, 'Error : User not found', null, -21);
-        else Response(res, 'User found', user, 1);
+      .exec(function afterUserSearch(err, user) {
+        if (err) Response.findError();
+        else if (user == null) Response.notFound(res, 'user');
+        else Response.success(res, "User found", users);
       });
   }
 }
@@ -283,8 +294,8 @@ function getUser(req, res) {
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-1</td><td>Not logged</td></tr>
  * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
- * <tr><td>-21</td><td>User not found</td></tr>
- * <tr><td>-22</td><td>Error during password creation</td></tr>
+ * <tr><td>-22</td><td>User not found</td></tr>
+ * <tr><td>-23</td><td>Error during password creation</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * <tr><td>-29</td><td>MangoDB error during save()</td></tr>
  * <tr><td>-31</td><td>ID not valid</td></tr>
@@ -304,53 +315,56 @@ function getUser(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function editUser(req, res) {
-  if (req.session.level < User.Level.OldMember)
-    Response(res, "Error : Not logged", null, -1);
-  else if (!isMongooseId(req.params.user_id))
-    Response(res, "Error : ID not valid", null, -31);
+  if (req.session.level < User.Level.OldMember) Response.notLogged(res);
+  else if (!isMongooseId(req.params.user_id)) Response.invalidID(res);
   else
-    User.findById(req.params.user_id, function(err, user) {
-      if (err) Response(res, "Error", err, -27);
-      else if (user == null)
-        Response(res, "Error : User not found", null, -21);
-      else if ((user._id != req.session.userId) && (req.session.level < User.Level.Admin))
-        Response(res, "Error : You're not an admin", null, -2);
+    User.findById(req.params.user_id, function afterUserSearch(err, user) {
+      if (err) Response.findError(res);
+      else if (user == null) Response.notFound(res, 'user');
+      else if ((user._id != req.session.userId) &&
+        (req.session.level < User.Level.Admin))
+        Response.notAdmin(res);
       else {
         user.lastEdited = Date.now();
         if ("firstName" in req.body) user.firstName = req.body.firstName;
         if ("lastName" in req.body) user.lastName = req.body.lastName;
         if ("email" in req.body) user.email = req.body.email;
         if ("website" in req.body) user.website = req.body.website;
-        if ("universityGroup" in req.body) user.universityGroup = req.body.universityGroup;
+        if ("universityGroup" in req.body)
+          user.universityGroup = req.body.universityGroup;
         if ("birthday" in req.body) user.birthday = new Date(req.body.birthday);
         if ("description" in req.body) user.description = req.body.description;
         if ("picture" in req.body) user.picture = req.body.picture;
         // Edit role if logged user is an admin
-        if ("role" in req.body && req.session.level == User.Level.Admin) user.role = req.body.role;
+        if ("role" in req.body && req.session.level == User.Level.Admin)
+          user.role = req.body.role;
         if ("password" in req.body) {
           // Create random salt
           user.privateKey = PasswordGenerator.generateRandomString(32);
 
           PasswordGenerator.encryptPassword(req.body.password,
             user.privateKey,
-            function(err, key) {
+            function afterPasswordCreated(err, key) {
               if (!err) {
                 // Stock the password in readable format
                 user.passwordHash = key.toString("base64");
-                user.save(function(err) {
-                  if (err) Response(res, "Error", err, -29);
+                user.save(function afterUserSaved(err) {
+                  if (err) Response.saveError(res);
                   else {
                     Response(res, 'User updated', user, 1);
                     Log.i("User \"" + user.username + "\"(" + user._id +
                       ") edited by user " + req.session.userId);
                   }
                 });
-              } else
-                Response(res, "Error during creating password", err, -22);
+              }
+              else
+                Response.serverError(res, "Error during creating password",
+                  err, -23);
             });
-        } else user.save(function(err) {
-          if (err) Response(res, "Error", err, -29);
-          else Response(res, 'User updated', user, 1);
+        }
+        else user.save(function afterUserSaved(err) {
+          if (err) Response.saveError(res);
+          else Response.success(res, 'User updated', user);
         });
       }
     });
@@ -387,16 +401,16 @@ function editLoggedUser(req, res) {
  */
 function deleteUser(req, res) {
   if (req.session.level < User.Level.OldMember)
-    Response(res, "Error : Not logged", null, -1);
+    Response.notLogged(res);
   else if (req.session.level < User.Level.Admin)
-    Response(res, "Error : You're not an admin", null, -2);
+    Response.notAdmin(res);
   else
     User.remove({
       _id: req.params.user_id
     }, function(err, user) {
-      if (err) Response(res, "Error", err, -28);
+      if (err) Response.removeError();
       else {
-        Response(res, 'User deleted', user, 1);
+        Response.success(res, 'User deleted', user);
         Log.i("User \"" + user.username + "\"(" + user._id +
           ") deleted by user " + req.session.userId);
       }
@@ -412,12 +426,32 @@ function createAdmin(req, res) {
   user.email = "admin@test.com";
   user.level = User.Level.Admin;
 
-  user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." + user.lastName.replace(/\s/g, '').toLowerCase();
+  user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." +
+    user.lastName.replace(/\s/g, '').toLowerCase();
   user.privateKey = "poulpe";
   user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
 
   user.save(function(err) {
-    if (err) Response(res, "Error", err, 0);
-    else Response(res, 'Admin created', user, 1);
+    if (err) Response.saveError(res);
+    else Response.success(res, 'Admin created', user);
+    createUserTest(1);
+  });
+}
+
+// Function available only in debug mode
+function createUserTest(n) {
+  var user = new User();
+
+  user.firstName = "UserTest"+n;
+  user.lastName = "UserTest"+n;
+  user.email = "user"+n+"@test.com";
+
+  user.username = user.firstName.replace(/\s/g, '').toLowerCase() + "." +
+    user.lastName.replace(/\s/g, '').toLowerCase();
+  user.privateKey = "poulpe";
+  user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
+
+  user.save(function(err) {
+    if (n == 1) createUserTest(2);
   });
 }
