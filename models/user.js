@@ -18,7 +18,7 @@ var UserSchema   = new Schema(
     email : {type : String, required : true, unique : true},
     passwordHash : String,
     privateKey : String,
-    role : {type : String, default : "Membre"}, // Editable uniquement par les admins
+    role : {type : String, default : "Membre"},
     picture : {type : String, default : null},
     level : {type : Number, default : 1},
     description : {type : String, default : ''},

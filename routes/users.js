@@ -279,6 +279,8 @@ function editUser(req, res) {
       if ("birthday" in req.body) user.birthday = new Date(req.body.birthday);
       if ("description" in req.body) user.description = req.body.description;
       if ("picture" in req.body) user.picture = req.body.picture;
+      // Edit role if logged user is an admin
+      if ("role" in req.body && req.session.level == User.Level.Admin) user.role = req.body.role;
       if ("password" in req.body) {
         // Create random salt
         user.privateKey = PasswordGenerator.generateRandomString(32);
