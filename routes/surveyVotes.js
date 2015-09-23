@@ -7,7 +7,7 @@
  * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
  * <tr><td>survey</td><td>ObjectId</td></tr>
  * <tr><td>value</td><td>ObjectId</td></tr>
- * <tr><td>author</td><td>ObjectId</td></tr>
+ * <tr><td>user</td><td>ObjectId</td></tr>
  * </table><br>
  * <h2>Routing Table</h2>
  * <table>
@@ -135,7 +135,7 @@ function createSurveyVote(req, res) {
                             // Remove all old surveyVotes
                     function removeOldSurveyVotes(callback) {
                                 SurveyVote.remove({
-                                    author: req.session.userId,
+                                    user: req.session.userId,
                                     survey: survey
                                 }, function (err) {
                                     if (err) {
@@ -153,7 +153,7 @@ function createSurveyVote(req, res) {
                                         function createSurveyVote(v, callbackItem) {
                                             var sv = new SurveyVote();
 
-                                            sv.author = req.session.userId;
+                                            sv.user = req.session.userId;
                                             sv.survey = survey._id;
                                             sv.value = v;
 
@@ -257,7 +257,7 @@ function getSessionSurveyVote(req, res) {
     SurveyVote.find({
             survey: req.params.survey_id,
             // Use userId from logged client to find his surveyVotes
-            author: req.session.userId
+            user: req.session.userId
         },
         function (err, sv) {
             if (err) Response(res, "Error", err, 0);
@@ -310,7 +310,7 @@ function deleteSessionSurveyVote(req, res) {
     SurveyVote.remove({
         survey: req.params.survey_id,
         // Use userId from logged client to find his surveyVotes
-        author: req.session.userId
+        user: req.session.userId
     }, function (err, sv) {
         if (err) Response(res, "Error", err, 0);
         else if (sv == null || sv == [])

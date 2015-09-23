@@ -7,7 +7,7 @@
  * <tr><td>created</td><td>Date</td><td>Date.now</td></tr>
  * <tr><td>level</td><td>Number</td><td>0</td></tr>
  * <tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
- * <tr><td>author</td><td>ObjectId</td></tr>
+ * <tr><td>user</td><td>ObjectId</td></tr>
  * <tr><td>project</td><td>ObjectId</td></tr>
  * </table><br>
  * <h2>Routing Table</h2>
@@ -117,12 +117,12 @@ function createOrEditProjectUser(req, res) {
           },
           function afterUserSearch(err, user) {
             if (err || user == null) userFound = false;
-            else projectUser.author = user._id;
+            else projectUser.user = user._id;
             callback();
           });
         else {
           // Case where a user want to take part in project
-          projectUser.author = req.session.userId;
+          projectUser.user = req.session.userId;
           callback();
         }
 
@@ -130,7 +130,7 @@ function createOrEditProjectUser(req, res) {
       function searchProjectUserOfClient(callback) {
         // Search ProjectUser of the client
         ProjectUser.findOne({
-          author: req.session.userId,
+          user: req.session.userId,
           project: projectUser.project
         }, function afterProjectUserSearch(err, pu) {
           projectUserOfClient = pu;
@@ -155,7 +155,7 @@ function createOrEditProjectUser(req, res) {
         // Client is admin, so add the user to project
         else {
           ProjectUser.findOne({
-              author: projectUser.author,
+              user: projectUser.user,
               project: projectUser.project
             },
             function afterPUSearch(err, pu) {
@@ -297,7 +297,7 @@ function deleteProjectUser(req, res) {
       function searchProjectUserOfClient(callback) {
         if (projectUser != null) {
           ProjectUser.findOne({
-              author: req.session.userId,
+              user: req.session.userId,
               project: projectUser.project
             },
             function afterPUClientSearch(err, pu) {

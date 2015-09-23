@@ -8,7 +8,7 @@ var SurveyVoteSchema   = new Schema(
     survey : {type: mongoose.Schema.Types.ObjectId, ref : "Survey"},
     // Value is equal to surveyItem concerned
     value : {type: mongoose.Schema.Types.ObjectId, ref : "SurveyItem"},
-    author : {type: mongoose.Schema.Types.ObjectId, ref : "User"}
+    user : {type: mongoose.Schema.Types.ObjectId, ref : "User"}
 });
 
 module.exports = mongoose.model('SurveyVote', SurveyVoteSchema);
