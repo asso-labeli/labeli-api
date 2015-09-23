@@ -10,6 +10,8 @@ module.exports.Code = {
   success : 1,
   notLogged : -1,
   notAdmin : -2,
+  notMember : -3,
+  notOwner : -4,
   alreadyExist : -21,
   notFound : -22,
   invalidID : -31
@@ -40,6 +42,22 @@ function notAdmin(res) {
     message: "Error : You're not an admin",
     data: null,
     success: -2
+  });
+}
+
+function notMember(res) {
+  sendResponse(res, 403, {
+    message: "Error : You're not a member",
+    data: null,
+    success: -3
+  });
+}
+
+function notOwner(res) {
+  sendResponse(res, 403, {
+    message: "Error : You're not a member",
+    data: null,
+    success: -3
   });
 }
 
@@ -112,6 +130,8 @@ module.exports = formatResponse;
 module.exports.success = success;
 module.exports.notLogged = notLogged;
 module.exports.notAdmin = notAdmin;
+module.exports.notMember = notMember;
+module.exports.notOwner = notOwner;
 module.exports.missing = missing;
 module.exports.alreadyExist = alreadyExist;
 module.exports.notFound = notFound;
