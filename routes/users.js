@@ -270,7 +270,7 @@ function getUser(req, res) {
       .exec(function afterUserSearch(err, user) {
         if (err) Response.findError();
         else if (user == null) Response.notFound(res, 'user');
-        else Response.success(res, "User found", users);
+        else Response.success(res, "User found", user);
       });
   }
   else { // Username case
@@ -280,7 +280,7 @@ function getUser(req, res) {
       .exec(function afterUserSearch(err, user) {
         if (err) Response.findError();
         else if (user == null) Response.notFound(res, 'user');
-        else Response.success(res, "User found", users);
+        else Response.success(res, "User found", user);
       });
   }
 }
