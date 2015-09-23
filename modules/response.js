@@ -12,6 +12,7 @@ module.exports.Code = {
   notAdmin: -2,
   notMember: -3,
   notOwner: -4,
+  notAllowed: -5,
   alreadyExist: -21,
   notFound: -22,
   invalidID: -31,
@@ -56,9 +57,17 @@ function notMember(res) {
 
 function notOwner(res) {
   sendResponse(res, 403, {
-    message: "Error : You're not a member",
+    message: "Error : You're not the owner",
     data: null,
-    success: -3
+    success: -4
+  });
+}
+
+function notAllowed(res) {
+  sendResponse(res, 403, {
+    message: "Error : You're not allowed to do that",
+    data: null,
+    success: -5
   });
 }
 
@@ -141,6 +150,7 @@ module.exports.notLogged = notLogged;
 module.exports.notAdmin = notAdmin;
 module.exports.notMember = notMember;
 module.exports.notOwner = notOwner;
+module.exports.notAllowed = notAllowed;
 module.exports.missing = missing;
 module.exports.alreadyExist = alreadyExist;
 module.exports.notFound = notFound;
