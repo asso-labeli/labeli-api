@@ -118,13 +118,13 @@ function createProject(req, res) {
     },
     function afterUserSearch(err, user) {
       if (err)
-        Response.findError(res);
+        Response.findError(res, err);
       else if (user === null)
         Response.notFound(res, 'authorUsername');
       else {
         project.author = user._id;
         project.save(function afterProjectSave(err) {
-          if (err) Response.saveError(res);
+          if (err) Response.saveError(res, err);
           else {
             var projectUser = new ProjectUser();
             projectUser.author = project.author;
@@ -162,7 +162,7 @@ function createProject(req, res) {
  */
 function getProjects(req, res) {
   Project.find(function afterProjectSearch(err, projects) {
-    if (err) Response.findError(res);
+    if (err) Response.findError(res, err);
     else if (typeof projects === 'undefined' ||  projects.length == 0)
       Response.notFound(res, 'project');
     else Response.success(res, "Projects found", projects);
@@ -189,7 +189,7 @@ function getProject(req, res) {
   if (isMongooseId(req.params.project_id))
     Project.findById(req.params.project_id,
       function afterProjectSearch(err, project) {
-        if (err) Response.findError(res);
+        if (err) Response.findError(res, err);
         else if (project == null)
           Response.notFound(res, 'project');
         else Response.success(res, "Project Found", project);
@@ -232,7 +232,7 @@ function editProject(req, res) {
     Project.findById(req.params.project_id,
       function afterProjectSearch(err, project) {
         if (err) {
-          Response.findError(res);
+          Response.findError(res, err);
           return;
         }
         else if (project == null) {
@@ -271,7 +271,7 @@ function editProject(req, res) {
         // Wait and save the project
         async.parallel(calls, function afterProjectIsEdited() {
           project.save(function afterProjectSave(err) {
-            if (err) Response.saveError(res);
+            if (err) Response.saveError(res, err);
             else if (!usernameFound)
               Response.serverError(res,
                 'Error : Project updated but authorUsername not found',
@@ -317,7 +317,7 @@ function deleteProject(req, res) {
   Project.remove({
     _id: req.params.project_id
   }, function afterProjectRemove(err, project) {
-    if (err) Response.removeError(res);
+    if (err) Response.removeError(res, err);
     else {
       var errors = [];
       var voteDeleted = true;

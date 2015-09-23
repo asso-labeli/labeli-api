@@ -67,10 +67,12 @@ function createMessage(req, res) {
   if (req.session.userId == undefined) {
     Response.notLogged(res);
     return;
-  } else if (req.session.level < User.Level.Member) {
+  }
+  else if (req.session.level < User.Level.Member) {
     Response.notMember(res);
     return;
-  } else if (!isMongooseId(req.params.project_id)) {
+  }
+  else if (!isMongooseId(req.params.project_id)) {
     Response.invalidID(res);
     return;
   }
@@ -102,7 +104,7 @@ function createMessage(req, res) {
     else {
       message.save(function useResult(err) {
         if (err)
-          Response.saveError(res);
+          Response.saveError(res, err);
         else {
           Response.success(res, 'Message created', message);
           Log.i("Message \"" + message.content + "\"(" + message._id +
@@ -136,7 +138,7 @@ function getMessages(req, res) {
     Message.find({
       project: req.params.project_id
     }, function useResult(err, messages) {
-      if (err) Response.findError(res);
+      if (err) Response.findError(res, err);
       else if (typeof messages === null ||  messages.length == 0)
         Response.notFound(res, 'message');
       else Response.success(res, "Messages found", messages);
@@ -164,7 +166,7 @@ function getMessage(req, res) {
     Response.invalidID(res);
   else
     Message.findById(req.params.message_id, function useResult(err, message) {
-      if (err) Response.findError(res);
+      if (err) Response.findError(res, err);
       else if (message == null)
         Response.notFound(res, message);
       else Response.success(res, "Message found", message);
@@ -199,12 +201,14 @@ function editMessage(req, res) {
   else
     Message.findById(req.params.message_id, function(err, message) {
       if (err) {
-        Response.findError(res);
+        Response.findError(res, err);
         return;
-      } else if (message == null) {
+      }
+      else if (message == null) {
         Response.notFound(res, 'message');
         return;
-      } else if ((message.author != req.session.userId) && (req.session.level < 3)) {
+      }
+      else if ((message.author != req.session.userId) && (req.session.level < 3)) {
         Response.notAdmin(res);
         return;
       }
@@ -215,7 +219,7 @@ function editMessage(req, res) {
       message.lastEdited = Date.now();
 
       message.save(function useResult(err) {
-        if (err) Response.saveError(res);
+        if (err) Response.saveError(res, err);
         else {
           Response.success(res, 'Message edited', message);
           Log.i("Message \"" + message.content + "\"(" + message._id +
@@ -249,12 +253,14 @@ function deleteMessage(req, res) {
   else
     Message.findById(req.params.message_id, function useResult(err, message) {
       if (err) {
-        Response.findError(res);
+        Response.findError(res, err);
         return;
-      } else if (message == null) {
+      }
+      else if (message == null) {
         Response.notFound(res, 'message');
         return;
-      } else if ((message.author != req.session.userId) && (req.session.level < 3)) {
+      }
+      else if ((message.author != req.session.userId) && (req.session.level < 3)) {
         Response.notOwner(res);
         return;
       }
@@ -262,7 +268,7 @@ function deleteMessage(req, res) {
       Message.remove({
         _id: req.params.message_id
       }, function useResult(err, obj) {
-        if (err) Response.removeError(res);
+        if (err) Response.removeError(res, err);
         else {
           Response.success(res, 'Message deleted', obj);
           Log.i("Message \"" + message.content + "\"(" + message._id +

@@ -7,14 +7,15 @@ function formatResponse(res, message, data, success) {
 }
 
 module.exports.Code = {
-  success : 1,
-  notLogged : -1,
-  notAdmin : -2,
-  notMember : -3,
-  notOwner : -4,
-  alreadyExist : -21,
-  notFound : -22,
-  invalidID : -31
+  success: 1,
+  notLogged: -1,
+  notAdmin: -2,
+  notMember: -3,
+  notOwner: -4,
+  alreadyExist: -21,
+  notFound: -22,
+  invalidID: -31,
+  invalidParameter: -32
 }
 
 function sendResponse(res, httpCode, data) {
@@ -86,26 +87,26 @@ function notFound(res, field) {
   });
 }
 
-function findError(res) {
+function findError(res, err) {
   sendResponse(res, 500, {
     message: "MongoDB error during find()",
-    data: null,
+    data: err,
     success: -27
   });
 }
 
-function removeError(res) {
+function removeError(res, err) {
   sendResponse(res, 500, {
     message: "MongoDB error during remove()",
-    data: null,
+    data: err,
     success: -28
   });
 }
 
-function saveError(res) {
+function saveError(res, err) {
   sendResponse(res, 500, {
     message: "MongoDB error during save()",
-    data: null,
+    data: err,
     success: -29
   });
 }
@@ -126,6 +127,14 @@ function serverError(res, message, data, errorCode) {
   });
 }
 
+function invalidParameter(res, field) {
+  sendResponse(res, 400, {
+    message: "Error : Invalid " + field,
+    data: null,
+    success: -32
+  });
+}
+
 module.exports = formatResponse;
 module.exports.success = success;
 module.exports.notLogged = notLogged;
@@ -139,4 +148,5 @@ module.exports.findError = findError;
 module.exports.removeError = removeError;
 module.exports.saveError = saveError;
 module.exports.invalidID = invalidID;
+module.exports.invalidParameter = invalidParameter;
 module.exports.serverError = serverError;

@@ -144,7 +144,7 @@ function createUser(req, res) {
             if (err.code == 11000) // Duplicate email
               Response.alreadyExist(res, 'email');
             else
-              Response.saveError(res);
+              Response.saveError(res, err);
           }
           else {
             Response.success(res, 'User created', user);
@@ -179,7 +179,7 @@ function createUsername(res, user, callback) {
     }
   }, function afterUserSearch(err, users) {
     if (err) {
-      Response.findError(res);
+      Response.findError(res, err);
       callback(null);
     }
     else {
@@ -319,7 +319,7 @@ function editUser(req, res) {
   else if (!isMongooseId(req.params.user_id)) Response.invalidID(res);
   else
     User.findById(req.params.user_id, function afterUserSearch(err, user) {
-      if (err) Response.findError(res);
+      if (err) Response.findError(res, err);
       else if (user == null) Response.notFound(res, 'user');
       else if ((user._id != req.session.userId) &&
         (req.session.level < User.Level.Admin))
@@ -349,7 +349,7 @@ function editUser(req, res) {
                 // Stock the password in readable format
                 user.passwordHash = key.toString("base64");
                 user.save(function afterUserSaved(err) {
-                  if (err) Response.saveError(res);
+                  if (err) Response.saveError(res, err);
                   else {
                     Response(res, 'User updated', user, 1);
                     Log.i("User \"" + user.username + "\"(" + user._id +
@@ -363,7 +363,7 @@ function editUser(req, res) {
             });
         }
         else user.save(function afterUserSaved(err) {
-          if (err) Response.saveError(res);
+          if (err) Response.saveError(res, err);
           else Response.success(res, 'User updated', user);
         });
       }
@@ -408,7 +408,7 @@ function deleteUser(req, res) {
     User.remove({
       _id: req.params.user_id
     }, function(err, user) {
-      if (err) Response.removeError();
+      if (err) Response.removeError(res, err);
       else {
         Response.success(res, 'User deleted', user);
         Log.i("User \"" + user.username + "\"(" + user._id +
@@ -432,7 +432,7 @@ function createAdmin(req, res) {
   user.passwordHash = "098f6bcd4621d373cade4e832627b4f6";
 
   user.save(function(err) {
-    if (err) Response.saveError(res);
+    if (err) Response.saveError(res, err);
     else Response.success(res, 'Admin created', user);
     createUserTest(1);
   });
