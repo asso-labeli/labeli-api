@@ -63,7 +63,26 @@
     <div class="container-overview">
     
         
-            <div class="description"><a href="SurveyVote.html#.getSurveyVotes">SurveyVote.getSurveyVotes</a>, <a href="SurveyVote.html#.getSurveyVote">SurveyVote.getSurveyVote</a> and <a href="SurveyVote.html#.deleteSurveyVote">SurveyVote.deleteSurveyVote</a> need admin rights to protect anonymity of votes.<br><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>survey</td><td>ObjectId</td></tr><tr><td>value</td><td>ObjectId</td></tr><tr><td>author</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /surveyVotes/:project_id</td><td><a href="SurveyVote.html#.createSurveyVote">SurveyVote.createSurveyVote</a></td></tr><tr><td>GET /surveyVotes/:project_id</td><td><a href="SurveyVote.html#.getSurveyVotes">SurveyVote.getSurveyVotes</a></td></tr><tr><td>GET /surveyVote/:surveyVote_id</td><td><a href="SurveyVote.html#.getSurveyVote">SurveyVote.getSurveyVote</a></td></tr><tr><td>DELETE /surveyVote/:surveyVote_id</td><td><a href="SurveyVote.html#.deleteSurveyVote">SurveyVote.deleteSurveyVote</a></td></tr><tr><td>GET /surveyVoteForProject/:project_id</td><td><a href="SurveyVote.html#.getSessionSurveyVote">SurveyVote.getSessionSurveyVote</a></td></tr><tr><td>DELETE /surveyVoteForProject/:project_id</td><td><a href="SurveyVote.html#.deleteSessionSurveyVote">SurveyVote.deleteSessionSurveyVote</a></td></tr><tr><td>GET /surveyVoteResult/:project_id</td><td><a href="SurveyVote.html#.getSurveyVoteResult">SurveyVote.getSurveyVoteResult</a></td></tr></table><br></table><br></div>
+            <div class="description"><a href="SurveyVote.html#.getSurveyVotes">SurveyVote.getSurveyVotes</a>, <a href="SurveyVote.html#.getSurveyVote">SurveyVote.getSurveyVote</a> and <a href="SurveyVote.html#.deleteSurveyVote">SurveyVote.deleteSurveyVote</a> need admin rights to protect anonymity of votes.<br>
+<h2>Model</h2>
+<table>
+<tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+<tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>survey</td><td>ObjectId</td></tr>
+<tr><td>value</td><td>ObjectId</td></tr>
+<tr><td>author</td><td>ObjectId</td></tr>
+</table><br>
+<h2>Routing Table</h2>
+<table>
+<tr><td>POST /surveyVotes/:project_id</td><td><a href="SurveyVote.html#.createSurveyVote">SurveyVote.createSurveyVote</a></td></tr>
+<tr><td>GET /surveyVotes/:project_id</td><td><a href="SurveyVote.html#.getSurveyVotes">SurveyVote.getSurveyVotes</a></td></tr>
+<tr><td>GET /surveyVote/:surveyVote_id</td><td><a href="SurveyVote.html#.getSurveyVote">SurveyVote.getSurveyVote</a></td></tr>
+<tr><td>DELETE /surveyVote/:surveyVote_id</td><td><a href="SurveyVote.html#.deleteSurveyVote">SurveyVote.deleteSurveyVote</a></td></tr>
+<tr><td>GET /surveyVoteForProject/:project_id</td><td><a href="SurveyVote.html#.getSessionSurveyVote">SurveyVote.getSessionSurveyVote</a></td></tr>
+<tr><td>DELETE /surveyVoteForProject/:project_id</td><td><a href="SurveyVote.html#.deleteSessionSurveyVote">SurveyVote.deleteSessionSurveyVote</a></td></tr>
+<tr><td>GET /surveyVoteResult/:project_id</td><td><a href="SurveyVote.html#.getSurveyVoteResult">SurveyVote.getSurveyVoteResult</a></td></tr>
+</table><br></table><br></div>
         
 
         
@@ -143,7 +162,8 @@
     
     
     <div class="description">
-        Create or edit one or some surveyVotes on a survey<br><b>Level needed :</b> Member
+        Create or edit one or some surveyVotes on a survey<br>
+<b>Level needed :</b> Member
     </div>
     
 
@@ -364,7 +384,8 @@
     
     
     <div class="description">
-        Delete surveyVotes on a survey of logged client<br><b>Level needed :</b> Member
+        Delete surveyVotes on a survey of logged client<br>
+<b>Level needed :</b> Member
     </div>
     
 
@@ -562,7 +583,8 @@
     
     
     <div class="description">
-        Delete a surveyVote<br><b>Level needed :</b> Admin
+        Delete a surveyVote<br>
+<b>Level needed :</b> Admin
     </div>
     
 
@@ -760,7 +782,8 @@
     
     
     <div class="description">
-        Get survey vote on a survey of logged client<br><b>Level needed :</b> Member
+        Get survey vote on a survey of logged client<br>
+<b>Level needed :</b> Member
     </div>
     
 
@@ -958,7 +981,8 @@
     
     
     <div class="description">
-        Get a specific surveyVote<br><b>Level needed :</b> Admin
+        Get a specific surveyVote<br>
+<b>Level needed :</b> Admin
     </div>
     
 
@@ -1156,7 +1180,12 @@
     
     
     <div class="description">
-        Get results for a survey<br>Result has this form :<br>- a field with id of surveyItem for each surveyItem<br>(example : data.54f2e15d4a1d54e2)<br>- data.total for the total number of votes<br><b>Level needed :</b> Member
+        Get results for a survey<br>
+Result has this form :<br>
+- a field with id of surveyItem for each surveyItem<br>
+(example : data.54f2e15d4a1d54e2)<br>
+- data.total for the total number of votes<br>
+<b>Level needed :</b> Member
     </div>
     
 
@@ -1354,7 +1383,8 @@
     
     
     <div class="description">
-        Get all SurveyVotes of a survey<br><b>Level needed :</b> Admin
+        Get all SurveyVotes of a survey<br>
+<b>Level needed :</b> Admin
     </div>
     
 
@@ -1577,8 +1607,8 @@ DocStrap Copyright © 2012-2013 The contributors to the JSDoc3 and DocStrap proj
 </span>
 
 <span class="jsdoc-message">
-Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a>
-on 2015-09-09T17:21:53+02:00 using the <a
+Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+on 2015-09-23T14:08:00+02:00 using the <a
 href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 </span>
 </footer>

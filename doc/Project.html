@@ -63,7 +63,38 @@
     <div class="container-overview">
     
         
-            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>name</td><td>String</td></tr><tr><td>picture</td><td>String</td><td>null</td></tr><tr><td>type</td><td>Number</td><td>0</td></tr><tr><td>description</td><td>String</td><td>' '</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>picture</td><td>String</td><td>' '</td></tr><tr><td>status</td><td>Number</td><td>0</td></tr><tr><td>author</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /projects/</td><td><a href="Project.html#.createProject">Project.createProject</a></td></tr><tr><td>GET /projects/</td><td><a href="Project.html#.getProjects">Project.getProjects</a></td></tr><tr><td>GET /projects/:project_id</td><td><a href="Project.html#.getProject">Project.getProject</a></td></tr><tr><td>PUT /projects/:project_id</td><td><a href="Project.html#.editProject">Project.editProject</a></td></tr><tr><td>DELETE /projects/:project_id</td><td><a href="Project.html#.deleteProject">Project.deleteProject</a></td></tr></table><br><h2>Constants</h2><h5>Project.Type</h5><table><tr><td>Project</td><td>0</td></tr><tr><td>Event</td><td>1</td></tr><tr><td>Team</td><td>2</td></tr></table><h5>Project.Status</h5><table><tr><td>Preparation</td><td>0</td></tr><tr><td>Vote</td><td>1</td></tr><tr><td>Working</td><td>2</td></tr><tr><td>Archived</td><td>3</td></tr></table></div>
+            <div class="description"><h2>Model</h2>
+<table>
+<tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+<tr><td>name</td><td>String</td></tr>
+<tr><td>picture</td><td>String</td><td>null</td></tr>
+<tr><td>type</td><td>Number</td><td>0</td></tr>
+<tr><td>description</td><td>String</td><td>' '</td></tr>
+<tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>picture</td><td>String</td><td>' '</td></tr>
+<tr><td>status</td><td>Number</td><td>0</td></tr>
+<tr><td>author</td><td>ObjectId</td></tr>
+</table><br>
+<h2>Routing Table</h2>
+<table>
+<tr><td>POST /projects/</td><td><a href="Project.html#.createProject">Project.createProject</a></td></tr>
+<tr><td>GET /projects/</td><td><a href="Project.html#.getProjects">Project.getProjects</a></td></tr>
+<tr><td>GET /projects/:project_id</td><td><a href="Project.html#.getProject">Project.getProject</a></td></tr>
+<tr><td>PUT /projects/:project_id</td><td><a href="Project.html#.editProject">Project.editProject</a></td></tr>
+<tr><td>DELETE /projects/:project_id</td><td><a href="Project.html#.deleteProject">Project.deleteProject</a></td></tr></table><br>
+<h2>Constants</h2>
+<h5>Project.Type</h5>
+<table>
+<tr><td>Project</td><td>0</td></tr>
+<tr><td>Event</td><td>1</td></tr>
+<tr><td>Team</td><td>2</td></tr></table>
+<h5>Project.Status</h5>
+<table>
+<tr><td>Preparation</td><td>0</td></tr>
+<tr><td>Vote</td><td>1</td></tr>
+<tr><td>Working</td><td>2</td></tr>
+<tr><td>Archived</td><td>3</td></tr></table></div>
         
 
         
@@ -143,7 +174,22 @@
     
     
     <div class="description">
-        Create a new project<br><b>Level needed :</b> Admin
+        Create a new project<br>
+<b>Level needed :</b> Admin<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+<tr><td>-11</td><td>Missing name</td></tr>
+<tr><td>-12</td><td>Missing type</td></tr>
+<tr><td>-13</td><td>Missing authorUsername</td></tr>
+<tr><td>-22</td><td>AuthorUsername not found</td></tr>
+<tr><td>-23</td><td>Error during creation of projectUser</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+<tr><td>-29</td><td>MangoDB error during save()</td></tr>
+</table>
     </div>
     
 
@@ -387,7 +433,17 @@
     
     
     <div class="description">
-        Delete a project<br><b>Level needed :</b> Admin
+        Delete a project<br>
+<b>Level needed :</b> Admin<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+<tr><td>-23</td><td>Project remove, but some datas always exist (datas are detailled in message)</td></tr>
+<tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+</table>
     </div>
     
 
@@ -597,7 +653,20 @@
     
     
     <div class="description">
-        Edit a project<br><b>Level needed :</b> Owner | Admin
+        Edit a project<br>
+<b>Level needed :</b> Owner | Admin<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+<tr><td>-22</td><td>Project not found</td></tr>
+<tr><td>-23</td><td>Project updated but authorUsername not found</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+<tr><td>-29</td><td>MangoDB error during save()</td></tr>
+<tr><td>-31</td><td>ID not valid</td></tr>
+</table>
     </div>
     
 
@@ -972,7 +1041,16 @@
     
     
     <div class="description">
-        Get a specific project<br><b>Level needed :</b> Guest
+        Get a specific project<br>
+<b>Level needed :</b> Guest<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-22</td><td>No project found</td></tr>
+<tr><td>-27</td><td>MongoDB error during find()</td></tr>
+<tr><td>-31</td><td>ID not valid</td></tr>
+</table>
     </div>
     
 
@@ -1182,7 +1260,15 @@
     
     
     <div class="description">
-        Get all projects<br><b>Level needed :</b> Guest
+        Get all projects<br>
+<b>Level needed :</b> Guest<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-22</td><td>No project found</td></tr>
+<tr><td>-27</td><td>MongoDB error during find()</td></tr>
+</table>
     </div>
     
 
@@ -1356,8 +1442,8 @@ DocStrap Copyright © 2012-2013 The contributors to the JSDoc3 and DocStrap proj
 </span>
 
 <span class="jsdoc-message">
-Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a>
-on 2015-09-09T17:21:53+02:00 using the <a
+Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+on 2015-09-23T14:08:00+02:00 using the <a
 href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 </span>
 </footer>

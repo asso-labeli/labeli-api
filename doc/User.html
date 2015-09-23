@@ -63,7 +63,40 @@
     <div class="container-overview">
     
         
-            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>lastName</td><td>String</td></tr><tr><td>firstName</td><td>String</td></tr><tr><td>username</td><td>String</td></tr><tr><td>email</td><td>String</td></tr><tr><td>passwordHash</td><td>String</td></tr><tr><td>privateKey</td><td>String</td></tr><tr><td>picture</td><td>String</td><td>null</td></tr><tr><td>role</td><td>String</td><td>Membre</td></tr><tr><td>level</td><td>Number</td><td>1</td></tr><tr><td>description</td><td>String</td><td> ' '</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>birthday</td><td>Date</td><td>new Date('01.01.1970T01:00')</td></tr><tr><td>universityGroup</td><td>String</td><td>'Inconnu'</td></tr><tr><td>website</td><td>String</td><td>null</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /users/</td><td><a href="User.html#.createUser">User.createUser</a></td></tr><tr><td>GET /users/</td><td><a href="User.html#.getUsers">User.getUsers</a></td></tr><tr><td>GET /users/:user_id</td><td><a href="User.html#.getUser">User.getUser</a></td></tr><tr><td>PUT /users/:user_id</td><td><a href="User.html#.editUser">User.editUser</a></td></tr><tr><td>DELETE /users/:user_id</td><td><a href="User.html#.deleteUser">User.deleteUser</a></td></tr></table><br><h2>Constants</h2><h5>User.Level</h5><table><tr><td>Guest</td><td>-1</td></tr><tr><td>OldMember</td><td>0</td></tr><tr><td>Member</td><td>1</td></tr><tr><td>Admin</td><td>3</td></tr></table></div>
+            <div class="description"><h2>Model</h2>
+<table>
+<tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+<tr><td>lastName</td><td>String</td></tr>
+<tr><td>firstName</td><td>String</td></tr>
+<tr><td>username</td><td>String</td></tr>
+<tr><td>email</td><td>String</td></tr>
+<tr><td>passwordHash</td><td>String</td></tr>
+<tr><td>privateKey</td><td>String</td></tr>
+<tr><td>picture</td><td>String</td><td>null</td></tr>
+<tr><td>role</td><td>String</td><td>Membre</td></tr>
+<tr><td>level</td><td>Number</td><td>1</td></tr>
+<tr><td>description</td><td>String</td><td> ' '</td></tr>
+<tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>birthday</td><td>Date</td><td>new Date('01.01.1970T01:00')</td></tr>
+<tr><td>universityGroup</td><td>String</td><td>'Inconnu'</td></tr>
+<tr><td>website</td><td>String</td><td>null</td></tr>
+</table><br>
+<h2>Routing Table</h2>
+<table>
+<tr><td>POST /users/</td><td><a href="User.html#.createUser">User.createUser</a></td></tr>
+<tr><td>GET /users/</td><td><a href="User.html#.getUsers">User.getUsers</a></td></tr>
+<tr><td>GET /users/:user_id</td><td><a href="User.html#.getUser">User.getUser</a></td></tr>
+<tr><td>PUT /users/:user_id</td><td><a href="User.html#.editUser">User.editUser</a></td></tr>
+<tr><td>DELETE /users/:user_id</td><td><a href="User.html#.deleteUser">User.deleteUser</a></td></tr>
+</table><br>
+<h2>Constants</h2>
+<h5>User.Level</h5>
+<table>
+<tr><td>Guest</td><td>-1</td></tr>
+<tr><td>OldMember</td><td>0</td></tr>
+<tr><td>Member</td><td>1</td></tr>
+<tr><td>Admin</td><td>3</td></tr></table></div>
         
 
         
@@ -143,7 +176,20 @@
     
     
     <div class="description">
-        Create a new user<br><b>Level needed :</b> Admin
+        Create a new user<br>
+<b>Level needed :</b> Admin<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+<tr><td>-11</td><td>Missing firstName</td></tr>
+<tr><td>-12</td><td>Missing lastName</td></tr>
+<tr><td>-13</td><td>Missing email</td></tr>
+<tr><td>-21</td><td>Email already exists</td></tr>
+<tr><td>-29</td><td>MongoDB error during save()</td></tr>
+</table>
     </div>
     
 
@@ -379,6 +425,179 @@
         
             
 <dt>
+    <h4 class="name" id=".createUsername"><span class="type-signature">&lt;static> </span>createUsername<span class="signature">(res, user, callback)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Create username for a user with an analysis of existing usernames.<br>
+<b>PRIVATE FUNCTION</b>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Express.Response</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable to send response</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="User.html">User</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">variable with firstName and lastName fields</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">function to call when username is created</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id=".deleteUser"><span class="type-signature">&lt;static> </span>deleteUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
     
     
@@ -387,7 +606,16 @@
     
     
     <div class="description">
-        Delete a user<br><b>Level needed :</b> Admin
+        Delete a user<br>
+<b>Level needed :</b> Admin<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+<tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+</table>
     </div>
     
 
@@ -597,7 +825,9 @@
     
     
     <div class="description">
-        Edit the current logged user
+        Edit the current logged user<br>
+<b>Level needed :</b> Member<br>
+Same documentation for : <a href="User.html#.editUser">User.editUser</a>
     </div>
     
 
@@ -746,7 +976,20 @@
     
     
     <div class="description">
-        Edit a user<br><b>Level needed :</b> Owner | Admin
+        Edit a user<br>
+<b>Level needed :</b> Owner | Admin<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+<tr><td>-22</td><td>User not found</td></tr>
+<tr><td>-23</td><td>Error during password creation</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+<tr><td>-29</td><td>MangoDB error during save()</td></tr>
+<tr><td>-31</td><td>ID not valid</td></tr>
+</table>
     </div>
     
 
@@ -1245,6 +1488,134 @@
         
             
 <dt>
+    <h4 class="name" id=".getSelectQueryForLevel"><span class="type-signature">&lt;static> </span>getSelectQueryForLevel<span class="signature">(level)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get string select query for a specific level.<br>
+This function select datas who must to be send.<br>
+<b>PRIVATE FUNCTION</b>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>level</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">level of user</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id=".getUser"><span class="type-signature">&lt;static> </span>getUser<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
     
     
@@ -1253,7 +1624,17 @@
     
     
     <div class="description">
-        Get a specific user<br><b>Level needed :</b> Guest
+        Get a specific user<br>
+<b>Level needed :</b> Guest<br>
+Under Level.Member, datas are : firstName - lastName - role - level
+Else, all datas (except passwordhash and privateKey) are get
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-22</td><td>No users found</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+</table>
     </div>
     
 
@@ -1451,7 +1832,17 @@
     
     
     <div class="description">
-        Get all users<br><b>Level needed :</b> Guest
+        Get all users<br>
+Under Level.Member, datas are : firstName - lastName - role - level
+Else, all datas (except passwordhash and privateKey) are get
+<b>Level needed :</b> Guest<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-22</td><td>No users found</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+</table>
     </div>
     
 
@@ -1625,8 +2016,8 @@ DocStrap Copyright © 2012-2013 The contributors to the JSDoc3 and DocStrap proj
 </span>
 
 <span class="jsdoc-message">
-Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a>
-on 2015-09-09T17:21:53+02:00 using the <a
+Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+on 2015-09-23T14:08:00+02:00 using the <a
 href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 </span>
 </footer>

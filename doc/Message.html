@@ -63,7 +63,23 @@
     <div class="container-overview">
     
         
-            <div class="description"><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>content</td><td>String</td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>project</td><td>ObjectId</td></tr><tr><td>author</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /messages/:project_id</td><td><a href="Message.html#.createMessage">Message.createMessage</a></td></tr><tr><td>GET /messages/:project_id</td><td><a href="Message.html#.getMessages">Message.getMessages</a></td></tr><tr><td>GET /messages/:message_id</td><td><a href="Message.html#.getMessage">Message.getMessage</a></td></tr><tr><td>PUT /messages/:message_id</td><td><a href="Message.html#.editMessage">Message.editMessage</a></td></tr><tr><td>DELETE /messages/:message_id</td><td><a href="Message.html#.deleteMessage">Message.deleteMessage</a></td></tr></table><br></div>
+            <div class="description"><h2>Model</h2>
+<table>
+<tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+<tr><td>content</td><td>String</td></tr>
+<tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>project</td><td>ObjectId</td></tr>
+<tr><td>author</td><td>ObjectId</td></tr>
+</table><br>
+<h2>Routing Table</h2>
+<table>
+<tr><td>POST /messages/:project_id</td><td><a href="Message.html#.createMessage">Message.createMessage</a></td></tr>
+<tr><td>GET /messages/:project_id</td><td><a href="Message.html#.getMessages">Message.getMessages</a></td></tr>
+<tr><td>GET /messages/:message_id</td><td><a href="Message.html#.getMessage">Message.getMessage</a></td></tr>
+<tr><td>PUT /messages/:message_id</td><td><a href="Message.html#.editMessage">Message.editMessage</a></td></tr>
+<tr><td>DELETE /messages/:message_id</td><td><a href="Message.html#.deleteMessage">Message.deleteMessage</a></td></tr>
+</table><br></div>
         
 
         
@@ -143,7 +159,19 @@
     
     
     <div class="description">
-        Create a new message<br><b>Level needed :</b> Member
+        Create a new message<br>
+<b>Level needed :</b> Member<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-3</td><td>Not at least a member</td></tr>
+<tr><td>-11</td><td>Missing content</td></tr>
+<tr><td>-22</td><td>Project not found</td></tr>
+<tr><td>-29</td><td>MangoDB error during save()</td></tr>
+<tr><td>-31</td><td>ID not valid</td></tr>
+</table>
     </div>
     
 
@@ -387,7 +415,18 @@
     
     
     <div class="description">
-        Delete a message<br><b>Level needed :</b> Owner | Admin
+        Delete a message<br>
+<b>Level needed :</b> Owner | Admin<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-4</td><td>Not the owner</td></tr>
+<tr><td>-21</td><td>Message not found</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+<tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+</table>
     </div>
     
 
@@ -585,7 +624,19 @@
     
     
     <div class="description">
-        Edit a message<br><b>Level needed :</b> Owner | Admin
+        Edit a message<br>
+<b>Level needed :</b> Owner | Admin<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-4</td><td>Not the owner</td></tr>
+<tr><td>-22</td><td>Message not found</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+<tr><td>-29</td><td>MangoDB error during save()</td></tr>
+<tr><td>-31</td><td>ID not valid</td></tr>
+</table>
     </div>
     
 
@@ -826,7 +877,16 @@
     
     
     <div class="description">
-        Get a specific message<br><b>Level needed :</b> Guest
+        Get a specific message<br>
+<b>Level needed :</b> Guest<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-22</td><td>No project found</td></tr>
+<tr><td>-27</td><td>MongoDB error during find()</td></tr>
+<tr><td>-31</td><td>ID not valid</td></tr>
+</table>
     </div>
     
 
@@ -1024,7 +1084,16 @@
     
     
     <div class="description">
-        Get all messages from a project<br><b>Level needed :</b> Guest
+        Get all messages from a project<br>
+<b>Level needed :</b> Guest<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-22</td><td>No project found</td></tr>
+<tr><td>-27</td><td>MongoDB error during find()</td></tr>
+<tr><td>-31</td><td>ID not valid</td></tr>
+</table>
     </div>
     
 
@@ -1247,8 +1316,8 @@ DocStrap Copyright © 2012-2013 The contributors to the JSDoc3 and DocStrap proj
 </span>
 
 <span class="jsdoc-message">
-Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a>
-on 2015-09-09T17:21:53+02:00 using the <a
+Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+on 2015-09-23T14:08:00+02:00 using the <a
 href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 </span>
 </footer>

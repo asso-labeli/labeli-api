@@ -63,7 +63,30 @@
     <div class="container-overview">
     
         
-            <div class="description">This is the link between User module and Project module.<br>Creator can only be set during creation of project.<br><h2>Model</h2><table><tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr><tr><td>created</td><td>Date</td><td>Date.now</td></tr><tr><td>level</td><td>Number</td><td>0</td></tr><tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr><tr><td>author</td><td>ObjectId</td></tr><tr><td>project</td><td>ObjectId</td></tr></table><br><h2>Routing Table</h2><table><tr><td>POST /projectUsers/:project_id</td><td><a href="ProjectUser.html#.createOrEditProjectUser">ProjectUser.createOrEditProjectUser</a></td></tr><tr><td>GET /projectUsers/:project_id</td><td><a href="ProjectUser.html#.getProjectUsers">ProjectUser.getProjectUsers</a></td></tr><tr><td>GET /projectUser/:projectUser_id</td><td><a href="ProjectUser.html#.getProjectUser">ProjectUser.getProjectUser</a></td></tr><tr><td>DELETE /projectUser/:projectUser_id</td><td><a href="ProjectUser.html#.deleteProjectUser">ProjectUser.deleteProjectUser</a></td></tr></table><br><h2>Constants</h2><h5>ProjectUser.Level</h5><table><tr><td>Member</td><td>0</td></tr><tr><td>Administrator</td><td>1</td></tr><tr><td>Creator</td><td>2</td></tr></table></div>
+            <div class="description">This is the link between User module and Project module.<br>
+Creator can only be set during creation of project.<br>
+<h2>Model</h2>
+<table>
+<tr><td><b>Name</b></td><td><b>Type</b></td><td><b>Default Value</b></td></tr>
+<tr><td>created</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>level</td><td>Number</td><td>0</td></tr>
+<tr><td>lastEdited</td><td>Date</td><td>Date.now</td></tr>
+<tr><td>author</td><td>ObjectId</td></tr>
+<tr><td>project</td><td>ObjectId</td></tr>
+</table><br>
+<h2>Routing Table</h2>
+<table>
+<tr><td>POST /projectUsers/:project_id</td><td><a href="ProjectUser.html#.createOrEditProjectUser">ProjectUser.createOrEditProjectUser</a></td></tr>
+<tr><td>GET /projectUsers/:project_id</td><td><a href="ProjectUser.html#.getProjectUsers">ProjectUser.getProjectUsers</a></td></tr>
+<tr><td>GET /projectUser/:projectUser_id</td><td><a href="ProjectUser.html#.getProjectUser">ProjectUser.getProjectUser</a></td></tr>
+<tr><td>DELETE /projectUser/:projectUser_id</td><td><a href="ProjectUser.html#.deleteProjectUser">ProjectUser.deleteProjectUser</a></td></tr></table><br>
+<h2>Constants</h2>
+<h5>ProjectUser.Level</h5>
+<table>
+<tr><td>Member</td><td>0</td></tr>
+<tr><td>Administrator</td><td>1</td></tr>
+<tr><td>Creator</td><td>2</td></tr>
+</table></div>
         
 
         
@@ -143,7 +166,22 @@
     
     
     <div class="description">
-        Create or edit a new projectUser<br><b>Level needed :</b><br>- At least <i>ProjectUser.Level.Admin</i> to invite someone or to name a new admin<br>- <i>User.Member</i> to join a project
+        Create or edit a new projectUser<br>
+<b>Level needed :</b><br>
+- At least <i>ProjectUser.Level.Admin</i> to invite someone or to name a new admin<br>
+- <i>User.Member</i> to join a project<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-2</td><td>Not admin</td></tr>
+<tr><td>-3</td><td>Not at least a member</td></tr>
+<tr><td>-22</td><td>Project/User not found</td></tr>
+<tr><td>-29</td><td>MangoDB error during save()</td></tr>
+<tr><td>-31</td><td>ID not valid</td></tr>
+<tr><td>-32</td><td>Invalid level in body</td></tr>
+</table>
     </div>
     
 
@@ -433,7 +471,23 @@
     
     
     <div class="description">
-        Delete a projectUser<br><br><b>/!\</b> : Creator cannot be kicked.<br>To delete him, you must delete the project.<br><b>Level needed :</b> <br>- At least <i>ProjectUser.Level.Admin</i> to kick someone<br>- <i>ProjectUser.Level.Member</i> to leave the project
+        Delete a projectUser<br><br>
+<b>/!\</b> : Creator cannot be kicked.<br>
+To delete him, you must delete the project.<br>
+<b>Level needed :</b> <br>
+- At least <i>ProjectUser.Level.Admin</i> to kick someone<br>
+- <i>ProjectUser.Level.Member</i> to leave the project<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-1</td><td>Not logged</td></tr>
+<tr><td>-2</td><td>Not admin</td></tr>
+<tr><td>-5</td><td>Not allowed (cannot kick the creator)</td></tr>
+<tr><td>-22</td><td>ProjectUser not found</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+<tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+</table>
     </div>
     
 
@@ -631,7 +685,15 @@
     
     
     <div class="description">
-        Get a specific projectUser<br><b>Level needed :</b> Guest
+        Get a specific projectUser<br>
+<b>Level needed :</b> Guest<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-22</td><td>No users found</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+</table>
     </div>
     
 
@@ -829,7 +891,15 @@
     
     
     <div class="description">
-        Get all projectUsers of a project<br><b>Level needed :</b> Guest
+        Get all projectUsers of a project<br>
+<b>Level needed :</b> Guest<br>
+<h5>Return Table:</h5>
+<table>
+<tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+<tr><td>1</td><td>Success</td></tr>
+<tr><td>-22</td><td>No users found</td></tr>
+<tr><td>-27</td><td>MangoDB error during find()</td></tr>
+</table>
     </div>
     
 
@@ -1052,8 +1122,8 @@ DocStrap Copyright © 2012-2013 The contributors to the JSDoc3 and DocStrap proj
 </span>
 
 <span class="jsdoc-message">
-Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a>
-on 2015-09-09T17:21:53+02:00 using the <a
+Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+on 2015-09-23T14:08:00+02:00 using the <a
 href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 </span>
 </footer>
