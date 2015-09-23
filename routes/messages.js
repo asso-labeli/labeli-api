@@ -50,9 +50,9 @@ module.exports = router;
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-1</td><td>Not logged</td></tr>
- * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+ * <tr><td>-3</td><td>Not at least a member</td></tr>
  * <tr><td>-11</td><td>Missing content</td></tr>
- * <tr><td>-21</td><td>Project not found</td></tr>
+ * <tr><td>-22</td><td>Project not found</td></tr>
  * <tr><td>-29</td><td>MangoDB error during save()</td></tr>
  * <tr><td>-31</td><td>ID not valid</td></tr>
  * </table>
@@ -65,18 +65,18 @@ module.exports = router;
  */
 function createMessage(req, res) {
   if (req.session.userId == undefined) {
-    Response(res, "Error : Not logged", null, -1);
+    Response.notLogged(res);
     return;
   } else if (req.session.level < User.Level.Member) {
-    Response(res, "Error : You don't have rights to create message", null, -2);
+    Response.notMember(res);
     return;
   } else if (!isMongooseId(req.params.project_id)) {
-    Response(res, "Error : ID not valid", null, -31);
+    Response.invalidID(res);
     return;
   }
   // Check if variables are send
   else if (!("content" in req.body)) {
-    Response(res, "Error : No content given", null, -11);
+    Response.missing(res, 'content', -11);
     return;
   }
 
@@ -98,13 +98,13 @@ function createMessage(req, res) {
 
   // Wait response, and send result
   async.parallel(calls, function useProjectFound() {
-    if (!projectFound) Response(res, "Error : Project not found", null, -21);
+    if (!projectFound) Response.notFound(res, 'project');
     else {
       message.save(function useResult(err) {
         if (err)
-          Response(res, "Error", err, -29);
+          Response.saveError(res);
         else {
-          Response(res, 'Message created', message, 1);
+          Response.success(res, 'Message created', message);
           Log.i("Message \"" + message.content + "\"(" + message._id +
             ") created by user " + req.session.userId);
         }
@@ -120,7 +120,7 @@ function createMessage(req, res) {
  * <table>
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
- * <tr><td>-21</td><td>No project found</td></tr>
+ * <tr><td>-22</td><td>No project found</td></tr>
  * <tr><td>-27</td><td>MongoDB error during find()</td></tr>
  * <tr><td>-31</td><td>ID not valid</td></tr>
  * </table>
@@ -131,15 +131,15 @@ function createMessage(req, res) {
  */
 function getMessages(req, res) {
   if (!isMongooseId(req.params.project_id))
-    Response(res, "Error : ID not valid", null, -31);
+    Response.invalidID(res);
   else
     Message.find({
       project: req.params.project_id
     }, function useResult(err, messages) {
-      if (err) Response(res, "Error", err, -27);
+      if (err) Response.findError(res);
       else if (typeof messages === null ||  messages.length == 0)
-        Response(res, "Error : No messages found", messages, -21);
-      else Response(res, "Messages found", messages, 1);
+        Response.notFound(res, 'message');
+      else Response.success(res, "Messages found", messages);
     });
 }
 
@@ -150,7 +150,7 @@ function getMessages(req, res) {
  * <table>
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
- * <tr><td>-21</td><td>No project found</td></tr>
+ * <tr><td>-22</td><td>No project found</td></tr>
  * <tr><td>-27</td><td>MongoDB error during find()</td></tr>
  * <tr><td>-31</td><td>ID not valid</td></tr>
  * </table>
@@ -161,13 +161,13 @@ function getMessages(req, res) {
  */
 function getMessage(req, res) {
   if (!isMongooseId(req.params.message_id))
-    Response(res, "Error : ID not valid", null, -31);
+    Response.invalidID(res);
   else
     Message.findById(req.params.message_id, function useResult(err, message) {
-      if (err) Response(res, "Error", err, -27);
+      if (err) Response.findError(res);
       else if (message == null)
-        Response(res, "Error : Message not found", message, -21);
-      else Response(res, "Message found", message, 1);
+        Response.notFound(res, message);
+      else Response.success(res, "Message found", message);
     });
 }
 
@@ -179,8 +179,8 @@ function getMessage(req, res) {
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-1</td><td>Not logged</td></tr>
- * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
- * <tr><td>-21</td><td>Message not found</td></tr>
+ * <tr><td>-4</td><td>Not the owner</td></tr>
+ * <tr><td>-22</td><td>Message not found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * <tr><td>-29</td><td>MangoDB error during save()</td></tr>
  * <tr><td>-31</td><td>ID not valid</td></tr>
@@ -193,19 +193,19 @@ function getMessage(req, res) {
  */
 function editMessage(req, res) {
   if (req.session.level < User.Level.OldMember)
-    Response(res, "Error : Not logged", null, -1);
+    Response.notLogged(res);
   else if (!isMongooseId(req.params.message_id))
-    Response(res, "Error : ID not valid", null, -31);
+    Response.invalidID(res);
   else
     Message.findById(req.params.message_id, function(err, message) {
       if (err) {
-        Response(res, "Error", err, -27);
+        Response.findError(res);
         return;
       } else if (message == null) {
-        Response(res, "Error : Message not found", message, -21);
+        Response.notFound(res, 'message');
         return;
       } else if ((message.author != req.session.userId) && (req.session.level < 3)) {
-        Response(res, "Error : You're not the owner of this message", null, -2);
+        Response.notAdmin(res);
         return;
       }
 
@@ -215,9 +215,9 @@ function editMessage(req, res) {
       message.lastEdited = Date.now();
 
       message.save(function useResult(err) {
-        if (err) Response(res, "Error", err, -29);
+        if (err) Response.saveError(res);
         else {
-          Response(res, 'Message edited', message, 1);
+          Response.success(res, 'Message edited', message);
           Log.i("Message \"" + message.content + "\"(" + message._id +
             ") edited by user " + req.session.userId);
         }
@@ -233,7 +233,7 @@ function editMessage(req, res) {
  * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-1</td><td>Not logged</td></tr>
- * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
+ * <tr><td>-4</td><td>Not the owner</td></tr>
  * <tr><td>-21</td><td>Message not found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * <tr><td>-28</td><td>MangoDB error during remove()</td></tr>
@@ -245,26 +245,26 @@ function editMessage(req, res) {
  */
 function deleteMessage(req, res) {
   if (req.session.level < User.Level.OldMember)
-    Response(res, "Error : Not logged", null, -1);
+    Response.notLogged(res);
   else
     Message.findById(req.params.message_id, function useResult(err, message) {
       if (err) {
-        Response(res, "Error", err, -27);
+        Response.findError(res);
         return;
       } else if (message == null) {
-        Response(res, "Error : Message not found", message, -21);
+        Response.notFound(res, 'message');
         return;
       } else if ((message.author != req.session.userId) && (req.session.level < 3)) {
-        Response(res, "Error : You're not the owner of this message", null, -2);
+        Response.notOwner(res);
         return;
       }
 
       Message.remove({
         _id: req.params.message_id
       }, function useResult(err, obj) {
-        if (err) Response(res, "Error", err, -28);
+        if (err) Response.removeError(res);
         else {
-          Response(res, 'Message deleted', obj, 1);
+          Response.success(res, 'Message deleted', obj);
           Log.i("Message \"" + message.content + "\"(" + message._id +
             ") deleted by user " + req.session.userId);
         }
