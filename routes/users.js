@@ -68,7 +68,7 @@ module.exports = router;
  */
 function getSelectQueryForLevel(level) {
   if (level < User.Level.Member)
-    return 'firstName lastName role level';
+    return 'firstName lastName role level picture';
   else
     return '-passwordHash -privateKey';
 }
@@ -236,7 +236,7 @@ function getUsers(req, res) {
 
   User.find().select(selectQuery)
     .exec(function afterUserSearch(err, users) {
-      if (err) Response.findError();
+      if (err) Response.findError(res, err);
       else if (typeof users === 'undefined' ||  users.length == 0)
         Response.notFound(res, 'user');
       else Response.success(res, "Users found", users);
@@ -266,9 +266,9 @@ function getUser(req, res) {
   // If is an ID, search with id
   if (isMongooseId(req.params.user_id)) {
     User.findById(req.params.user_id)
-      .select('-passwordHash -privateKey')
+      .select(selectQuery)
       .exec(function afterUserSearch(err, user) {
-        if (err) Response.findError();
+        if (err) Response.findError(res, err);
         else if (user == null) Response.notFound(res, 'user');
         else Response.success(res, "User found", user);
       });
@@ -276,9 +276,9 @@ function getUser(req, res) {
   else { // Username case
     User.findOne({
         username: req.params.user_id
-      }).select('-passwordHash -privateKey')
+      }).select(selectQuery)
       .exec(function afterUserSearch(err, user) {
-        if (err) Response.findError();
+        if (err) Response.findError(res, err);
         else if (user == null) Response.notFound(res, 'user');
         else Response.success(res, "User found", user);
       });
