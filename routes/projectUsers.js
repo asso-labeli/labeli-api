@@ -80,6 +80,10 @@ function createOrEditProjectUser(req, res) {
     Response.notMember(res);
     return;
   }
+  else if (!isMongooseId(req.params.project_id)) {
+    Response.invalidID(res);
+    return;
+  }
 
   var projectUser = new ProjectUser();
   var project = null;
@@ -205,6 +209,7 @@ function createOrEditProjectUser(req, res) {
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-22</td><td>No users found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof ProjectUser
  * @param {Express.Request} req - request send
@@ -212,15 +217,18 @@ function createOrEditProjectUser(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getProjectUsers(req, res) {
-  ProjectUser.find({
-    project: req.params.project_id
-  }, function afterPUSearch(err, projectUsers) {
-    if (err) Response.findError(res, err);
-    else if (typeof projectUsers === 'undefined' ||  
-      projectUsers.length == 0)
-      Response.notFound(res, 'projectUser');
-    else Response.success(res, "ProjectUsers found", projectUsers);
-  });
+  if (!isMongooseId(req.params.project_id))
+    Response.invalidID(res);
+  else
+    ProjectUser.find({
+      project: req.params.project_id
+    }, function afterPUSearch(err, projectUsers) {
+      if (err) Response.findError(res, err);
+      else if (typeof projectUsers === 'undefined' ||  
+        projectUsers.length == 0)
+        Response.notFound(res, 'projectUser');
+      else Response.success(res, "ProjectUsers found", projectUsers);
+    });
 }
 
 /**
@@ -232,6 +240,7 @@ function getProjectUsers(req, res) {
  * <tr><td>1</td><td>Success</td></tr>
  * <tr><td>-22</td><td>No users found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof ProjectUser
  * @param {Express.Request} req - request send
@@ -239,14 +248,17 @@ function getProjectUsers(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getProjectUser(req, res) {
-  ProjectUser.findById(req.params.projectUser_id,
-    function afterPUSearch(err, projectUser) {
-      if (err) Response.findError(res, err);
-      else if (projectUser == null)
-        Response.notFound(res, 'projectUser');
-      else
-        Response.success(res, "ProjectUser found", projectUser);
-    });
+  if (!isMongooseId(req.params.projectUser_id))
+    Response.invalidID(res);
+  else
+    ProjectUser.findById(req.params.projectUser_id,
+      function afterPUSearch(err, projectUser) {
+        if (err) Response.findError(res, err);
+        else if (projectUser == null)
+          Response.notFound(res, 'projectUser');
+        else
+          Response.success(res, "ProjectUser found", projectUser);
+      });
 }
 
 /**
@@ -266,6 +278,7 @@ function getProjectUser(req, res) {
  * <tr><td>-22</td><td>ProjectUser not found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * <tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof ProjectUser
  * @param {Express.Request} req - request send
@@ -275,6 +288,10 @@ function getProjectUser(req, res) {
 function deleteProjectUser(req, res) {
   if (req.session.level < User.Level.OldMember) {
     Response.notLogged(res);
+    return;
+  }
+  else if (!isMongooseId(req.params.projectUser_id)){
+    Response.invalidID(res);
     return;
   }
 

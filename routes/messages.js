@@ -241,6 +241,7 @@ function editMessage(req, res) {
  * <tr><td>-21</td><td>Message not found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * <tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof Message
  * @param {Express.Request} req - request send
@@ -250,6 +251,8 @@ function editMessage(req, res) {
 function deleteMessage(req, res) {
   if (req.session.level < User.Level.OldMember)
     Response.notLogged(res);
+  else if (!isMongooseId(req.params.message_id))
+    Response.invalidID(res);
   else
     Message.findById(req.params.message_id, function useResult(err, message) {
       if (err) {

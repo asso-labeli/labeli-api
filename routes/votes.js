@@ -64,6 +64,7 @@ module.exports = router;
  * <tr><td>-11</td><td>Missing value</td></tr>
  * <tr><td>-22</td><td>Project not found</td></tr>
  * <tr><td>-29</td><td>MongoDB error during save()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof Vote
  * @param {Express.Request} req - request send
@@ -78,6 +79,10 @@ function createOrEditVote(req, res) {
   }
   else if (req.session.level < User.Level.Member) {
     Response.notMember(res);
+    return;
+  }
+  else if (!isMongooseId(req.params.project_id)) {
+    Response.invalidID(res);
     return;
   }
 
@@ -144,6 +149,7 @@ function createOrEditVote(req, res) {
  * <tr><td>-2</td><td>Not admin</td></tr>
  * <tr><td>-22</td><td>No votes found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof Vote
  * @param {Express.Request} req - request send
@@ -151,23 +157,21 @@ function createOrEditVote(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getVotes(req, res) {
-  if (req.session.level == User.Level.Guest) {
+  if (req.session.level == User.Level.Guest)
     Response.notLogged(res);
-    return;
-  }
-  else if (req.session.level < User.Level.Admin) {
+  else if (req.session.level < User.Level.Admin)
     Response.notAdmin(res);
-    return;
-  }
-
-  Vote.find({
-    project: req.params.project_id
-  }, function afterVoteSearch(err, votes) {
-    if (err) Response.findError(res, err);
-    else if (typeof votes === 'undefined' ||  votes.length == 0)
-      Response.notFound(res, 'vote');
-    else Response.success(res, "Votes found", votes);
-  });
+  else if (!isMongooseId(req.params.project_id))
+    Response.invalidID(res);
+  else
+    Vote.find({
+      project: req.params.project_id
+    }, function afterVoteSearch(err, votes) {
+      if (err) Response.findError(res, err);
+      else if (typeof votes === 'undefined' ||  votes.length == 0)
+        Response.notFound(res, 'vote');
+      else Response.success(res, "Votes found", votes);
+    });
 }
 
 /**
@@ -181,6 +185,7 @@ function getVotes(req, res) {
  * <tr><td>-2</td><td>Not admin</td></tr>
  * <tr><td>-22</td><td>No vote found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof Vote
  * @param {Express.Request} req - request send
@@ -188,20 +193,18 @@ function getVotes(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getVote(req, res) {
-  if (req.session.level == User.Level.Guest) {
+  if (req.session.level == User.Level.Guest)
     Response.notLogged(res);
-    return;
-  }
-  else if (req.session.level < User.Level.Admin) {
+  else if (req.session.level < User.Level.Admin)
     Response.notAdmin(res);
-    return;
-  }
-
-  Vote.findById(req.params.vote_id, function afterVoteSearch(err, vote) {
-    if (err) Response.findError(res, err);
-    else if (vote == null) Response.notFound(res, 'vote');
-    else Response.success(res, "Vote found", vote);
-  });
+  else if (!isMongooseId(req.params.vote_id))
+    Response.invalidID(res);
+  else
+    Vote.findById(req.params.vote_id, function afterVoteSearch(err, vote) {
+      if (err) Response.findError(res, err);
+      else if (vote == null) Response.notFound(res, 'vote');
+      else Response.success(res, "Vote found", vote);
+    });
 }
 
 /**
@@ -215,6 +218,7 @@ function getVote(req, res) {
  * <tr><td>-3</td><td>Not at least a member</td></tr>
  * <tr><td>-22</td><td>No vote found</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof Vote
  * @param {Express.Request} req - request send
@@ -222,17 +226,14 @@ function getVote(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function getSessionVote(req, res) {
-  if (req.session.level == User.Level.Guest) {
+  if (req.session.level == User.Level.Guest)
     Response.notLogged(res);
-    return;
-  }
-  else if (req.session.level < User.Level.Member) {
+  else if (req.session.level < User.Level.Member)
     Response.notMember(res);
-    return;
-  }
-
-  // Search vote of logged client
-  Vote.findOne({
+  else if (!isMongooseId(req.params.project_id))
+    Response.invalidID(res);
+  else // Search vote of logged client
+    Vote.findOne({
       author: req.session.userId,
       project: req.params.project_id
     },
@@ -253,6 +254,7 @@ function getSessionVote(req, res) {
  * <tr><td>-1</td><td>Not logged</td></tr>
  * <tr><td>-2</td><td>Not admin</td></tr>
  * <tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof Vote
  * @param {Express.Request} req - request send
@@ -260,21 +262,19 @@ function getSessionVote(req, res) {
  * @param {Express.Response} res - variable to send the response
  */
 function deleteVote(req, res) {
-  if (req.session.level == User.Level.Guest) {
+  if (req.session.level == User.Level.Guest)
     Response.notLogged(res);
-    return;
-  }
-  else if (req.session.level < User.Level.Admin) {
+  else if (req.session.level < User.Level.Admin)
     Response.notAdmin(res);
-    return;
-  }
-
-  Vote.remove({
-    _id: req.params.vote_id
-  }, function afterVoteRemove(err, vote) {
-    if (err) Response.removeError(res, err);
-    else Response.success(res, 'Vote deleted', vote);
-  });
+  else if (!isMongooseId(req.params.vote_id))
+    Response.invalidID(res);
+  else
+    Vote.remove({
+      _id: req.params.vote_id
+    }, function afterVoteRemove(err, vote) {
+      if (err) Response.removeError(res, err);
+      else Response.success(res, 'Vote deleted', vote);
+    });
 }
 
 /**
@@ -288,19 +288,22 @@ function deleteVote(req, res) {
  * <tr><td>-3</td><td>Not at least a member</td></tr>
  * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
  * <tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof Vote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.project_id - id of the project
  * @param {Express.Response} res - variable to send the response
- */function deleteSessionVote(req, res) {
-  if (req.session.level == User.Level.Guest) {
+ */
+function deleteSessionVote(req, res) {
+  if (req.session.level == User.Level.Guest)
     Response.notLogged(res);
-    return;
-  }
-
-  // Search vote of logged client
-  Vote.findOne({
+  else if (req.session.level < User.Level.Member)
+    Response.notMember(res);
+  else if (!isMongooseId(req.params.project_id))
+    Response.invalidID(res);
+  else // Search vote of logged client
+    Vote.findOne({
       author: req.session.userId,
       project: req.params.project_id
     },
@@ -314,8 +317,6 @@ function deleteVote(req, res) {
         else Response.success(res, 'Vote deleted', vote);
       });
     });
-
-
 }
 
 /**
@@ -325,31 +326,38 @@ function deleteVote(req, res) {
  * - data.neutral for number of neutral votes<br>
  * - data.positive for number of positive votes<br>
  * - data.total for total score<br>
- * <b>Level needed :</b> Member
+ * <b>Level needed :</b> Member<br>
+ * <h5>Return Table:</h5>
+ * <table>
+ * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+ * <tr><td>1</td><td>Success</td></tr>
+ * <tr><td>-1</td><td>Not logged</td></tr>
+ * <tr><td>-3</td><td>Not at least a member</td></tr>
+ * <td><td>-22</td><td>Vote not found</td></tr>
+ * <tr><td>-27</td><td>MangoDB error during find()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
+ * </table>
  * @memberof Vote
  * @param {Express.Request} req - request send
  * @param {ObjectId} req.params.project_id - id of the project
  * @param {Express.Response} res - variable to send the response
  */
 function getVoteResult(req, res) {
-  if (req.session.level == User.Level.Guest) {
-    Response(res, "Error : Not logged", null, 0);
-    return;
-  }
-
+  if (req.session.level == User.Level.Guest)
+    Response.notLogged(res);
+  else if (req.session.level < User.Level.Member)
+    Response.notMember(res);
+  else if (!isMongooseId(req.params.project_id))
+    Response.invalidID(res);
+  else
   // Search all votes for this project
-  Vote.find({
+    Vote.find({
       project: req.params.project_id
     },
-    function(err, votes) {
-      if (err) Response(res, "Error", err, 0);
+    function afterVoteSearch(err, votes) {
+      if (err) Response.findError(res, err);
       // If not found, send a empty data array
-      else if (votes == null || votes == []) Response(res, "Error : Votes not found", {
-        negative: 0,
-        neutral: 0,
-        positive: 0,
-        total: 0
-      }, 0);
+      else if (vote == null) Response.notFound(res, 'vote');
       else {
         var data = {
           negative: 0,
@@ -376,7 +384,7 @@ function getVoteResult(req, res) {
         }
 
         // Send data array
-        Response(res, "Votes found", data, 1);
+        Response.success(res, "Votes found", data);
       }
     });
 }

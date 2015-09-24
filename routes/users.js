@@ -393,6 +393,7 @@ function editLoggedUser(req, res) {
  * <tr><td>-1</td><td>Not logged</td></tr>
  * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
  * <tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof User
  * @param {Express.Request} req - request send
@@ -404,6 +405,8 @@ function deleteUser(req, res) {
     Response.notLogged(res);
   else if (req.session.level < User.Level.Admin)
     Response.notAdmin(res);
+  else if (!isMongooseId(req.params.user_id))
+      Response.invalidID(res);
   else
     User.remove({
       _id: req.params.user_id

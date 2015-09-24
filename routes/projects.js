@@ -297,6 +297,7 @@ function editProject(req, res) {
  * <tr><td>-2</td><td>Access denied (need more permissions)</td></tr>
  * <tr><td>-23</td><td>Project remove, but some datas always exist (datas are detailled in message)</td></tr>
  * <tr><td>-28</td><td>MangoDB error during remove()</td></tr>
+ * <tr><td>-31</td><td>Invalid ID</td></tr>
  * </table>
  * @memberof Project
  * @param {Express.Request} req - request send
@@ -310,6 +311,10 @@ function deleteProject(req, res) {
   }
   else if (req.session.level < User.Level.Admin) {
     Response.notAdmin(res);
+    return;
+  }
+  else if (!isMongooseId(req.params.project_id)) {
+    Response.invalidID(res);
     return;
   }
 
