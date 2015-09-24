@@ -15,6 +15,8 @@ module.exports.Code = {
   notAllowed: -5,
   alreadyExist: -21,
   notFound: -22,
+  serverError: -23,
+  badLogin: -24,
   findError: -27,
   removeError: -28,
   saveError: -29,
@@ -99,6 +101,14 @@ function notFound(res, field) {
   });
 }
 
+function badLogin(res) {
+  sendResponse(res, 401, {
+    message: "Error : Bad combinaison username/password",
+    data: null,
+    success: -24
+  });
+}
+
 function findError(res, err) {
   sendResponse(res, 500, {
     message: "MongoDB error during find()",
@@ -157,6 +167,7 @@ module.exports.notAllowed = notAllowed;
 module.exports.missing = missing;
 module.exports.alreadyExist = alreadyExist;
 module.exports.notFound = notFound;
+module.exports.badLogin = badLogin;
 module.exports.findError = findError;
 module.exports.removeError = removeError;
 module.exports.saveError = saveError;
