@@ -15,6 +15,9 @@ module.exports.Code = {
   notAllowed: -5,
   alreadyExist: -21,
   notFound: -22,
+  findError: -27,
+  removeError: -28,
+  saveError: -29,
   invalidID: -31,
   invalidParameter: -32
 }
