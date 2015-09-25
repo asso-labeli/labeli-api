@@ -24,10 +24,16 @@ router.route('/upload').post(uploadPicture);
 
 module.exports = router;
 
-
 /**
  * Upload a picture on the server<br>
- * <b>Level needed :</b> Member
+ * <b>Level needed :</b> Member<br>
+ * <h5>Return Table:</h5>
+ * <table>
+ * <tr><td><b>Code</b></td><td><b>Value</b></td></tr>
+ * <tr><td>1</td><td>Success</td></tr>
+ * <tr><td>-1</td><td>Not logged</td></tr>
+ * <tr><td>-3</td><td>Not at least a member</td></tr>
+ * </table>
  * @memberof Upload
  * @param {Express.Request} req - request send
  * @param {String} req.body.name - new name of file (with extension)
@@ -36,25 +42,19 @@ module.exports = router;
  */
 function uploadPicture(req, res) {
     if (req.session.level == User.Level.Guest){
-        Response(res, "Error : Not logged", null, 0);
+        Response.notLogged(res);
+        return ;
+    } else if (req.session.level < User.Level.Member){
+        Response.notMember(res);
         return ;
     }
 
     var form = new formidable.IncomingForm();
     var file_name = "";
 
-    form.parse(req, function (err, fields, files) {
+    form.parse(req, function afterParse(err, fields, files) {
         file_name = fields.name;
-        fields.message = "Success";
-        fields.success = 1;
-
-        res.writeHead(200, {
-            'content-type': 'text/plain'
-        });
-        res.end(util.inspect({
-            fields: fields,
-            files: files
-        }));
+        Response.success(res, "Success", fields);
     });
 
     form.on('end', function (fields, files) {
