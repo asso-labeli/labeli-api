@@ -22,7 +22,7 @@ module.exports.Code = {
   saveError: -29,
   invalidID: -31,
   invalidParameter: -32,
-  surveyClosed: -41
+  surveyClosed: -41,
   tooManyItems: -42
 }
 
