@@ -21,7 +21,9 @@ module.exports.Code = {
   removeError: -28,
   saveError: -29,
   invalidID: -31,
-  invalidParameter: -32
+  invalidParameter: -32,
+  surveyClosed: -41
+  tooManyItems: -42
 }
 
 function sendResponse(res, httpCode, data) {
@@ -157,6 +159,22 @@ function invalidParameter(res, field) {
   });
 }
 
+function surveyClosed(res){
+  sendResponse(res, 400, {
+    message: "Error : Survey closed",
+    data: null,
+    success: -41
+  });
+}
+
+function tooManyItems(res){
+  sendResponse(res, 400, {
+    message: "Error : Too many items",
+    data: null,
+    success: -42
+  });
+}
+
 module.exports = formatResponse;
 module.exports.success = success;
 module.exports.notLogged = notLogged;
@@ -174,3 +192,5 @@ module.exports.saveError = saveError;
 module.exports.invalidID = invalidID;
 module.exports.invalidParameter = invalidParameter;
 module.exports.serverError = serverError;
+module.exports.surveyClosed = surveyClosed;
+module.exports.tooManyItems = tooManyItems;
